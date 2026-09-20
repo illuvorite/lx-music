@@ -1,0 +1,985 @@
+@import './reset.less';
+@import './animate.less';
+@import './layout.less';
+
+*, *::after, *::before {
+	-webkit-user-drag: none;
+}
+
+:root {
+  --color-primary: rgb(77, 175, 124);
+  --color-primary-alpha-100: rgba(77, 175, 124, 0.90);
+  --color-primary-alpha-200: rgba(77, 175, 124, 0.80);
+  --color-primary-alpha-300: rgba(77, 175, 124, 0.70);
+  --color-primary-alpha-400: rgba(77, 175, 124, 0.60);
+  --color-primary-alpha-500: rgba(77, 175, 124, 0.50);
+  --color-primary-alpha-600: rgba(77, 175, 124, 0.40);
+  --color-primary-alpha-700: rgba(77, 175, 124, 0.30);
+  --color-primary-alpha-800: rgba(77, 175, 124, 0.20);
+  --color-primary-alpha-900: rgba(77, 175, 124, 0.10);
+  --color-primary-dark-100: rgb(69,158,112);
+  --color-primary-dark-100-alpha-100: rgba(69, 158, 112, 0.90);
+  --color-primary-dark-100-alpha-200: rgba(69, 158, 112, 0.80);
+  --color-primary-dark-100-alpha-300: rgba(69, 158, 112, 0.70);
+  --color-primary-dark-100-alpha-400: rgba(69, 158, 112, 0.60);
+  --color-primary-dark-100-alpha-500: rgba(69, 158, 112, 0.50);
+  --color-primary-dark-100-alpha-600: rgba(69, 158, 112, 0.40);
+  --color-primary-dark-100-alpha-700: rgba(69, 158, 112, 0.30);
+  --color-primary-dark-100-alpha-800: rgba(69, 158, 112, 0.20);
+  --color-primary-dark-100-alpha-900: rgba(69, 158, 112, 0.10);
+  --color-primary-dark-200: rgb(62,142,101);
+  --color-primary-dark-200-alpha-100: rgba(62, 142, 101, 0.90);
+  --color-primary-dark-200-alpha-200: rgba(62, 142, 101, 0.80);
+  --color-primary-dark-200-alpha-300: rgba(62, 142, 101, 0.70);
+  --color-primary-dark-200-alpha-400: rgba(62, 142, 101, 0.60);
+  --color-primary-dark-200-alpha-500: rgba(62, 142, 101, 0.50);
+  --color-primary-dark-200-alpha-600: rgba(62, 142, 101, 0.40);
+  --color-primary-dark-200-alpha-700: rgba(62, 142, 101, 0.30);
+  --color-primary-dark-200-alpha-800: rgba(62, 142, 101, 0.20);
+  --color-primary-dark-200-alpha-900: rgba(62, 142, 101, 0.10);
+  --color-primary-dark-300: rgb(56,128,91);
+  --color-primary-dark-300-alpha-100: rgba(56, 128, 91, 0.90);
+  --color-primary-dark-300-alpha-200: rgba(56, 128, 91, 0.80);
+  --color-primary-dark-300-alpha-300: rgba(56, 128, 91, 0.70);
+  --color-primary-dark-300-alpha-400: rgba(56, 128, 91, 0.60);
+  --color-primary-dark-300-alpha-500: rgba(56, 128, 91, 0.50);
+  --color-primary-dark-300-alpha-600: rgba(56, 128, 91, 0.40);
+  --color-primary-dark-300-alpha-700: rgba(56, 128, 91, 0.30);
+  --color-primary-dark-300-alpha-800: rgba(56, 128, 91, 0.20);
+  --color-primary-dark-300-alpha-900: rgba(56, 128, 91, 0.10);
+  --color-primary-dark-400: rgb(50,115,82);
+  --color-primary-dark-400-alpha-100: rgba(50, 115, 82, 0.90);
+  --color-primary-dark-400-alpha-200: rgba(50, 115, 82, 0.80);
+  --color-primary-dark-400-alpha-300: rgba(50, 115, 82, 0.70);
+  --color-primary-dark-400-alpha-400: rgba(50, 115, 82, 0.60);
+  --color-primary-dark-400-alpha-500: rgba(50, 115, 82, 0.50);
+  --color-primary-dark-400-alpha-600: rgba(50, 115, 82, 0.40);
+  --color-primary-dark-400-alpha-700: rgba(50, 115, 82, 0.30);
+  --color-primary-dark-400-alpha-800: rgba(50, 115, 82, 0.20);
+  --color-primary-dark-400-alpha-900: rgba(50, 115, 82, 0.10);
+  --color-primary-dark-500: rgb(45,104,74);
+  --color-primary-dark-500-alpha-100: rgba(45, 104, 74, 0.90);
+  --color-primary-dark-500-alpha-200: rgba(45, 104, 74, 0.80);
+  --color-primary-dark-500-alpha-300: rgba(45, 104, 74, 0.70);
+  --color-primary-dark-500-alpha-400: rgba(45, 104, 74, 0.60);
+  --color-primary-dark-500-alpha-500: rgba(45, 104, 74, 0.50);
+  --color-primary-dark-500-alpha-600: rgba(45, 104, 74, 0.40);
+  --color-primary-dark-500-alpha-700: rgba(45, 104, 74, 0.30);
+  --color-primary-dark-500-alpha-800: rgba(45, 104, 74, 0.20);
+  --color-primary-dark-500-alpha-900: rgba(45, 104, 74, 0.10);
+  --color-primary-dark-600: rgb(41,94,67);
+  --color-primary-dark-600-alpha-100: rgba(41, 94, 67, 0.90);
+  --color-primary-dark-600-alpha-200: rgba(41, 94, 67, 0.80);
+  --color-primary-dark-600-alpha-300: rgba(41, 94, 67, 0.70);
+  --color-primary-dark-600-alpha-400: rgba(41, 94, 67, 0.60);
+  --color-primary-dark-600-alpha-500: rgba(41, 94, 67, 0.50);
+  --color-primary-dark-600-alpha-600: rgba(41, 94, 67, 0.40);
+  --color-primary-dark-600-alpha-700: rgba(41, 94, 67, 0.30);
+  --color-primary-dark-600-alpha-800: rgba(41, 94, 67, 0.20);
+  --color-primary-dark-600-alpha-900: rgba(41, 94, 67, 0.10);
+  --color-primary-dark-700: rgb(37,85,60);
+  --color-primary-dark-700-alpha-100: rgba(37, 85, 60, 0.90);
+  --color-primary-dark-700-alpha-200: rgba(37, 85, 60, 0.80);
+  --color-primary-dark-700-alpha-300: rgba(37, 85, 60, 0.70);
+  --color-primary-dark-700-alpha-400: rgba(37, 85, 60, 0.60);
+  --color-primary-dark-700-alpha-500: rgba(37, 85, 60, 0.50);
+  --color-primary-dark-700-alpha-600: rgba(37, 85, 60, 0.40);
+  --color-primary-dark-700-alpha-700: rgba(37, 85, 60, 0.30);
+  --color-primary-dark-700-alpha-800: rgba(37, 85, 60, 0.20);
+  --color-primary-dark-700-alpha-900: rgba(37, 85, 60, 0.10);
+  --color-primary-dark-800: rgb(33,77,54);
+  --color-primary-dark-800-alpha-100: rgba(33, 77, 54, 0.90);
+  --color-primary-dark-800-alpha-200: rgba(33, 77, 54, 0.80);
+  --color-primary-dark-800-alpha-300: rgba(33, 77, 54, 0.70);
+  --color-primary-dark-800-alpha-400: rgba(33, 77, 54, 0.60);
+  --color-primary-dark-800-alpha-500: rgba(33, 77, 54, 0.50);
+  --color-primary-dark-800-alpha-600: rgba(33, 77, 54, 0.40);
+  --color-primary-dark-800-alpha-700: rgba(33, 77, 54, 0.30);
+  --color-primary-dark-800-alpha-800: rgba(33, 77, 54, 0.20);
+  --color-primary-dark-800-alpha-900: rgba(33, 77, 54, 0.10);
+  --color-primary-dark-900: rgb(30,69,49);
+  --color-primary-dark-900-alpha-100: rgba(30, 69, 49, 0.90);
+  --color-primary-dark-900-alpha-200: rgba(30, 69, 49, 0.80);
+  --color-primary-dark-900-alpha-300: rgba(30, 69, 49, 0.70);
+  --color-primary-dark-900-alpha-400: rgba(30, 69, 49, 0.60);
+  --color-primary-dark-900-alpha-500: rgba(30, 69, 49, 0.50);
+  --color-primary-dark-900-alpha-600: rgba(30, 69, 49, 0.40);
+  --color-primary-dark-900-alpha-700: rgba(30, 69, 49, 0.30);
+  --color-primary-dark-900-alpha-800: rgba(30, 69, 49, 0.20);
+  --color-primary-dark-900-alpha-900: rgba(30, 69, 49, 0.10);
+  --color-primary-dark-1000: rgb(27,62,44);
+  --color-primary-dark-1000-alpha-100: rgba(27, 62, 44, 0.90);
+  --color-primary-dark-1000-alpha-200: rgba(27, 62, 44, 0.80);
+  --color-primary-dark-1000-alpha-300: rgba(27, 62, 44, 0.70);
+  --color-primary-dark-1000-alpha-400: rgba(27, 62, 44, 0.60);
+  --color-primary-dark-1000-alpha-500: rgba(27, 62, 44, 0.50);
+  --color-primary-dark-1000-alpha-600: rgba(27, 62, 44, 0.40);
+  --color-primary-dark-1000-alpha-700: rgba(27, 62, 44, 0.30);
+  --color-primary-dark-1000-alpha-800: rgba(27, 62, 44, 0.20);
+  --color-primary-dark-1000-alpha-900: rgba(27, 62, 44, 0.10);
+  --color-primary-light-100: rgb(113,191,150);
+  --color-primary-light-100-alpha-100: rgba(113, 191, 150, 0.90);
+  --color-primary-light-100-alpha-200: rgba(113, 191, 150, 0.80);
+  --color-primary-light-100-alpha-300: rgba(113, 191, 150, 0.70);
+  --color-primary-light-100-alpha-400: rgba(113, 191, 150, 0.60);
+  --color-primary-light-100-alpha-500: rgba(113, 191, 150, 0.50);
+  --color-primary-light-100-alpha-600: rgba(113, 191, 150, 0.40);
+  --color-primary-light-100-alpha-700: rgba(113, 191, 150, 0.30);
+  --color-primary-light-100-alpha-800: rgba(113, 191, 150, 0.20);
+  --color-primary-light-100-alpha-900: rgba(113, 191, 150, 0.10);
+  --color-primary-light-200: rgb(141,204,171);
+  --color-primary-light-200-alpha-100: rgba(141, 204, 171, 0.90);
+  --color-primary-light-200-alpha-200: rgba(141, 204, 171, 0.80);
+  --color-primary-light-200-alpha-300: rgba(141, 204, 171, 0.70);
+  --color-primary-light-200-alpha-400: rgba(141, 204, 171, 0.60);
+  --color-primary-light-200-alpha-500: rgba(141, 204, 171, 0.50);
+  --color-primary-light-200-alpha-600: rgba(141, 204, 171, 0.40);
+  --color-primary-light-200-alpha-700: rgba(141, 204, 171, 0.30);
+  --color-primary-light-200-alpha-800: rgba(141, 204, 171, 0.20);
+  --color-primary-light-200-alpha-900: rgba(141, 204, 171, 0.10);
+  --color-primary-light-300: rgb(164,214,188);
+  --color-primary-light-300-alpha-100: rgba(164, 214, 188, 0.90);
+  --color-primary-light-300-alpha-200: rgba(164, 214, 188, 0.80);
+  --color-primary-light-300-alpha-300: rgba(164, 214, 188, 0.70);
+  --color-primary-light-300-alpha-400: rgba(164, 214, 188, 0.60);
+  --color-primary-light-300-alpha-500: rgba(164, 214, 188, 0.50);
+  --color-primary-light-300-alpha-600: rgba(164, 214, 188, 0.40);
+  --color-primary-light-300-alpha-700: rgba(164, 214, 188, 0.30);
+  --color-primary-light-300-alpha-800: rgba(164, 214, 188, 0.20);
+  --color-primary-light-300-alpha-900: rgba(164, 214, 188, 0.10);
+  --color-primary-light-400: rgb(182,222,201);
+  --color-primary-light-400-alpha-100: rgba(182, 222, 201, 0.90);
+  --color-primary-light-400-alpha-200: rgba(182, 222, 201, 0.80);
+  --color-primary-light-400-alpha-300: rgba(182, 222, 201, 0.70);
+  --color-primary-light-400-alpha-400: rgba(182, 222, 201, 0.60);
+  --color-primary-light-400-alpha-500: rgba(182, 222, 201, 0.50);
+  --color-primary-light-400-alpha-600: rgba(182, 222, 201, 0.40);
+  --color-primary-light-400-alpha-700: rgba(182, 222, 201, 0.30);
+  --color-primary-light-400-alpha-800: rgba(182, 222, 201, 0.20);
+  --color-primary-light-400-alpha-900: rgba(182, 222, 201, 0.10);
+  --color-primary-light-500: rgb(197,229,212);
+  --color-primary-light-500-alpha-100: rgba(197, 229, 212, 0.90);
+  --color-primary-light-500-alpha-200: rgba(197, 229, 212, 0.80);
+  --color-primary-light-500-alpha-300: rgba(197, 229, 212, 0.70);
+  --color-primary-light-500-alpha-400: rgba(197, 229, 212, 0.60);
+  --color-primary-light-500-alpha-500: rgba(197, 229, 212, 0.50);
+  --color-primary-light-500-alpha-600: rgba(197, 229, 212, 0.40);
+  --color-primary-light-500-alpha-700: rgba(197, 229, 212, 0.30);
+  --color-primary-light-500-alpha-800: rgba(197, 229, 212, 0.20);
+  --color-primary-light-500-alpha-900: rgba(197, 229, 212, 0.10);
+  --color-primary-light-600: rgb(209,234,221);
+  --color-primary-light-600-alpha-100: rgba(209, 234, 221, 0.90);
+  --color-primary-light-600-alpha-200: rgba(209, 234, 221, 0.80);
+  --color-primary-light-600-alpha-300: rgba(209, 234, 221, 0.70);
+  --color-primary-light-600-alpha-400: rgba(209, 234, 221, 0.60);
+  --color-primary-light-600-alpha-500: rgba(209, 234, 221, 0.50);
+  --color-primary-light-600-alpha-600: rgba(209, 234, 221, 0.40);
+  --color-primary-light-600-alpha-700: rgba(209, 234, 221, 0.30);
+  --color-primary-light-600-alpha-800: rgba(209, 234, 221, 0.20);
+  --color-primary-light-600-alpha-900: rgba(209, 234, 221, 0.10);
+  --color-primary-light-700: rgb(218,238,228);
+  --color-primary-light-700-alpha-100: rgba(218, 238, 228, 0.90);
+  --color-primary-light-700-alpha-200: rgba(218, 238, 228, 0.80);
+  --color-primary-light-700-alpha-300: rgba(218, 238, 228, 0.70);
+  --color-primary-light-700-alpha-400: rgba(218, 238, 228, 0.60);
+  --color-primary-light-700-alpha-500: rgba(218, 238, 228, 0.50);
+  --color-primary-light-700-alpha-600: rgba(218, 238, 228, 0.40);
+  --color-primary-light-700-alpha-700: rgba(218, 238, 228, 0.30);
+  --color-primary-light-700-alpha-800: rgba(218, 238, 228, 0.20);
+  --color-primary-light-700-alpha-900: rgba(218, 238, 228, 0.10);
+  --color-primary-light-800: rgb(225,241,233);
+  --color-primary-light-800-alpha-100: rgba(225, 241, 233, 0.90);
+  --color-primary-light-800-alpha-200: rgba(225, 241, 233, 0.80);
+  --color-primary-light-800-alpha-300: rgba(225, 241, 233, 0.70);
+  --color-primary-light-800-alpha-400: rgba(225, 241, 233, 0.60);
+  --color-primary-light-800-alpha-500: rgba(225, 241, 233, 0.50);
+  --color-primary-light-800-alpha-600: rgba(225, 241, 233, 0.40);
+  --color-primary-light-800-alpha-700: rgba(225, 241, 233, 0.30);
+  --color-primary-light-800-alpha-800: rgba(225, 241, 233, 0.20);
+  --color-primary-light-800-alpha-900: rgba(225, 241, 233, 0.10);
+  --color-primary-light-900: rgb(231,244,237);
+  --color-primary-light-900-alpha-100: rgba(231, 244, 237, 0.90);
+  --color-primary-light-900-alpha-200: rgba(231, 244, 237, 0.80);
+  --color-primary-light-900-alpha-300: rgba(231, 244, 237, 0.70);
+  --color-primary-light-900-alpha-400: rgba(231, 244, 237, 0.60);
+  --color-primary-light-900-alpha-500: rgba(231, 244, 237, 0.50);
+  --color-primary-light-900-alpha-600: rgba(231, 244, 237, 0.40);
+  --color-primary-light-900-alpha-700: rgba(231, 244, 237, 0.30);
+  --color-primary-light-900-alpha-800: rgba(231, 244, 237, 0.20);
+  --color-primary-light-900-alpha-900: rgba(231, 244, 237, 0.10);
+  --color-primary-light-1000: rgb(255,255,255);
+  --color-primary-light-1000-alpha-100: rgba(255, 255, 255, 0.90);
+  --color-primary-light-1000-alpha-200: rgba(255, 255, 255, 0.80);
+  --color-primary-light-1000-alpha-300: rgba(255, 255, 255, 0.70);
+  --color-primary-light-1000-alpha-400: rgba(255, 255, 255, 0.60);
+  --color-primary-light-1000-alpha-500: rgba(255, 255, 255, 0.50);
+  --color-primary-light-1000-alpha-600: rgba(255, 255, 255, 0.40);
+  --color-primary-light-1000-alpha-700: rgba(255, 255, 255, 0.30);
+  --color-primary-light-1000-alpha-800: rgba(255, 255, 255, 0.20);
+  --color-primary-light-1000-alpha-900: rgba(255, 255, 255, 0.10);
+  --color-theme: rgb(77, 175, 124);
+  // --color-scrollbar-track:
+
+  // --color-900: #fff;
+  // --color-800: #fafafa;
+  // --color-700: #f5f5f5;
+  // --color-600: #eeeeee;
+  // --color-500: #e0e0e0;
+  // --color-400: #bdbdbd;
+  // --color-300: #9e9e9e;
+  // --color-200: #757575;
+  // --color-100: #616161;
+  // --color-050: #424242;
+  // --color-000: #212121;
+  // --color-000: #fff;
+  // --color-050: #fafafa;
+  // --color-100: #f5f5f5;
+  // --color-200: #eeeeee;
+  // --color-300: #e0e0e0;
+  // --color-400: #bdbdbd;
+  // --color-500: #9e9e9e;
+  // --color-600: #757575;
+  // --color-700: #616161;
+  // --color-800: #424242;
+  // --color-900: #212121;
+
+  --color-000: rgb(255,255,255);
+  --color-050: rgb(244,244,244);
+  --color-100: rgb(233,233,233);
+  --color-150: rgb(222,222,222);
+  --color-200: rgb(211,211,211);
+  --color-250: rgb(200,200,200);
+  --color-300: rgb(188,188,188);
+  --color-350: rgb(177,177,177);
+  --color-400: rgb(166,166,166);
+  --color-450: rgb(155,155,155);
+  --color-500: rgb(144,144,144);
+  --color-550: rgb(133,133,133);
+  --color-600: rgb(122,122,122);
+  --color-650: rgb(111,111,111);
+  --color-700: rgb(100,100,100);
+  --color-750: rgb(89,89,89);
+  --color-800: rgb(77,77,77);
+  --color-850: rgb(66,66,66);
+  --color-900: rgb(55,55,55);
+  --color-950: rgb(44,44,44);
+  --color-1000: rgb(33, 33, 33);
+
+  --color-app-background: var(--color-primary-light-600-alpha-600);
+  --color-main-background: rgba(255, 255, 255, 0.9);
+  --color-nav-font: var(--color-primary);
+  // --color-app-background: rgba(0, 0, 0, .5);
+  // --color-main-background: rgba(0, 0, 0, 0.26);
+  --color-btn-hide: #3bc2b2;
+  --color-btn-min: #85c43b;
+  // --color-btn-max: #e7aa36;
+  --color-btn-close: #fab4a0;
+
+  --color-badge-primary: var(--color-primary);
+  --color-badge-secondary: #4baed5;
+  --color-badge-tertiary: #e7aa36;
+
+  --color-font: var(--color-850);
+  --color-font-label: var(--color-450);
+  --color-primary-font: var(--color-primary);
+  --color-primary-font-hover: var(--color-primary-alpha-300);
+  --color-primary-font-active: var(--color-primary-dark-100-alpha-200);
+  --color-primary-background: var(--color-primary-light-400-alpha-700);
+  --color-primary-background-hover: var(--color-primary-light-300-alpha-800);
+  --color-primary-background-active: var(--color-primary-light-100-alpha-800);
+  --color-button-font: var(--color-primary-alpha-100);
+  --color-button-font-selected: var(--color-primary-dark-100-alpha-100);
+  --color-button-background: var(--color-primary-light-400-alpha-700);
+  --color-button-background-selected: var(--color-primary-alpha-600);
+  --color-button-background-hover: var(--color-primary-light-300-alpha-600);
+  --color-button-background-active: var(--color-primary-light-100-alpha-600);
+  --color-list-header-border-bottom: 1px solid var(--color-primary-alpha-900);
+  --color-content-background: var(--color-primary-light-1000);
+
+
+  --background-image: none;
+  --background-image-position: center;
+  --background-image-size: cover;
+
+  // ============================================================
+  //  新增：现代扁平 + 微妙层次设计 token（增量，不破坏现有引用）
+  //  浅色主题为默认；深色主题可在主题切换处覆盖同名 var
+  // ============================================================
+
+  // —— 语义化状态色 ——
+  --color-accent:        var(--color-primary);
+  --color-accent-soft:   var(--color-primary-light-300-alpha-700);
+  --color-accent-hover:  var(--color-primary-alpha-300);
+  --color-danger:        #f44336;
+  --color-warning:       #ffa000;
+  --color-success:       #4caf50;
+  --color-info:          #03a9f4;
+
+  // —— Surface 分层（自下而上：base / raised / floating / overlay）——
+  // 说明：取值全部基于主题色阶派生，因此深色主题下会自动变为深色，
+  // 不会出现「深色主题里白卡片」的问题。
+  --color-surface-base:    var(--qm-surface, var(--color-primary-light-1000)); // 主容器背景（跟随「皮肤透明度」，0% 全透 / 100% 实底）
+  --color-surface-raised:  color-mix(in srgb, var(--color-primary-light-1000) 96%, transparent); // 卡片/弹窗
+  --color-surface-floating:color-mix(in srgb, var(--color-primary-light-1000) 98%, transparent); // modal/tooltip
+  --color-surface-overlay: color-mix(in srgb, var(--color-primary-light-1000) 86%, transparent); // 浮层（遮罩上）
+
+  // —— 边框 / 分隔线（用文字色做「墨色」，深浅主题自动适配）——
+  --color-border-subtle:  color-mix(in srgb, var(--color-font) 6%, transparent);
+  --color-border:         color-mix(in srgb, var(--color-font) 10%, transparent);
+  --color-border-strong:  color-mix(in srgb, var(--color-font) 16%, transparent);
+  --color-divider:        var(--color-border-subtle);
+
+  // —— 阴影色（避免在 box-shadow 里硬编码）——
+  --shadow-color-soft:    rgba(0, 0, 0, 0.06);
+  --shadow-color-medium:  rgba(0, 0, 0, 0.08);
+  --shadow-color-strong:  rgba(0, 0, 0, 0.16);
+
+  // —— 玻璃材质 token（同样跟随主题深浅）——
+  --glass-bg-soft:        color-mix(in srgb, var(--color-primary-light-1000) 68%, transparent);
+  --glass-bg-medium:      color-mix(in srgb, var(--color-primary-light-1000) 80%, transparent);
+  --glass-bg-strong:      color-mix(in srgb, var(--color-primary-light-1000) 92%, transparent);
+  --glass-blur:           20px;
+  --glass-saturate:       180%;
+  --glass-border:         color-mix(in srgb, var(--color-primary-light-1000) 42%, transparent);
+  --glass-highlight:       inset 0 1px 0 color-mix(in srgb, var(--color-primary-light-1000) 55%, transparent);
+
+  // —— 过渡曲线 ——
+  --ease-out:             cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:          cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:          cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast:      150ms var(--ease-out);
+  --transition-base:      200ms var(--ease-out);
+  --transition-slow:      320ms var(--ease-out);
+
+  // —— 浮起阴影（盒模型用）——
+  --shadow-1: 0 1px 2px var(--shadow-color-soft);
+  --shadow-2: 0 2px 8px var(--shadow-color-soft), 0 1px 2px var(--shadow-color-soft);
+  --shadow-3: 0 8px 24px var(--shadow-color-medium), 0 2px 6px var(--shadow-color-soft);
+  --shadow-4: 0 16px 48px var(--shadow-color-strong), 0 4px 12px var(--shadow-color-medium);
+  --shadow-5: 0 24px 64px var(--shadow-color-strong), 0 8px 24px var(--shadow-color-medium);
+  // 默认浮起（卡片）：e2
+  --shadow-card:          var(--shadow-2);
+  --shadow-card-hover:    var(--shadow-3);
+  --shadow-floating:      var(--shadow-3);
+  --shadow-modal:         var(--shadow-4);
+
+  // ============================================================
+  //  首页外壳 token（按设计稿复刻：中性灰面板 + 亮绿强调）
+  //  说明：这些值取自设计稿实测像素，属于「中性灰」体系，
+  //  不随主题主色变化（深色主题下的壳层仍按此稿渲染）。
+  // ============================================================
+  --home-shell-bg:        rgb(240, 240, 240);   // 窗口底 / 侧栏底
+  --home-panel-bg:        rgb(245, 245, 245);   // 主面板 / 播放栏底
+  --home-tile-bg:         rgb(232, 232, 232);   // 侧栏快捷块（常态）
+  --home-tile-bg-active:  rgb(215, 215, 215);   // 侧栏快捷块（选中）
+  --home-field-bg:        rgb(224, 224, 224);   // 搜索框底
+  --home-hover-bg:        rgba(0, 0, 0, 0.05);  // 通用 hover 底
+  --home-text-strong:     rgb(38, 38, 38);      // 标题
+  --home-text:            rgb(74, 74, 74);      // 正文
+  --home-text-weak:       rgb(140, 140, 140);   // 次要文案 / 图标
+  --home-text-mute:       rgb(176, 176, 176);   // 链接 / 占位
+  --home-icon:            rgb(110, 110, 110);   // 图标默认色
+  --home-line:            rgb(201, 201, 201);   // 虚线 / 分隔
+  --home-green:           rgb(35, 240, 140);    // 品牌绿（播放钮 / 图标）
+  --home-green-deep:      rgb(31, 214, 125);    // 品牌绿（深一档）
+  --home-radius-panel:    10px;                 // 主面板 / 播放栏圆角
+  --home-gap-panel:       11px;                 // 窗口外边距 / 面板间距
+
+  // ============================================================
+  //  --qm-* 设计 token（QQ 音乐风格）
+  //  取值依据：docs/qq-music-design-system.md
+  //  约定：页面样式只允许引用本段，禁止再写裸色值
+  // ============================================================
+
+  // —— 品牌色：跟随主题主色（切换主题时全局变色） ——
+  // 注意：主题的 alpha-N 命名是反的（alpha-100=90% 不透明、alpha-900=10%），
+  // 「浅色调」要用大号：alpha-800=20%、alpha-700=30%。
+  // soft 系列必须是浅色调：选中文字本身是主色（--qm-primary），
+  // 若背景也是接近实心的主色，任何主题下都会主色叠主色导致文字看不清。
+  --qm-primary:            var(--color-primary, #31C27C);
+  --qm-primary-hover:      var(--color-primary-dark-100, #2CA76B);
+  --qm-primary-active:     var(--color-primary-dark-200, #27975F);
+  --qm-primary-soft:       var(--color-primary-alpha-800, #EAF8F1);
+  --qm-primary-soft-hover: var(--color-primary-alpha-700, #E1F5EB);
+  --qm-primary-border:     var(--color-primary-alpha-700, #CBEEDD);
+
+  // —— 中性面（跟随主题：暗色主题自动变暗、半透明主题让背景图透出） ——
+  --qm-shell:              var(--color-app-background, #F0F0F0);
+  // 面板比卡片更透一档：带背景图的主题下背景可透出，同时保留卡片层次
+  // 透明度由「皮肤透明度」设置驱动：运行时由 JS 解析主题主背景色后
+  // 直接写入内联 --qm-surface（见 store/utils.ts applySkinSurface），
+  // 此处静态 82% 仅作首帧兜底（避免在 color-mix 百分比位使用 var 造成重算闪烁）
+  --qm-surface:            color-mix(in srgb, var(--color-main-background) 82%, transparent);
+  --qm-card:               var(--color-main-background, #FFFFFF);
+  --qm-hover:              color-mix(in srgb, var(--color-1000) 7%, transparent);
+  --qm-hover-strong:       color-mix(in srgb, var(--color-1000) 11%, transparent);
+  --qm-field:              color-mix(in srgb, var(--color-1000) 9%, transparent);
+  --qm-mask:               rgba(0, 0, 0, 0.45);
+
+  // —— 文字层级（跟随主题字体色阶：浅色主题深字、深色主题浅字） ——
+  --qm-text-1:             var(--color-1000, #1F1F1F);
+  --qm-text-2:             var(--color-950, #333333);
+  --qm-text-3:             var(--color-800, #6B6B6B);
+  --qm-text-4:             var(--color-650, #9A9A9A);
+  --qm-text-5:             var(--color-550, #B5B5B5);
+  --qm-text-invert:        #FFFFFF;
+  --qm-text-active:        var(--qm-primary);
+
+  // —— 线与阴影（用字体色的透明度，深浅主题都可见） ——
+  --qm-line-1:             color-mix(in srgb, var(--color-1000) 7%, transparent);
+  --qm-line-2:             color-mix(in srgb, var(--color-1000) 11%, transparent);
+  --qm-line-dashed:        color-mix(in srgb, var(--color-1000) 16%, transparent);
+  --qm-shadow-1:           0 2px 8px rgba(0, 0, 0, 0.06);
+  --qm-shadow-2:           0 8px 24px rgba(0, 0, 0, 0.12);
+  --qm-shadow-3:           0 12px 32px rgba(0, 0, 0, 0.16);
+  --qm-shadow-text:        0 1px 3px rgba(0, 0, 0, 0.45);
+
+  // —— 尺寸与节奏 ——
+  --qm-shell-gap:          11px;
+  --qm-radius-panel:       10px;
+  --qm-radius-card:        8px;
+  --qm-radius-cover:       6px;
+  --qm-radius-btn:         6px;
+  --qm-radius-chip:        999px;
+  --qm-sidebar:            214px;
+  --qm-sidebar-mini:       64px;
+  --qm-toolbar-h:          48px;
+  --qm-player-h:           72px;
+  --qm-row-h:              44px;
+  --qm-s1: 4px;
+  --qm-s2: 8px;
+  --qm-s3: 12px;
+  --qm-s4: 16px;
+  --qm-s5: 20px;
+  --qm-s6: 24px;
+  --qm-s7: 32px;
+  --qm-content-pad-left:   36px;
+  --qm-content-pad-right:  40px;
+  --qm-content-pad-top:    18px;
+
+  // —— 字号阶（行高/字重按 docs 规范在组件里配套） ——
+  --qm-font-title-xl:      22px;
+  --qm-font-title-lg:      15px;
+  --qm-font-title-md:      13px;
+  --qm-font-body:          14px;
+  --qm-font-meta:          13px;
+  --qm-font-aux:           12px;
+  --qm-font-badge:         11px;
+
+  // —— 动效 ——
+  --qm-ease:               cubic-bezier(0.16, 1, 0.3, 1);
+  --qm-t-fast:             150ms var(--qm-ease);
+  --qm-t-base:             200ms var(--qm-ease);
+  --qm-t-slow:             280ms var(--qm-ease);
+
+  // —— 外壳别名：历史代码里的 --home-* 统一指向 --qm-* ——
+  --home-shell-bg:         var(--qm-shell);
+  --home-panel-bg:         var(--qm-surface);
+  --home-field-bg:         var(--qm-field);
+  --home-hover-bg:         var(--qm-hover);
+  --home-text-strong:      var(--qm-text-1);
+  --home-text:             var(--qm-text-2);
+  --home-text-weak:        var(--qm-text-4);
+  --home-text-mute:        var(--qm-text-5);
+  --home-icon:             var(--qm-text-3);
+  --home-line:             var(--qm-line-dashed);
+  --home-green:            var(--qm-primary);
+  --home-green-deep:       var(--qm-primary-hover);
+  --home-radius-panel:     var(--qm-radius-panel);
+  --home-gap-panel:        var(--qm-shell-gap);
+  --home-tile-bg:          rgb(232, 232, 232);
+  --home-tile-bg-active:   rgb(215, 215, 215);
+}
+
+html {
+  font-size: 16px;
+}
+
+.nobreak {
+  white-space: nowrap;
+}
+
+.auto-hidden {
+  .mixin-ellipsis-1();
+}
+
+.center {
+  text-align: center;
+}
+
+.break {
+  word-break: break-all;
+}
+
+.select {
+  user-select: text;
+}
+.no-select {
+  user-select: none;
+}
+
+// ============================================================
+//  歌曲行（QQ 版式）：封面 + 双行「歌名/歌手」 + 行内操作
+//  所有歌曲展示页共用：歌单详情 / 搜索 / 榜单 / 我的列表 / 推荐页
+// ============================================================
+.list-item-cell.cover {
+  flex: none !important;
+  width: 50px;
+  padding: 0 10px 0 6px !important;
+}
+
+.row-cover {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, .05);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.row-cover-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--qm-text-5);
+  background-color: rgba(0, 0, 0, .04);
+
+  svg { width: 18px; height: 18px; fill: currentColor; }
+}
+
+.row-cover-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .42);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity var(--qm-t-fast);
+
+  svg { fill: currentColor; }
+
+  // 当前播放行常显（显示为正在播放的波形感）
+  .list-item.active & { opacity: 1; background-color: rgba(0, 0, 0, .35); }
+}
+
+.list-item:hover .row-cover-play { opacity: 1; }
+
+.name-wrap {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+}
+
+.name-main {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+
+  .name {
+    min-width: 0;
+    font-size: 14px;
+    color: var(--qm-text-1);
+    .mixin-ellipsis-1();
+  }
+}
+
+.name-sub {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--qm-text-4);
+
+  .name-sub-text {
+    min-width: 0;
+    .mixin-ellipsis-1();
+  }
+}
+
+.list-item.active .name-main .name { color: var(--qm-text-active); }
+
+// 行内操作按钮：默认常显（QQ 移动端在 hover 才显示，桌面版常显更好点）
+.list-item-cell.actions {
+  flex: none !important;
+  padding: 0 6px !important;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 4px;
+  height: 15px;
+  line-height: 14px;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  border: 1px solid var(--qm-primary-border);
+  border-radius: 3px;
+  color: var(--qm-primary);
+  transform: scale(0.95);
+  transform-origin: left center;
+
+  // &.badge-light {
+  //   background-color: #f8f9fa;
+  // }
+  // &.badge-secondary {
+  //   color: #fff;
+  //   background-color: #6c757d;
+  // }
+  // &.badge-info {
+  //   color: #fff;
+  //   background-color: #4baed5;
+  // }
+  // &.badge-warning {
+  //   color: #fff;
+  //   background-color: #ffa45a;
+  // }
+  // &.badge-danger {
+  //   color: #fff;
+  //   background-color: #ff705a;
+  // }
+  // &.badge-success {
+  //   color: #fff;
+  //   background-color: #32bc63;
+  // }
+  &.badge-theme-primary {
+    border-color: var(--qm-primary-border);
+    color: var(--qm-primary);
+  }
+  &.badge-theme-secondary {
+    border-color: #E7DCC3;
+    color: #B98B3C;
+  }
+  &.badge-theme-tertiary {
+    border-color: var(--qm-line-2);
+    color: var(--qm-text-4);
+  }
+}
+
+small {
+  font-size: .8em;
+}
+.small {
+  font-size: .9em;
+}
+.tip {
+  color: var(--color-label);
+}
+strong {
+  font-weight: bold;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+svg {
+  transition: @transition-normal;
+  transition-property: fill;
+}
+
+button, input, textarea, a {
+  color: var(--color-font);
+}
+
+input, textarea {
+  &::placeholder {
+    color: var(--color-font-label);
+  }
+}
+::selection {
+  color: var(--color-primary-dark-500-alpha-200);
+  background: var(--color-primary-light-100-alpha-500);
+}
+
+// 全局键盘焦点环（不抢鼠标 focus 状态）
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 3px;
+}
+
+.hover, a {
+  cursor: pointer;
+  transition: color var(--transition-base);
+  &:hover {
+    color: var(--color-primary-font-hover);
+  }
+  &:active {
+    color: var(--color-primary-font-active);
+  }
+}
+
+.scroll {
+  overflow: auto;
+  scrollbar-gutter: stable;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: rgba(0, 0, 0, 0.18);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color var(--transition-base);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.32);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+// 统一滚动容器（QQ 音乐风格：4px 细滚动条）
+.qm-scroll {
+  overflow: auto;
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track { background-color: transparent; }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: #D3D3D3;
+  }
+  &::-webkit-scrollbar-corner { background-color: transparent; }
+}
+
+// 统一空态（QQ 音乐风格：居中浅灰文案 + 上留白）
+.qm-empty {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  color: var(--qm-text-3);
+
+  > p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+  }
+}
+
+
+.thead {
+  border-bottom: 1px solid var(--qm-line-1);
+  padding: 0;
+  flex: none;
+  background-color: var(--qm-surface);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  transition: background-color var(--transition-base);
+
+  .num {
+    .nobreak();
+    .center();
+    color: var(--qm-text-4);
+  }
+}
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  overflow: hidden;
+  color: var(--qm-text-2);
+  th {
+    font-size: var(--qm-font-aux);
+    font-weight: 400;
+    text-align: left;
+    line-height: 36px;
+    padding: 0 10px;
+    color: var(--qm-text-4);
+    user-select: none;
+  }
+  // 时间/时长等数字列等宽对齐，避免长短不一造成跳动
+  .num, [class*='num'] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+}
+
+
+.list {
+  width: 100%;
+  overflow: hidden;
+  color: var(--color-font);
+  flex: auto;
+
+
+  .list-item {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    // border-top: 1px solid rgba(0, 0, 0, 0.12);
+    transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+    // border-bottom: 1px solid @color-theme_2-line;
+    box-sizing: border-box;
+    font-size: 13px;
+
+    &:hover {
+      background-color: var(--qm-hover);
+    }
+    &.active {
+      background-color: var(--qm-primary-soft);
+
+      .list-item-cell { color: var(--qm-text-active); }
+      .list-item-cell.num { color: var(--qm-text-active); }
+
+      // 当前播放行：左侧强调色指示条，扫视列表时更容易定位
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        border-radius: 0 3px 3px 0;
+        background-color: var(--qm-primary);
+      }
+    }
+    &.selected {
+      background-color: var(--qm-hover-strong);
+    }
+    &.disabled {
+      opacity: .5;
+    }
+    .list-item-cell {
+      flex: none;
+      padding: 0 10px;
+      position: relative;
+      // transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 18px;
+      vertical-align: middle;
+      box-sizing: border-box;
+      .mixin-ellipsis-1();
+
+      &.auto {
+        flex: auto;
+      }
+
+      &.num, .num {
+        .nobreak();
+        .center();
+        padding-left: 3px;
+        padding-right: 3px;
+        font-size: @font-size-caption;
+        color: var(--color-font-label);
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum' 1;
+      }
+
+      &.name {
+        display: flex;
+        flex-flow: row nowrap;
+        overflow: hidden;
+        white-space: initial;
+        text-overflow: initial;
+        align-items: center;
+
+        >.name {
+          .mixin-ellipsis-1();
+        }
+      }
+      .badge {
+        margin-left: 3px;
+        opacity: .85;
+      }
+    }
+
+    // .list-item-cell-action {
+    //   white-space: nowrap;
+    //   display: none;
+    //   flex: auto;
+    //   text-align: right;
+    //   // position: absolute;
+    //   // right: 5px;
+    //   // top: -2px;
+    //   // opacity: 0;
+    //   // transition: opacity .1s ease;
+    // }
+  }
+}
+
+.copying {
+  .no-select {
+    display: none !important;
+  }
+}
+
+.gap-left {
+  + .gap-left {
+    margin-left: 20px;
+  }
+}
+.gap-top {
+  &.top {
+    margin-top: 25px;
+  }
+
+  + .gap-top {
+    margin-top: 10px;
+  }
+}
+
+.color-picker {
+  border-radius: @radius-border !important;
+}
+
+.list-active-enter-active,
+.list-active-leave-active {
+  transition: 160ms var(--ease-out);
+  transition-property: width, opacity;
+}
+
+.list-active-enter-from,
+.list-active-leave-to {
+  width: 0.25em !important;
+  opacity: 0;
+}
+
+.play-active-enter-active,
+.play-active-leave-active {
+  transition: .13s ease;
+  transition-property: transform, opacity;
+}
+
+.play-active-enter-from,
+.play-active-leave-to {
+  transform: scale(0.3);
+  opacity: 0;
+}

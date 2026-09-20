@@ -1,0 +1,122 @@
+// ============================================================
+//  QQ 音乐风格通用 mixin（仅供各组件 @import 使用，不产生输出）
+//  取值一律引用 index.less 里的 --qm-* token
+// ============================================================
+
+// 卡片面（白底 + 圆角 + 阴影）
+.qm-card-surface() {
+  background-color: var(--qm-card);
+  border-radius: var(--qm-radius-card);
+  box-shadow: var(--qm-shadow-1);
+}
+
+// 卡片悬停抬升
+.qm-card-hover() {
+  transition: transform var(--qm-t-base), box-shadow var(--qm-t-base), background-color var(--qm-t-fast);
+  &:hover {
+    box-shadow: var(--qm-shadow-2);
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 标签 / 药丸
+.qm-chip() {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qm-s1);
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--qm-radius-chip);
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--qm-text-3);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+  &:hover {
+    color: var(--qm-text-1);
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+}
+
+// 选中态标签
+.qm-chip-active() {
+  background-color: var(--qm-primary);
+  color: var(--qm-text-invert);
+
+  &:hover {
+    background-color: var(--qm-primary-hover);
+    color: var(--qm-text-invert);
+  }
+}
+
+// 主按钮（绿底）
+.qm-btn-primary() {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--qm-radius-btn);
+  background-color: var(--qm-primary);
+  color: var(--qm-text-invert);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color var(--qm-t-fast), transform var(--qm-t-fast);
+
+  &:hover { background-color: var(--qm-primary-hover); }
+  &:active { background-color: var(--qm-primary-active); transform: scale(0.98); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// 次按钮（描边）
+.qm-btn-ghost() {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 16px;
+  border: 1px solid var(--qm-line-2);
+  border-radius: var(--qm-radius-btn);
+  background-color: transparent;
+  color: var(--qm-text-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color var(--qm-t-fast), color var(--qm-t-fast), background-color var(--qm-t-fast);
+
+  &:hover {
+    border-color: var(--qm-primary);
+    color: var(--qm-primary);
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// 封面占位
+.qm-cover-placeholder() {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--qm-text-5);
+}
+
+// 骨架屏动画
+@keyframes qm-skeleton {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.qm-skeleton() {
+  background-color: var(--qm-line-1);
+  border-radius: var(--qm-radius-cover);
+  animation: qm-skeleton 1.2s ease-in-out infinite;
+}

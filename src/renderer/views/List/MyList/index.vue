@@ -1,0 +1,453 @@
+<template>
+  <div ref="dom_lists" :class="$style.lists">
+    <div :class="$style.listHeader">
+      <h2 :class="$style.listsTitle">{{ $t('my_list') }}</h2>
+      <div :class="$style.headerBtns">
+        <button :class="$style.listsAdd" :aria-label="$t('lists__new_list_btn')" @click="isShowNewList = true">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="70%" viewBox="0 0 24 24" space="preserve">
+            <use xlink:href="#icon-list-add" />
+          </svg>
+        </button>
+        <button :class="$style.listsAdd" :aria-label="$t('list_update_modal__title')" @click="isShowListUpdateModal = true">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="transform: rotate(45deg);" height="70%" viewBox="0 0 24 24" space="preserve">
+            <use xlink:href="#icon-refresh" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <ul ref="dom_lists_list" class="scroll" :class="[$style.listsContent, { [$style.sortable]: isModDown }]">
+      <li
+        v-for="(item, index) in userLists"
+        :key="item.id" class="user-list"
+        :class="[$style.listsItem, {[$style.active]: item.id == listId}, {[$style.clicked]: rightClickItemIndex == index}, {[$style.fetching]: fetchingListStatus[item.id]}]"
+        :data-index="index" :aria-label="item.name" :aria-selected="false" @contextmenu="handleListsItemRigthClick($event, index)"
+      >
+        <span :class="$style.listsLabel" @click="handleListToggle(item.id, index + 2)">
+          <transition name="list-active">
+            <svg-icon v-if="item.id == listId" name="angle-right-solid" :class="$style.activeIcon" />
+          </transition>
+          {{ item.name }}
+        </span>
+        <base-input
+          :class="$style.listsInput" type="text" :value="item.name"
+          :placeholder="item.name" @keyup.enter="handleSaveListName(index, $event)" @blur="handleSaveListName(index, $event)"
+        />
+      </li>
+      <transition enter-active-class="animated-fast slideInLeft" leave-active-class="animated-fast fadeOut" @after-leave="isNewListLeave = false" @after-enter="$refs.dom_listsNewInput.focus()">
+        <li v-if="isShowNewList" :class="[$style.listsItem, $style.listsNew, {[$style.newLeave]: isNewListLeave}]">
+          <base-input
+            ref="dom_listsNewInput" :class="$style.listsInput" type="text" :placeholder="$t('lists__new_list_input')"
+            @keyup.enter="handleCreateList" @blur="handleCreateList"
+          />
+        </li>
+      </transition>
+    </ul>
+    <base-menu v-model="isShowMenu" :menus="menus" :xy="menuLocation" item-name="name" @menu-click="handleMenuClick" />
+    <DuplicateMusicModal v-model:visible="isShowDuplicateMusicModal" :list-info="duplicateListInfo" />
+    <ListSortModal v-model:visible="isShowListSortModal" :list-info="sortListInfo" />
+    <ListUpdateModal v-model:visible="isShowListUpdateModal" />
+  </div>
+</template>
+
+<script>
+import { openUrl } from '@common/utils/electron'
+
+import musicSdk from '@renderer/utils/musicSdk'
+import DuplicateMusicModal from './components/DuplicateMusicModal.vue'
+import ListSortModal from './components/ListSortModal.vue'
+import ListUpdateModal from './components/ListUpdateModal.vue'
+
+import { defaultList, loveList, userLists, fetchingListStatus } from '@renderer/store/list/state'
+import { removeUserList } from '@renderer/store/list/action'
+
+import { ref, watch } from '@common/utils/vueTools'
+import { useRouter, useRoute } from '@common/utils/vueRouter'
+import { LIST_IDS } from '@common/constants'
+
+import { dialog } from '@renderer/plugins/Dialog'
+
+import { saveListPrevSelectId } from '@renderer/utils/data'
+
+import { useI18n } from '@renderer/plugins/i18n'
+
+
+import useShare from './useShare'
+import useMenu from './useMenu'
+import useListUpdate from './useListUpdate'
+import useSort from './useSort'
+import useDarg from './useDarg'
+import useEditList from './useEditList'
+import useListScroll from './useListScroll'
+import useDuplicate from './useDuplicate'
+import { addLocalFile } from './actions'
+
+export default {
+  name: 'MyLists',
+  components: {
+    DuplicateMusicModal,
+    ListSortModal,
+    ListUpdateModal,
+  },
+  props: {
+    listId: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ['show-menu'],
+  setup(props, { emit }) {
+    const router = useRouter()
+    const route = useRoute()
+    const t = useI18n()
+
+    const dom_lists_list = ref(null)
+    const rightClickItemIndex = ref(-10)
+
+    const { handleImportList, handleExportList } = useShare()
+    const { isShowListUpdateModal, handleUpdateSourceList } = useListUpdate()
+    const { isShowListSortModal, sortListInfo, handleSortList } = useSort()
+    const { isShowDuplicateMusicModal, duplicateListInfo, handleDuplicateList } = useDuplicate()
+    const { handleRename, handleSaveListName, isShowNewList, isNewListLeave, handleCreateList } = useEditList({ dom_lists_list })
+    useListScroll({ dom_lists_list })
+
+    const handleOpenSourceDetailPage = async(listInfo) => {
+      const { source, sourceListId } = listInfo
+      if (!sourceListId) return
+      let url
+      if (/board__/.test(sourceListId)) {
+        const id = sourceListId.replace(/board__/, '')
+        url = musicSdk[source].leaderboard.getDetailPageUrl(id)
+      } else if (musicSdk[source]?.songList?.getDetailPageUrl) {
+        url = await musicSdk[source].songList.getDetailPageUrl(sourceListId)
+      }
+      if (!url) return
+      void openUrl(url)
+    }
+
+    const handleRemove = (listInfo) => {
+      void dialog.confirm({
+        message: t('lists__remove_tip', { name: listInfo.name }),
+        confirmButtonText: t('lists__remove_tip_button'),
+      }).then(isRemove => {
+        if (!isRemove) return
+        void removeUserList([listInfo.id])
+        if (props.listId == listInfo.id) {
+          handleListToggle(LIST_IDS.DEFAULT)
+        }
+      })
+    }
+
+    const {
+      menus,
+      menuLocation,
+      isShowMenu,
+      showMenu,
+      menuClick,
+    } = useMenu({
+      emit,
+
+      handleImportList,
+      handleExportList,
+      handleUpdateSourceList,
+      handleOpenSourceDetailPage,
+      handleSortList,
+      handleDuplicateList,
+      handleRename,
+      handleRemove,
+    })
+
+    const handleListsItemRigthClick = (event, index) => {
+      rightClickItemIndex.value = index
+      showMenu(event, index)
+    }
+
+    const handleListToggle = (id) => {
+      if (id == props.listId) return
+      router.replace({
+        path: '/list',
+        query: { id },
+      }).catch(_ => _)
+    }
+
+    const handleMenuClick = (action) => {
+      if (rightClickItemIndex.value < -2) return
+      let index = rightClickItemIndex.value
+      rightClickItemIndex.value = -10
+      menuClick(action, index)
+    }
+
+    const { isModDown } = useDarg({ dom_lists_list, handleMenuClick, handleSaveListName })
+
+
+    // 监听 ?new=1：触发新建歌单输入
+    watch(() => route.query.new, (val) => {
+      if (val === '1' || val === 1) {
+        isShowNewList.value = true
+        const q = { ...route.query }
+        delete q.new
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      }
+    }, { immediate: true })
+
+    watch(() => route.query, (query) => {
+      if (!props.listId) return
+      const list = userLists.find(l => l.id == props.listId)
+      if (!list) return
+
+      if (query.sort == '1' || query.sort === 1) {
+        handleSortList(list)
+        const q = { ...route.query }
+        delete q.sort
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.dedupe == '1' || query.dedupe === 1) {
+        handleDuplicateList(list)
+        const q = { ...route.query }
+        delete q.dedupe
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.addLocal == '1' || query.addLocal === 1) {
+        void addLocalFile(list)
+        const q = { ...route.query }
+        delete q.addLocal
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.update == '1' || query.update === 1) {
+        handleUpdateSourceList(list)
+        const q = { ...route.query }
+        delete q.update
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.detail == '1' || query.detail === 1) {
+        void handleOpenSourceDetailPage(list)
+        const q = { ...route.query }
+        delete q.detail
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.import == '1' || query.import === 1) {
+        handleImportList(list, userLists.length)
+        const q = { ...route.query }
+        delete q.import
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      } else if (query.export == '1' || query.export === 1) {
+        handleExportList(list)
+        const q = { ...route.query }
+        delete q.export
+        void router.replace({ path: route.path, query: q }).catch(() => {})
+      }
+    })
+
+    watch(() => props.listId, (listId) => {
+      saveListPrevSelectId(listId)
+    })
+
+    watch(() => userLists, (lists) => {
+      if (lists.some(l => l.id == props.listId)) return
+      void router.replace({
+        path: '/list',
+        query: {
+          id: defaultList.id,
+        },
+      })
+    })
+
+    return {
+      rightClickItemIndex,
+      defaultList,
+      loveList,
+      userLists,
+      fetchingListStatus,
+      dom_lists_list,
+      isShowListUpdateModal,
+      isShowListSortModal,
+      sortListInfo,
+      isShowDuplicateMusicModal,
+      duplicateListInfo,
+      handleSaveListName,
+      isShowNewList,
+      isNewListLeave,
+      handleCreateList,
+      handleListsItemRigthClick,
+      isShowMenu,
+      handleMenuClick,
+      menus,
+      menuLocation,
+      handleListToggle,
+      isModDown,
+      hideMenu: handleMenuClick,
+      handleSortList,
+      handleDuplicateList,
+      handleUpdateSourceList,
+      handleOpenSourceDetailPage,
+      handleImportList,
+      handleExportList,
+      addLocalFile,
+    }
+  },
+}
+</script>
+
+<style lang="less" module>
+@import '@renderer/assets/styles/layout.less';
+
+@lists-item-height: 36px;
+.lists {
+  flex: none;
+  width: 18%;
+  min-width: 200px;
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: var(--color-surface-base);
+  border-right: 1px solid var(--color-border-subtle);
+}
+.listHeader {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 4px 8px 4px 12px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  &:hover {
+    .listsAdd {
+      opacity: 1;
+    }
+  }
+}
+.listsTitle {
+  flex: auto;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  line-height: 38px;
+  padding: 0 4px;
+  color: var(--color-font-label);
+  .mixin-ellipsis-1();
+}
+.headerBtns {
+  flex: none;
+  display: flex;
+  gap: 2px;
+}
+.listsAdd {
+  background: none;
+  height: 30px;
+  width: 30px;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 1;
+  color: var(--color-font-label);
+  transition: background-color @transition-fast, color @transition-fast, transform @transition-fast;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    vertical-align: bottom;
+  }
+  &:hover {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+  &:active {
+    transform: scale(0.92);
+  }
+}
+.listsContent {
+  flex: auto;
+  min-width: 0;
+  overflow-y: scroll !important;
+  padding: 6px 8px;
+  // border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+  &.sortable {
+    * {
+      -webkit-user-drag: element;
+    }
+
+    .listsItem {
+      &:hover, &.active, &.selected, &.clicked {
+        background-color: transparent !important;
+      }
+
+      &.dragingItem {
+        background-color: var(--color-primary-background-hover) !important;
+      }
+    }
+  }
+}
+.listsItem {
+  position: relative;
+  transition: background-color @transition-fast, color @transition-fast, opacity @transition-fast, transform @transition-fast;
+  background-color: transparent;
+  border-radius: 8px;
+  &:not(.active) {
+    &:hover {
+      background-color: var(--color-button-background-hover);
+      color: var(--color-accent);
+      cursor: pointer;
+    }
+  }
+  &.active {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  &.selected {
+    background-color: var(--color-primary-font-active);
+  }
+  &.clicked {
+    background-color: var(--color-primary-background-hover);
+  }
+  &.fetching {
+    opacity: .5;
+  }
+  &.editing {
+    padding: 0 10px;
+    background-color: var(--color-primary-background-hover);
+    .listsLabel {
+      display: none;
+    }
+    .listsInput {
+      display: block;
+    }
+  }
+}
+.activeIcon {
+  height: .9em;
+  width: .9em;
+  margin-left: -0.45em;
+  vertical-align: -0.05em;
+  color: var(--color-accent);
+}
+.listsLabel {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: @lists-item-height;
+  padding: 0 10px;
+  font-size: 13px;
+  line-height: @lists-item-height;
+  .mixin-ellipsis-1();
+}
+.listsInput {
+  width: 100%;
+  height: @lists-item-height;
+  padding: 0;
+  line-height: @lists-item-height;
+  background: none !important;
+  border-radius: 0;
+  font-size: 13px;
+  display: none;
+}
+
+.listsNew {
+  padding: 0 10px;
+  background-color: var(--color-primary-background-hover) !important;
+  .listsInput {
+    display: block;
+  }
+}
+.newLeave {
+  margin-top: -@lists-item-height;
+  z-index: -1;
+}
+
+
+</style>

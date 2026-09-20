@@ -1,0 +1,141 @@
+// ============================================================
+//  歌曲表格（QQ 音乐风格）—— 各列表页 @import 后套用
+//  用法：.table { .qm-table(); .qm-thead(); .qm-tbody(); }
+// ============================================================
+
+// 表体容器
+.qm-table() {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: var(--qm-text-2);
+  font-size: 13px;
+}
+
+// 吸顶表头
+.qm-thead() {
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 36px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background-color: var(--qm-surface);
+    color: var(--qm-text-4);
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--qm-line-1);
+  }
+  .num { text-align: center; }
+}
+
+// 行
+.qm-tbody() {
+  tr {
+    height: var(--qm-row-h);
+    cursor: default;
+    transition: background-color var(--qm-t-fast);
+
+    &:hover {
+      background-color: var(--qm-hover);
+
+      .action { opacity: 1; }
+      .index-plain { display: none; }
+      .index-play { display: inline-flex; }
+    }
+
+    &.selected { background-color: var(--qm-hover-strong); }
+
+    // 当前播放行
+    &.active {
+      background-color: var(--qm-primary-soft);
+
+      td { color: var(--qm-primary); }
+      .num { color: var(--qm-primary); }
+    }
+
+    td {
+      padding: 0 10px;
+      box-sizing: border-box;
+      border-bottom: 1px solid var(--qm-line-1);
+      color: var(--qm-text-2);
+      vertical-align: middle;
+      .mixin-ellipsis-1();
+    }
+  }
+}
+
+// 序号列
+.qm-index-cell() {
+  width: 46px;
+  text-align: center;
+  color: var(--qm-text-4);
+  font-variant-numeric: tabular-nums;
+
+  .index-play { display: none; color: var(--qm-primary); }
+  .index-plain { color: var(--qm-text-4); }
+}
+
+// 时长列
+.qm-time-cell() {
+  width: 64px;
+  text-align: right;
+  color: var(--qm-text-4);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+// 操作列
+.qm-action-cell() {
+  width: 92px;
+  white-space: nowrap;
+  text-align: right;
+
+  .action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--qm-text-3);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--qm-t-fast), background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.06);
+      color: var(--qm-text-1);
+    }
+    :global(.svg-icon) { width: 15px; height: 15px; fill: currentColor; }
+  }
+}
+
+// 歌名 + 标签
+.qm-name-cell() {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+
+  .name-text { min-width: 0; .mixin-ellipsis-1(); }
+  .tag {
+    flex: none;
+    padding: 0 4px;
+    height: 15px;
+    line-height: 15px;
+    border: 1px solid var(--qm-primary-border);
+    border-radius: 3px;
+    color: var(--qm-primary);
+    font-size: 10px;
+    transform: scale(0.95);
+    transform-origin: left center;
+  }
+}

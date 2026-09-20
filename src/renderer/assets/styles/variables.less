@@ -1,0 +1,114 @@
+@import './colors.less';
+
+
+// ============================================================
+// Width
+// ============================================================
+@width-app-left: 6.6%;
+
+// ============================================================
+// Height
+// ============================================================
+@height-toolbar: 56px;
+@height-player: 72px;
+
+// ============================================================
+// Shadow (legacy alias, kept for back-compat)
+// ============================================================
+@shadow-app: 8px;
+
+// ============================================================
+// Elevation — 现代扁平+微妙层次 阴影阶梯
+// 用法: box-shadow: @elevation-2;
+// ============================================================
+@elevation-0: none;
+@elevation-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
+@elevation-2: 0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+@elevation-3: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
+@elevation-4: 0 16px 48px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+@elevation-5: 0 24px 64px rgba(0, 0, 0, 0.16), 0 8px 24px rgba(0, 0, 0, 0.08);
+
+// 深色主题 inset 高光（覆盖在 shadow 上，模拟顶光）
+@highlight-top-light: 0 1px 0 rgba(255, 255, 255, 0.04);
+@highlight-top-strong: 0 1px 0 rgba(255, 255, 255, 0.08);
+
+// ============================================================
+// Radius — 圆角节奏（4px 阶梯）
+// ============================================================
+@radius-progress-border: 5px;
+@radius-border: 8px;          // 主圆角（上调：4 → 8，现代感）
+@radius-xs: 6px;              // 输入/小标签
+@radius-sm: 8px;              // 按钮/小卡片
+@radius-md: 12px;             // 普通卡片
+@radius-lg: 16px;             // 大卡片/hero
+@radius-xl: 20px;             // modal/抽屉
+@radius-pill: 999px;          // chip/avatar
+
+// ============================================================
+// Spacing — 4px 节奏
+// ============================================================
+@space-1: 2px;
+@space-2: 4px;
+@space-3: 6px;
+@space-4: 8px;
+@space-5: 12px;
+@space-6: 16px;
+@space-7: 20px;
+@space-8: 24px;
+@space-9: 32px;
+@space-10: 40px;
+@space-11: 48px;
+@space-12: 64px;
+
+// ============================================================
+// Typography — 字号阶
+// ============================================================
+@font-size-caption: 11px;
+@font-size-meta: 12px;
+@font-size-body: 13px;
+@font-size-body-lg: 14px;
+@font-size-title-md: 16px;
+@font-size-title-lg: 20px;
+@font-size-title-xl: 28px;
+@font-size-display: 36px;
+
+// 字重
+@font-weight-regular: 400;
+@font-weight-medium: 500;
+@font-weight-semibold: 600;
+@font-weight-bold: 700;
+
+// ============================================================
+// Transition
+// ============================================================
+@transition-slow: .6s ease;
+@transition-normal: .4s ease;
+@transition-fast: .3s ease;
+
+// 别名：home-tokens.less 用 @transition-base，这里同步提供，避免 LESS 报未定义
+@transition-base: 200ms @ease-out;
+
+@form-radius: 3px;
+
+// 精细化过渡 token (毫秒 + ease-out 曲线)
+@ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+@ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+@ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+@transition-fast-token: 150ms @ease-out;
+@transition-base-token: 200ms @ease-out;
+@transition-slow-token: 320ms @ease-out;
+
+// 缩放反馈（按钮按下）
+@press-scale: 0.97;
+@hover-lift: -1px;
+
+// ============================================================
+// Z-index 层级（与 home-tokens 一致，这里冗余定义用于未引入 home-tokens 的组件）
+// ============================================================
+@z-base: 1;
+@z-sidebar: 5;
+@z-toolbar: 50;
+@z-overlay: 500;
+@z-modal: 1000;
+@z-toast: 1500;

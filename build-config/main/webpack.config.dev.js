@@ -1,0 +1,33 @@
+// ============================================================
+// 受保护文件：该文件已与 lx-music-desktop-2.12.2 同步，
+// 包含修复音源切换卡在“初始化中”的关键逻辑。
+// 未经授权不得修改。若需变更，请先移除本注释并联系相关负责人。
+// ============================================================
+const path = require('path')
+const { merge } = require('webpack-merge')
+const webpack = require('webpack')
+
+const baseConfig = require('./webpack.config.base')
+
+
+module.exports = merge(baseConfig, {
+  mode: 'development',
+  entry: {
+    main: path.join(__dirname, '../../src/main/index-dev.ts'),
+    'dbService.worker': path.join(__dirname, '../../src/main/worker/dbService/index.ts'),
+  },
+  devtool: 'eval-source-map',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"development"',
+      },
+      webpackStaticPath: `"${path.join(__dirname, '../../src/static').replace(/\\/g, '\\\\')}"`,
+      webpackUserApiPath: `"${path.join(__dirname, '../../src/main/modules/userApi').replace(/\\/g, '\\\\')}"`,
+    }),
+  ],
+  performance: {
+    maxEntrypointSize: 1024 * 1024 * 50,
+    maxAssetSize: 1024 * 1024 * 30,
+  },
+})
