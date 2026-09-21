@@ -34,8 +34,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  // 同 TagList：undefined 不能出现在 type 数组里（会打断组件更新），允许缺省用 default: undefined
   boardId: {
-    type: [String, undefined],
+    type: String,
     default: undefined,
   },
 })

@@ -20,7 +20,14 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // 内联模式：不写路由，改为 emit('change', sortId)（供乐馆「分类歌单」内嵌复用）
+  inline: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+const emit = defineEmits(['change'])
 
 const router = useRouter()
 const route = useRoute()
@@ -29,6 +36,10 @@ const list = shallowReactive([])
 
 
 const handleToggle = (id) => {
+  if (props.inline) {
+    emit('change', id)
+    return
+  }
   void router.replace({
     path: route.path,
     query: {

@@ -1,14 +1,94 @@
 <template>
-  <div :class="$style.page" class="qm-scroll">
+  <div
+    ref="pageRef"
+    :class="[$style.page, { [$style.pageFill]: tab === 'square' }]"
+    class="qm-scroll"
+    :style="tab === 'square' ? { overflow: 'hidden' } : null"
+  >
     <header :class="$style.head">
-      <h1 :class="$style.title">乐馆</h1>
+      <div :class="$style.titleRow">
+        <h1 :class="$style.title">乐馆</h1>
+        <SourceTabs :model-value="source" @change="handleSourceChange" />
+      </div>
       <nav :class="$style.tabs">
-        <button v-for="item in tabs" :key="item.id" type="button" :class="[$style.tab, { [$style.tabActive]: tab === item.id }]" @click="tab = item.id">{{ item.label }}</button>
+        <button v-for="item in tabs" :key="item.id" type="button" :class="[$style.tab, { [$style.tabActive]: tab === item.id }]" @click="handleTabClick(item.id)">{{ item.label }}</button>
       </nav>
-      <SourceTabs :model-value="source" @change="handleSourceChange" />
     </header>
 
-    <template v-if="tab === 'featured'">
+    <!-- ============ 歌手 ============ -->
+    <section v-if="tab === 'singer'" :class="$style.singerPane">
+      <div :class="$style.filterRow">
+        <button
+          v-for="item in singerAreaList" :key="item.id" type="button"
+          :class="[$style.pill, { [$style.pillActive]: singerArea === item.id }]"
+          @click="handleSingerArea(item.id)"
+        >{{ item.label }}</button>
+      </div>
+
+      <div :class="$style.filterRow">
+        <button
+          v-for="item in singerSexList" :key="item.id" type="button"
+          :class="[$style.pill, { [$style.pillActive]: singerSex === item.id }]"
+          @click="handleSingerSex(item.id)"
+        >{{ item.label }}</button>
+        <div :class="$style.filterMore">
+          <button type="button" :class="$style.moreFilter" @click.stop="showLetterMenu = !showLetterMenu">
+            {{ singerIndexLabel }}
+            <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+              <path d="M6 9.5l6 5.5 6-5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div v-if="showLetterMenu" :class="[$style.letterMenu, { [$style.letterMenuOpen]: showLetterMenu }]">
+            <button
+              v-for="item in singerIndexList" :key="item.id" type="button"
+              :class="[$style.letterMenuItem, { [$style.letterMenuItemActive]: singerIndex === item.id }]"
+              @click="handleSingerIndex(item.id)"
+            >{{ item.label }}</button>
+          </div>
+        </div>
+      </div>
+
+      <div :class="$style.letterRow">
+        <button
+          v-for="item in singerIndexList" :key="item.id" type="button"
+          :class="[$style.letter, { [$style.letterActive]: singerIndex === item.id }]"
+          @click="handleSingerIndex(item.id)"
+        >{{ item.label }}</button>
+      </div>
+
+      <div v-if="singers.length" :class="$style.singerGrid">
+        <div v-for="item in singers" :key="item.id" :class="$style.singerCard" :title="item.name" @click="openSinger(item)">
+          <div :class="$style.singerAvatar">
+            <img v-if="item.img && !brokenCovers[item.id]" :src="item.img" alt="" loading="lazy" @error="brokenCovers[item.id] = true">
+            <span v-else :class="$style.singerAvatarEmpty"><svg-icon name="music" /></span>
+          </div>
+          <p :class="$style.singerName">{{ item.name }}</p>
+        </div>
+        <template v-if="singerLoading">
+          <div v-for="n in 4" :key="`skeleton-${n}`" :class="$style.singerCard">
+            <div :class="[$style.singerAvatar, $style.singerSkeleton]" />
+            <p :class="$style.singerName">&nbsp;</p>
+          </div>
+        </template>
+      </div>
+
+      <div v-else-if="singerLoading" :class="$style.singerGrid">
+        <div v-for="n in 8" :key="`skeleton-${n}`" :class="$style.singerCard">
+          <div :class="[$style.singerAvatar, $style.singerSkeleton]" />
+          <p :class="$style.singerName">&nbsp;</p>
+        </div>
+      </div>
+
+      <div v-else :class="$style.tip">
+        <p>{{ singerTip }}</p>
+        <button v-if="singerSupported" type="button" :class="$style.btnGhost" @click="loadSingers(true)">重新获取</button>
+      </div>
+
+      <div v-if="singers.length && singerLoading" :class="$style.loadingMore">加载中…</div>
+      <div v-else-if="singers.length && !singerHasMore" :class="$style.loadingMore">没有更多了</div>
+    </section>
+
+    <template v-else-if="tab === 'featured'">
       <section v-if="banners.length" :class="$style.banner" @mouseenter="paused = true" @mouseleave="paused = false">
         <div :class="$style.bannerTrack" :style="{ transform: `translateX(-${bannerIndex * 100}%)` }">
           <div v-for="item in banners" :key="item.id" :class="$style.bannerSlide" @click="openPlaylist(item)">
@@ -62,27 +142,71 @@
       <div v-if="!boards.length" :class="$style.tip">{{ loading ? '加载中…' : '该平台暂时没有取到榜单' }}</div>
     </div>
 
+    <!-- ============ 分类歌单（内嵌歌单广场：标签筛选 + 排序 + 歌单网格 + 分页） ============ -->
+    <section v-else-if="tab === 'square'" :class="$style.squarePane">
+      <div :class="$style.squareBar">
+        <tag-list
+          :source="source" :tag-id="squareTagId" :sort-id="squareSortId" inline
+          @change="handleSquareTagChange"
+        />
+        <sort-tab
+          :source="source" :tag-id="squareTagId" :sort-id="squareSortId" inline
+          @change="handleSquareSortChange"
+        />
+        <base-btn :class="$style.importBtn" outline min @click="visibleImport = true">打开歌单</base-btn>
+      </div>
+      <div :class="$style.squareBody">
+        <song-list :list-info="squareListInfo" @toggle-page="handleSquarePage" />
+      </div>
+      <open-list-modal v-model="visibleImport" :source-list="sourceList" />
+    </section>
+
+    <!-- 听书 / 数字专辑 / 音质专区 / 边听边玩 / 视频 / 频道：暂无内容源 -->
     <div v-else :class="$style.squareTip">
-      <p>分类歌单在「歌单广场」中浏览</p>
-      <button type="button" :class="$style.btnGhost" @click="goSquare('')">前往歌单广场</button>
+      <p>「{{ activeTabLabel }}」频道暂未接入</p>
+      <button type="button" :class="$style.btnGhost" @click="handleTabClick('featured')">回到精选</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from '@common/utils/vueTools'
-import { useRouter } from '@common/utils/vueRouter'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from '@common/utils/vueTools'
+import { useRoute, useRouter } from '@common/utils/vueRouter'
 import SourceTabs from '@renderer/components/common/SourceTabs.vue'
 import musicSdk from '@renderer/utils/musicSdk'
-import { getInitialSource, saveSource } from '@renderer/utils/personalRecommend'
+import { getAvailableSources, getInitialSource, getSourceName, saveSource } from '@renderer/utils/personalRecommend'
+import TagList from '@renderer/views/songList/List/components/TagList.vue'
+import SortTab from '@renderer/views/songList/List/components/SortTab.vue'
+import SongList from '@renderer/views/songList/List/components/SongList.vue'
+import OpenListModal from '@renderer/views/songList/List/components/OpenListModal.vue'
 
 const router = useRouter()
+// 页签顺序对齐参考图：精选 / 听书 / 排行 / 歌手 / 分类歌单 / 数字专辑 / 音质专区 / 边听边玩 / 视频 / 频道
+// （听书、数字专辑、音质专区、边听边玩、视频、频道暂无内容源，仅保留入口）
 const tabs = [
   { id: 'featured', label: '精选' },
-  { id: 'boards', label: '排行榜' },
+  { id: 'audiobook', label: '听书' },
+  { id: 'boards', label: '排行' },
+  { id: 'singer', label: '歌手' },
   { id: 'square', label: '分类歌单' },
+  { id: 'album', label: '数字专辑' },
+  { id: 'hires', label: '音质专区' },
+  { id: 'game', label: '边听边玩' },
+  { id: 'video', label: '视频' },
+  { id: 'channel', label: '频道' },
 ]
-const tab = ref('featured')
+// 页签与路由 query 双向同步：切换页签时写入 ?tab=xxx，
+// 这样顶部工具栏的「后退/前进」能回到具体的页签（否则重新挂载只会回到默认的精选页）
+const route = useRoute()
+const TAB_IDS = tabs.map(item => item.id)
+const resolveTab = value => (TAB_IDS.includes(value) ? value : 'featured')
+const tab = ref(resolveTab(route.query.tab))
+const handleTabClick = (id) => {
+  if (tab.value === id) return
+  tab.value = id
+  void router.push({ path: '/home/music-hall', query: { tab: id } }).catch(() => {})
+}
+const activeTabLabel = computed(() => tabs.find(item => item.id === tab.value)?.label ?? '该')
 const source = ref(getInitialSource())
 const loading = ref(false)
 const banners = ref([])
@@ -185,6 +309,189 @@ async function loadBoards() {
   }
 }
 
+// ------- 歌手（乐馆 - 歌手页） -------
+const pageRef = ref(null)
+const singerAreaList = [
+  { id: 'all', label: '全部' },
+  { id: 'mainland', label: '内地' },
+  { id: 'hktw', label: '港台' },
+  { id: 'western', label: '欧美' },
+  { id: 'japan', label: '日本' },
+  { id: 'korea', label: '韩国' },
+]
+const singerSexList = [
+  { id: 'all', label: '全部' },
+  { id: 'male', label: '男' },
+  { id: 'female', label: '女' },
+  { id: 'group', label: '组合' },
+]
+const singerIndexList = [
+  { id: 'all', label: '全部' },
+  ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => ({ id: letter, label: letter })),
+  { id: '#', label: '#' },
+]
+
+const singerArea = ref('all')
+const singerSex = ref('all')
+const singerIndex = ref('all')
+const singers = ref([])
+const singerLoading = ref(false)
+const singerHasMore = ref(false)
+const singerFailed = ref(false)
+const singerPage = ref(1)
+const showLetterMenu = ref(false)
+const brokenCovers = reactive({})
+
+let singerRequestSeq = 0
+
+const singerSupported = computed(() => !!musicSdk[source.value]?.singer?.getSingerList)
+const singerIndexLabel = computed(() => singerIndexList.find(item => item.id === singerIndex.value)?.label ?? '全部')
+const singerTip = computed(() => {
+  if (!singerSupported.value) return `当前音源（${getSourceName(source.value)}）暂不支持歌手列表，可在上方切换音源`
+  if (singerFailed.value) return '歌手列表获取失败，请稍后重试'
+  return '没有取到歌手数据'
+})
+
+async function loadSingers(reset = false) {
+  if (singerLoading.value && !reset) return
+  const sdk = musicSdk[source.value]?.singer
+  if (!sdk?.getSingerList) {
+    singers.value = []
+    singerHasMore.value = false
+    return
+  }
+  // 记录请求序号：筛选条件切换后，旧请求的结果直接丢弃，避免列表串数据
+  const requestId = ++singerRequestSeq
+  singerLoading.value = true
+  singerFailed.value = false
+  try {
+    const page = reset ? 1 : singerPage.value
+    const result = await sdk.getSingerList({
+      area: singerArea.value,
+      sex: singerSex.value,
+      index: singerIndex.value,
+      page,
+    }).catch(() => null)
+    if (requestId !== singerRequestSeq) return
+    if (!result) {
+      if (reset) singers.value = []
+      singerHasMore.value = false
+      singerFailed.value = true
+      return
+    }
+    const list = (result.list ?? []).filter(item => item.id && item.name)
+    singers.value = reset ? list : [...singers.value, ...list]
+    singerPage.value = page + 1
+    singerHasMore.value = !!result.hasMore
+  } finally {
+    if (requestId === singerRequestSeq) singerLoading.value = false
+  }
+}
+
+const handleSingerArea = (id) => {
+  if (singerArea.value === id) return
+  singerArea.value = id
+  void loadSingers(true)
+}
+
+const handleSingerSex = (id) => {
+  if (singerSex.value === id) return
+  singerSex.value = id
+  void loadSingers(true)
+}
+
+const handleSingerIndex = (id) => {
+  showLetterMenu.value = false
+  if (singerIndex.value === id) return
+  singerIndex.value = id
+  void loadSingers(true)
+}
+
+const openSinger = (item) => {
+  void router.push({ path: '/search', query: { text: item.name, source: source.value } }).catch(() => {})
+}
+
+// ------- 分类歌单（乐馆内嵌歌单广场：标签筛选 + 排序 + 网格 + 分页） -------
+const squareTagId = ref('')
+const squareSortId = ref('')
+const squareLoading = ref(false)
+const visibleImport = ref(false)
+const squareListInfo = reactive({
+  list: [],
+  total: 0,
+  page: 1,
+  limit: 36,
+  key: null,
+  noItemLabel: '',
+  source: source.value,
+  tagId: '',
+  sortId: '',
+})
+
+let squareRequestSeq = 0
+
+const sourceList = computed(() => getAvailableSources().map(id => ({ id, name: getSourceName(id) })))
+
+async function loadSquare(page = 1) {
+  const sdk = musicSdk[source.value]?.songList
+  if (!sdk?.getList) {
+    squareListInfo.list = []
+    squareListInfo.total = 0
+    squareListInfo.noItemLabel = `当前音源（${getSourceName(source.value)}）暂不支持分类歌单，可在上方切换音源`
+    return
+  }
+  // 排序项由 SortTab 在挂载 / 换源后自动选中并 emit，未就绪前先不请求
+  if (!squareSortId.value) return
+  const requestId = ++squareRequestSeq
+  squareLoading.value = true
+  squareListInfo.noItemLabel = '加载中…'
+  try {
+    const result = await sdk.getList(squareSortId.value, squareTagId.value, page).catch(() => null)
+    if (requestId !== squareRequestSeq) return
+    if (!result) {
+      squareListInfo.list = []
+      squareListInfo.total = 0
+      squareListInfo.noItemLabel = '歌单获取失败，请稍后重试'
+      return
+    }
+    const list = (result.list ?? []).filter(item => item.id && item.name)
+    squareListInfo.list = list
+    squareListInfo.total = result.total ?? 0
+    squareListInfo.limit = result.limit ?? 36
+    squareListInfo.page = page
+    squareListInfo.key = `${source.value}__${squareSortId.value}__${squareTagId.value}__${page}`
+    squareListInfo.source = source.value
+    squareListInfo.tagId = squareTagId.value
+    squareListInfo.sortId = squareSortId.value
+    squareListInfo.noItemLabel = list.length ? '' : '没有取到歌单数据'
+  } finally {
+    if (requestId === squareRequestSeq) squareLoading.value = false
+  }
+}
+
+const handleSquareTagChange = (id) => {
+  squareTagId.value = id
+  void loadSquare(1)
+}
+
+const handleSquareSortChange = (id) => {
+  squareSortId.value = id
+  void loadSquare(1)
+}
+
+const handleSquarePage = (page) => {
+  void loadSquare(page)
+}
+
+// 滚动到底部附近时加载下一页（分类歌单页走分页器，不参与此逻辑）
+function handleScroll() {
+  const el = pageRef.value
+  if (!el || tab.value !== 'singer') return
+  if (el.scrollHeight - el.scrollTop - el.clientHeight > 260) return
+  if (singerLoading.value || !singerHasMore.value) return
+  void loadSingers()
+}
+
 function reload() {
   bannerIndex.value = 0
   boards.value = []
@@ -196,7 +503,30 @@ const handleSourceChange = (id) => {
   source.value = id
   saveSource(id)
   reload()
+  if (tab.value === 'singer') {
+    singers.value = []
+    void loadSingers(true)
+  } else if (tab.value === 'square') {
+    // 换源后重置筛选；SortTab 会随 source 变化重新选中默认排序并 emit，从而触发加载
+    squareTagId.value = ''
+    squareSortId.value = ''
+    squareListInfo.list = []
+    squareListInfo.noItemLabel = '加载中…'
+  }
 }
+
+// 路由 query 变化（工具栏前进/后退等）时同步页签
+watch(() => route.query.tab, (value) => {
+  const next = resolveTab(value)
+  if (next !== tab.value) tab.value = next
+})
+
+watch(tab, (value) => {
+  showLetterMenu.value = false
+  if (pageRef.value) pageRef.value.scrollTop = 0
+  if (value === 'singer' && !singers.value.length) void loadSingers(true)
+  if (value === 'square' && !squareListInfo.list.length) void loadSquare(1)
+})
 
 const openPlaylist = (item) => {
   void router.push({
@@ -216,9 +546,16 @@ const goSquare = (sortId) => {
   void router.push({ path: '/songList/list', query: { source: source.value, tagId: '', sortId } }).catch(() => {})
 }
 
+// 点击页面其它地方时收起字母下拉（下拉按钮自身已 stop 冒泡）
+const handleDocumentClick = () => {
+  showLetterMenu.value = false
+}
+
 let timer = null
 onMounted(() => {
   reload()
+  pageRef.value?.addEventListener('scroll', handleScroll, { passive: true })
+  document.addEventListener('click', handleDocumentClick)
   timer = setInterval(() => {
     if (paused.value || banners.value.length < 2) return
     bannerIndex.value = (bannerIndex.value + 1) % banners.value.length
@@ -226,6 +563,8 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   if (timer) clearInterval(timer)
+  pageRef.value?.removeEventListener('scroll', handleScroll)
+  document.removeEventListener('click', handleDocumentClick)
 })
 </script>
 
@@ -240,10 +579,15 @@ onBeforeUnmount(() => {
 }
 
 .head {
+  padding: 20px var(--qm-content-pad-right) 14px var(--qm-content-pad-left);
+}
+
+.titleRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--qm-sp-9, 24px);
-  padding: 20px var(--qm-content-pad-right) 14px var(--qm-content-pad-left);
+  min-height: 36px;
 }
 
 .title {
@@ -253,14 +597,24 @@ onBeforeUnmount(() => {
   color: var(--qm-text-1);
 }
 
-.tabs { display: flex; align-items: center; gap: 22px; flex: none; }
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
 
 .tab {
   position: relative;
+  flex: none;
   padding: 4px 0;
   border: 0;
   background: none;
   font-size: var(--qm-fs-md, 14px);
+  white-space: nowrap;
   color: var(--qm-text-3);
   cursor: pointer;
   transition: color var(--qm-t-fast);
@@ -283,9 +637,246 @@ onBeforeUnmount(() => {
   }
 }
 
+// ---- 歌手（乐馆 - 歌手页） ----
+.singerPane {
+  padding: 10px var(--qm-content-pad-right) 26px var(--qm-content-pad-left);
+}
+
+.filterRow {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: var(--qm-sp-8, 20px);
+  margin-bottom: 14px;
+}
+
+.pill {
+  flex: none;
+  height: 30px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: var(--qm-radius-chip);
+  background-color: var(--qm-hover);
+  color: var(--qm-text-2);
+  font-size: var(--qm-fs-sm, 13px);
+  line-height: 30px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+  &:hover {
+    background-color: var(--qm-hover-strong);
+    color: var(--qm-text-1);
+  }
+}
+
+.pillActive {
+  background-color: var(--qm-primary);
+  color: var(--qm-text-invert);
+  font-weight: var(--qm-fw-medium, 500);
+
+  &:hover {
+    background-color: var(--qm-primary-hover);
+    color: var(--qm-text-invert);
+  }
+}
+
+.filterMore {
+  position: relative;
+  flex: none;
+  margin-left: auto;
+}
+
+.moreFilter {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: var(--qm-sp-1, 4px);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--qm-fs-sm, 13px);
+  color: var(--qm-text-4);
+  cursor: pointer;
+  transition: color var(--qm-t-fast);
+
+  svg { flex: none; }
+  &:hover { color: var(--qm-text-1); }
+}
+
+.letterMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 6;
+  display: grid;
+  grid-template-columns: repeat(7, 28px);
+  gap: var(--qm-sp-0, 2px);
+  padding: var(--qm-sp-3, 8px);
+  border-radius: var(--qm-radius-md, 10px);
+  background-color: var(--qm-card);
+  box-shadow: var(--qm-shadow-2);
+}
+
+.letterMenuItem {
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--qm-radius-xs, 6px);
+  background: transparent;
+  font-size: var(--qm-fs-xs, 12px);
+  color: var(--qm-text-3);
+  cursor: pointer;
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+  &:hover {
+    background-color: var(--qm-hover);
+    color: var(--qm-text-1);
+  }
+}
+
+.letterMenuItemActive {
+  color: var(--qm-primary);
+  font-weight: var(--qm-fw-semibold, 600);
+}
+
+.letterRow {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 26px;
+}
+
+.letter {
+  padding: 2px 1px;
+  border: 0;
+  background: none;
+  font-size: var(--qm-fs-sm, 13px);
+  color: var(--qm-text-4);
+  cursor: pointer;
+  transition: color var(--qm-t-fast);
+
+  &:hover { color: var(--qm-primary); }
+}
+
+.letterActive {
+  color: var(--qm-primary);
+  font-weight: var(--qm-fw-semibold, 600);
+}
+
+.singerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 30px var(--qm-sp-9, 24px);
+}
+
+.singerCard {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.singerAvatar {
+  position: relative;
+  width: 150px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--qm-hover);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--qm-t-slow);
+  }
+}
+
+.singerCard:hover .singerAvatar img { transform: scale(1.06); }
+
+.singerAvatarEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--qm-text-5);
+
+  :global(.svg-icon) {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+}
+
+.singerSkeleton { .qm-skeleton(); }
+
+.singerName {
+  margin: 14px 0 0;
+  max-width: 100%;
+  font-size: var(--qm-fs-sm, 13px);
+  color: var(--qm-text-1);
+  text-align: center;
+  .mixin-ellipsis-1();
+}
+
+.singerCard:hover .singerName { color: var(--qm-primary); }
+
+// ---- 分类歌单（乐馆内嵌歌单广场） ----
+// 该页内部自带滚动（SongList 组件），外层页面不再滚动
+.pageFill {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.squarePane {
+  flex: auto;
+  min-height: 0;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+// 顶栏：标签下拉 + 排序切换 + 打开歌单（对齐歌单广场页）
+.squareBar {
+  flex: none;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: var(--qm-sp-2, 6px);
+  padding: 6px var(--qm-content-pad-right) 2px var(--qm-content-pad-left);
+}
+
+.importBtn {
+  margin-left: auto;
+  color: var(--qm-text-2);
+  font-size: var(--qm-fs-xs, 12px);
+  background: none !important;
+  transition: color var(--qm-t-fast);
+
+  &:hover { color: var(--qm-primary); }
+}
+
+.squareBody {
+  position: relative;
+  flex: auto;
+  min-height: 0;
+}
+
+.loadingMore {
+  padding: 22px 0 4px;
+  text-align: center;
+  font-size: var(--qm-fs-xs, 12px);
+  color: var(--qm-text-4);
+}
+
 .banner {
   position: relative;
-  margin: 4px var(--qm-content-pad-right) 28px var(--qm-content-pad-left);
+  margin: 10px var(--qm-content-pad-right) 28px var(--qm-content-pad-left);
   border-radius: var(--qm-radius-lg, 12px);
   overflow: hidden;
 }
@@ -473,7 +1064,18 @@ onBeforeUnmount(() => {
   span { min-width: 0; .mixin-ellipsis-1(); }
 }
 
-.tip { padding: 40px 0; text-align: center; font-size: var(--qm-fs-sm, 13px); color: var(--qm-text-4); }
+.tip {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: var(--qm-sp-7, 16px);
+  padding: 40px 0;
+  text-align: center;
+  font-size: var(--qm-fs-sm, 13px);
+  color: var(--qm-text-4);
+
+  p { margin: 0; }
+}
 
 .squareTip {
   display: flex;

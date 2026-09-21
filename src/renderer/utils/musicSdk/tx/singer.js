@@ -96,7 +96,80 @@ const createMusicuFetch = async(data, options, retryNum = 0) => {
   return result.body
 }
 
+// 乐馆「歌手」筛选值 → 接口参数
+const SINGER_AREA_MAP = {
+  all: -100,
+  mainland: 200,
+  hktw: 2,
+  western: 5,
+  japan: 4,
+  korea: 3,
+}
+const SINGER_SEX_MAP = {
+  all: -100,
+  male: 0,
+  female: 1,
+  group: 2,
+}
+const SINGER_PAGE_SIZE = 80
+
+const getSingerIndexValue = index => {
+  if (!index || index === 'all') return -100
+  if (index === '#') return 27
+  const value = String(index).toUpperCase().charCodeAt(0) - 64
+  return value >= 1 && value <= 26 ? value : -100
+}
+
+// 头像统一取 300x300 并走 https，避免出现小图与混合内容
+const fixSingerPic = pic => {
+  if (!pic) return ''
+  return pic.replace(/^http:/, 'https:').replace(/T001R\d+x\d+M000/, 'T001R300x300M000')
+}
+
 export default {
+  /**
+   * 获取歌手列表（乐馆 - 歌手页）
+   * @param {object} [options]
+   * @param {string} [options.area] 地区：all/mainland/hktw/western/japan/korea
+   * @param {string} [options.sex] 性别：all/male/female/group
+   * @param {string} [options.index] 首字母：all / A-Z / #
+   * @param {number} [options.page] 页码
+   */
+  getSingerList({ area = 'all', sex = 'all', index = 'all', page = 1 } = {}) {
+    const data = {
+      comm: { ct: 24, cv: 0 },
+      singerList: {
+        module: 'Music.SingerListServer',
+        method: 'get_singer_list',
+        param: {
+          area: SINGER_AREA_MAP[area] ?? -100,
+          sex: SINGER_SEX_MAP[sex] ?? -100,
+          genre: -100,
+          index: getSingerIndexValue(index),
+          sin: (page - 1) * SINGER_PAGE_SIZE,
+          cur_page: page,
+        },
+      },
+    }
+    const url = `https://u.y.qq.com/cgi-bin/musicu.fcg?loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=${encodeURIComponent(JSON.stringify(data))}`
+    return httpFetch(url).promise.then(({ body }) => {
+      if (body.code !== 0 || body.singerList?.code !== 0) throw new Error('get singer list faild.')
+
+      const raw = body.singerList.data ?? {}
+      const list = (raw.singerlist ?? []).map(item => ({
+        id: item.singer_mid,
+        name: item.singer_name,
+        img: fixSingerPic(item.singer_pic),
+      })).filter(item => item.id && item.name)
+      const total = raw.total ?? 0
+      return {
+        source: 'tx',
+        list,
+        page,
+        hasMore: list.length > 0 && page * SINGER_PAGE_SIZE < total,
+      }
+    })
+  },
   /**
    * 获取歌手信息
    * @param {*} id

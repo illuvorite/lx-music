@@ -36,11 +36,21 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  // 注意：不要写 type: [String, undefined] —— undefined 不是构造函数，
+  // 非空值走到该类型分支时 assertType 会抛 "Right-hand side of 'instanceof' is not an object"，
+  // 进而打断组件更新、把 vnode 树补丁搞乱。允许缺省用 default: undefined 即可（null/undefined 会跳过校验）。
   sortId: {
-    type: [String, undefined],
+    type: String,
     default: undefined,
   },
+  // 内联模式：不写路由，改为 emit('change', tagId)（供乐馆「分类歌单」内嵌复用）
+  inline: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+const emit = defineEmits(['change'])
 
 const router = useRouter()
 const route = useRoute()
@@ -48,14 +58,18 @@ const t = useI18n()
 
 const list = shallowReactive([])
 const handleToggleTag = (id) => {
-  void router.replace({
-    path: route.path,
-    query: {
-      source: props.source,
-      tagId: id,
-      sortId: props.sortId,
-    },
-  })
+  if (props.inline) {
+    emit('change', id)
+  } else {
+    void router.replace({
+      path: route.path,
+      query: {
+        source: props.source,
+        tagId: id,
+        sortId: props.sortId,
+      },
+    })
+  }
   handleHide()
 }
 watch(() => props.source, async(source) => {

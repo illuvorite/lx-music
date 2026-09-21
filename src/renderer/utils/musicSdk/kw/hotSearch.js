@@ -3,6 +3,16 @@ import { httpFetch } from '../../request'
 export default {
   _requestObj: null,
   async getList(retryNum = 0) {
+    return this.getRawList(retryNum).then(rawList => ({ source: 'kw', list: this.filterList(rawList) }))
+  },
+  /**
+   * 带热度的热搜词（搜索框下拉「热门搜索」用，热度取接口 popularity）
+   * @returns {Promise<{source: string, list: Array<{name: string, hot: number}>}>}
+   */
+  async getListWithHot(retryNum = 0) {
+    return this.getRawList(retryNum).then(rawList => ({ source: 'kw', list: this.filterListWithHot(rawList) }))
+  },
+  async getRawList(retryNum = 0) {
     if (this._requestObj) this._requestObj.cancelHttp()
     if (retryNum > 2) return Promise.reject(new Error('try max num'))
 
@@ -14,9 +24,13 @@ export default {
     const { body, statusCode } = await _requestObj.promise
     if (statusCode != 200 || body.status !== 'ok') throw new Error('获取热搜词失败')
     // console.log(body, statusCode)
-    return { source: 'kw', list: this.filterList(body.tagvalue) }
+    return body.tagvalue
   },
   filterList(rawList) {
     return rawList.map(item => item.key)
+  },
+  // hot 为接口 popularity（搜索热度）
+  filterListWithHot(rawList) {
+    return rawList.map(item => ({ name: item.key, hot: Number(item.popularity) || 0 }))
   },
 }

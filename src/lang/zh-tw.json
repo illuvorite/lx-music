@@ -323,6 +323,8 @@
   "player__volume_muted": "已靜音",
   "search": "搜尋",
   "search__hot_search": "熱門搜尋",
+  "search__history_title": "搜尋歷史",
+  "search__clear": "清空",
   "search__type_music": "歌曲",
   "search__type_songlist": "歌單",
   "search__welcome": "搜我所想~~😉",

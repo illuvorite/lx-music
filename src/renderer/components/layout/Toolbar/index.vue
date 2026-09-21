@@ -7,8 +7,8 @@
         :aria-label="$t('back')" ignore-tip
         @click="goBack"
       >
-        <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
-          <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M15 4.8 8.2 12 15 19.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
       <button
@@ -16,8 +16,8 @@
         :aria-label="$t('forward')" ignore-tip
         @click="goForward"
       >
-        <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
-          <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M9 4.8 15.8 12 9 19.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
       <button
@@ -25,11 +25,9 @@
         :aria-label="$t('refresh')" ignore-tip
         @click="reload"
       >
-        <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
-          <path d="M19 12a7 7 0 1 1-2.6-5.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-          <path d="M18.6 3.6v3.2h-3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M5 12a7 7 0 0 0 2.6 5.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-          <path d="M5.4 20.4v-3.2h3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M23 4v6h-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
     </div>
@@ -80,24 +78,23 @@ const historyStack = ref<string[]>([])
 const historyIndex = ref(-1)
 let unregisterAfterEach: (() => void) | null = null
 
+// 由「后退/前进」按钮发起的导航：只在栈内移动指针，不新增记录
+let isHistoryNav = false
+const HISTORY_LIMIT = 100
+
 const recordRoute = (fullPath: string) => {
   const stack = historyStack.value
-  const idx = stack.indexOf(fullPath)
-  if (idx === -1) {
-    // 全新路由：在当前 index 后追加（截断 forwardStack）
-    stack.splice(historyIndex.value + 1)
-    stack.push(fullPath)
-    historyIndex.value = stack.length - 1
-  } else if (idx < historyIndex.value) {
-    // 回退到栈中更早的位置
-    historyIndex.value = idx
-  } else if (idx > historyIndex.value) {
-    // 前进到栈中更后的位置（用户点击 forward 按钮触发）
-    historyIndex.value = idx
-  } else {
-    // 刷新当前路由（query 等变化导致 fullPath 不同但属于同一索引位置）
-    stack[historyIndex.value] = fullPath
+  if (isHistoryNav) {
+    const idx = stack.indexOf(fullPath)
+    if (idx !== -1) historyIndex.value = idx
+    return
   }
+  // 用户主动导航：与当前记录相同则忽略（如刷新），否则截断前进记录后追加
+  if (stack[historyIndex.value] === fullPath) return
+  stack.splice(historyIndex.value + 1)
+  stack.push(fullPath)
+  if (stack.length > HISTORY_LIMIT) stack.shift()
+  historyIndex.value = stack.length - 1
 }
 
 onMounted(() => {
@@ -118,12 +115,14 @@ const canForward = computed(() => historyIndex.value >= 0 && historyIndex.value 
 const goBack = () => {
   if (!canBack.value) return
   const target = historyStack.value[historyIndex.value - 1]
-  void router.push(target).catch(() => {})
+  isHistoryNav = true
+  void router.push(target).catch(() => {}).finally(() => { isHistoryNav = false })
 }
 const goForward = () => {
   if (!canForward.value) return
   const target = historyStack.value[historyIndex.value + 1]
-  void router.push(target).catch(() => {})
+  isHistoryNav = true
+  void router.push(target).catch(() => {}).finally(() => { isHistoryNav = false })
 }
 const reload = () => {
   triggerRouteReload()

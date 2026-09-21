@@ -323,6 +323,8 @@
   "player__volume_muted": "Muted",
   "search": "Search",
   "search__hot_search": "Top Searches",
+  "search__history_title": "Search History",
+  "search__clear": "Clear",
   "search__type_music": "Song",
   "search__type_songlist": "Playlist",
   "search__welcome": "Search what I want~~ 😉",

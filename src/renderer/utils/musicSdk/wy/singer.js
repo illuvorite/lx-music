@@ -1,8 +1,64 @@
 import { eapiRequest } from './utils/index'
+import { httpFetch } from '../../request'
 import { formatPlayTime, sizeFormate } from '../../index'
 import { formatSingerName } from '../utils'
 
+// 乐馆「歌手」筛选值 → 接口参数
+const SINGER_AREA_MAP = {
+  all: -1,
+  mainland: 7,
+  hktw: 7,
+  western: 96,
+  japan: 8,
+  korea: 16,
+}
+const SINGER_SEX_MAP = {
+  all: -1,
+  male: 1,
+  female: 2,
+  group: 3,
+}
+const SINGER_PAGE_SIZE = 30
+
+// 头像走 https + 300x300 缩放，避免混合内容与小图
+const fixSingerPic = pic => {
+  if (!pic) return ''
+  return `${pic.replace(/^http:/, 'https:')}?param=300y300`
+}
+
 export default {
+  /**
+   * 获取歌手列表（乐馆 - 歌手页）
+   * @param {object} [options]
+   * @param {string} [options.area] 地区：all/mainland/hktw/western/japan/korea
+   * @param {string} [options.sex] 性别：all/male/female/group
+   * @param {string} [options.index] 首字母：all / A-Z / #
+   * @param {number} [options.page] 页码
+   */
+  getSingerList({ area = 'all', sex = 'all', index = 'all', page = 1 } = {}) {
+    const initial = !index || index === 'all' ? '' : index.toLowerCase()
+    const url = `https://music.163.com/api/artist/list?type=${SINGER_SEX_MAP[sex] ?? -1}&area=${SINGER_AREA_MAP[area] ?? -1}&initial=${encodeURIComponent(initial)}&limit=${SINGER_PAGE_SIZE}&offset=${(page - 1) * SINGER_PAGE_SIZE}`
+    return httpFetch(url, {
+      headers: {
+        Referer: 'https://music.163.com/',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+      },
+    }).promise.then(({ body }) => {
+      if (body.code !== 200) throw new Error('get singer list faild.')
+
+      const list = (body.artists ?? []).map(item => ({
+        id: item.id,
+        name: item.name,
+        img: fixSingerPic(item.picUrl),
+      })).filter(item => item.id && item.name)
+      return {
+        source: 'wy',
+        list,
+        page,
+        hasMore: !!body.more && list.length > 0,
+      }
+    })
+  },
   /**
    * 获取歌手信息
    * @param {*} id

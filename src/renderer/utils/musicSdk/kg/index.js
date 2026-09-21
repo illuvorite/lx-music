@@ -5,11 +5,11 @@ import musicSearch from './musicSearch'
 import pic from './pic'
 import lyric from './lyric'
 import hotSearch from './hotSearch'
+import tipSearch from './tipSearch'
 import comment from './comment'
-// import tipSearch from './tipSearch'
 
 const kg = {
-  // tipSearch,
+  tipSearch,
   leaderboard,
   songList,
   musicSearch,

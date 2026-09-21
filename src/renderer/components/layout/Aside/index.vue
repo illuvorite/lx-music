@@ -336,12 +336,11 @@ const mainQuickNav = computed(() => [
   { to: { name: 'Home' }, icon: 'home', label: t('home') || '首页', name: 'Home' },
   { to: '/home/music-hall', icon: 'compass', label: t('music_hall') || '乐馆', name: 'MusicHall' },
 ])
-// 其余入口（按设计稿顺序：喜欢 / 最近播放 / 本地和下载 / 已购音乐 / 试听列表）
+// 其余入口（按设计稿顺序：喜欢 / 最近播放 / 本地和下载 / 试听列表）
 const mainNav = computed(() => [
   { to: { name: 'ListLove' }, icon: 'heart-outline', label: '喜欢', name: 'ListLove', badge: loveListCount.value },
   { to: { name: 'ListRecent' }, icon: 'clock', label: '最近播放', name: 'ListRecent', badge: recentListCount.value },
   { to: { name: 'Download' }, icon: 'download-box', label: '本地和下载', name: 'Download' },
-  { to: '/songList/list', icon: 'bag-check', label: '已购音乐', name: 'SongList' },
   { to: { name: 'ListDefault' }, icon: 'music-note-list', label: '试听列表', name: 'ListDefault', badge: defaultListCount.value },
 ])
 const isActive = (item) => {

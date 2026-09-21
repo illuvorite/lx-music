@@ -2,13 +2,16 @@
   <div :class="$style.container">
     <div :class="[$style.search, { [$style.active]: focus }, { [$style.big]: big }, { [$style.small]: small }]">
       <div :class="$style.form">
-        <button type="button" :class="$style.iconBtn" :aria-label="$t('search')" ignore-tip @click="handleSearch">
-          <slot>
-            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-              <circle cx="10.6" cy="10.6" r="5.7" fill="none" stroke="currentColor" stroke-width="1.8" />
-              <path d="M14.9 14.9 19.5 19.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </slot>
+        <!-- 搜索源切换：左侧圆形徽标 + 弹出菜单（对齐官网搜索框） -->
+        <button
+          type="button" :class="$style.sourceBtn"
+          :aria-label="$t('music_source')" ignore-tip
+          @click.stop="toggleSourceMenu"
+        >
+          <span :class="$style.sourceBadge" :style="currentSource.icon ? null : { backgroundColor: currentSource.color }">
+            <img v-if="currentSource.icon" :class="$style.sourceIcon" :src="currentSource.icon" alt="" @error="markIconBroken(currentSource.id)">
+            <template v-else>{{ currentSource.badge }}</template>
+          </span>
         </button>
         <input
           ref="dom_input"
@@ -33,7 +36,51 @@
           </button>
         </transition>
       </div>
-      <div v-if="list" :class="$style.list" :style="listStyle">
+      <!-- 两列下拉面板：热门搜索 + 搜索历史（输入为空时展示） -->
+      <div v-if="showPanel" :class="$style.panel">
+        <div :class="[$style.panelCol, $style.panelColHot]">
+          <header :class="$style.panelHead">
+            <span>{{ $t('search__hot_search') }}</span>
+          </header>
+          <ul :class="$style.panelList" @mouseleave="selectIndex = -1">
+            <li v-for="(item, index) in hotList" :key="`hot-${index}`" @click="handlePanelSearch(item.name)">
+              <span :class="$style.panelName" :title="item.name">{{ item.name }}</span>
+              <span v-if="item.hot" :class="$style.panelHot">{{ formatHot(item.hot) }}</span>
+            </li>
+          </ul>
+        </div>
+        <div :class="$style.panelCol">
+          <header :class="$style.panelHead">
+            <span>{{ $t('search__history_title') }}</span>
+            <button
+              v-if="historyList.length" type="button" :class="$style.panelClear"
+              :aria-label="$t('history_clear')" @click="handleClearHistory"
+            >{{ $t('search__clear') }}</button>
+          </header>
+          <ul :class="$style.panelList">
+            <li v-for="(item, index) in historyList" :key="`his-${index}`" @click="handlePanelSearch(item)">
+              <span :class="$style.panelName" :title="item">{{ item }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 搜索源菜单 -->
+      <div v-if="sourceMenuVisible" :class="$style.sourceMenu">
+        <button
+          v-for="item in sourceOptions" :key="item.id" type="button"
+          :class="[$style.sourceItem, { [$style.sourceItemActive]: item.id === source }]"
+          @click="handleSelectSource(item.id)"
+        >
+          <span :class="$style.sourceBadgeSm" :style="item.icon ? null : { backgroundColor: item.color }">
+            <img v-if="item.icon" :class="$style.sourceIcon" :src="item.icon" alt="" @error="markIconBroken(item.id)">
+            <template v-else>{{ item.badge }}</template>
+          </span>
+          <span :class="$style.sourceItemName">{{ item.name }}</span>
+        </button>
+      </div>
+
+      <div v-if="list && !showPanel" :class="$style.list" :style="listStyle">
         <ul ref="dom_list" @mouseleave="selectIndex = -1">
           <li
             v-for="(item, index) in list"
@@ -54,6 +101,23 @@
 import { clipboardReadText } from '@common/utils/electron'
 import { HOTKEY_COMMON } from '@common/hotKey'
 import { appSetting } from '@renderer/store/setting'
+// 各平台官方图标（取自各平台官网 / 移动端的官方资源）
+import kgIcon from '@renderer/assets/images/music-source/kg.png'
+import kwIcon from '@renderer/assets/images/music-source/kw.png'
+import mgIcon from '@renderer/assets/images/music-source/mg.png'
+import txIcon from '@renderer/assets/images/music-source/tx.svg'
+import wyIcon from '@renderer/assets/images/music-source/wy.png'
+
+// 搜索源徽标：优先显示各平台官方图标；「聚合搜索」不是具体平台，仍用色块 + 字符表达；
+// 图标缺失或加载失败时回退为色块 + 字符（badge / color 即回退样式）
+const SOURCE_BADGE = {
+  all: { badge: '聚', color: '#31C27C', icon: '' },
+  kw: { badge: 'K', color: '#FFA800', icon: kwIcon },
+  kg: { badge: 'K', color: '#3E9BFF', icon: kgIcon },
+  tx: { badge: 'Q', color: '#12B7F5', icon: txIcon },
+  wy: { badge: 'W', color: '#E8453C', icon: wyIcon },
+  mg: { badge: 'M', color: '#FF6B4A', icon: mgIcon },
+}
 
 export default {
   props: {
@@ -83,18 +147,72 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 启用两列下拉面板（热门搜索 + 搜索历史）：输入为空且聚焦时展示，替代默认的联想列表
+    panel: {
+      type: Boolean,
+      default: false,
+    },
+    // 热门搜索：[{ name, hot }]
+    hotList: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    // 搜索历史：字符串数组
+    historyList: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    // 搜索源列表：[{ id, name }]（含 'all' 聚合搜索）
+    sourceList: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    // 当前搜索源 id
+    source: {
+      type: String,
+      default: 'all',
+    },
   },
-  emits: ['update:modelValue', 'event'],
+  emits: ['update:modelValue', 'event', 'change-source'],
   data() {
     return {
       isShow: false,
       text: '',
       selectIndex: -1,
       focus: false,
+      sourceMenuVisible: false,
+      // 记录图标加载失败的源 id：回退为色块 + 字符
+      brokenIcons: {},
       listStyle: {
         height: 0,
       },
     }
+  },
+  computed: {
+    showPanel() {
+      return this.panel && this.focus && !this.text && (this.hotList.length > 0 || this.historyList.length > 0)
+    },
+    sourceOptions() {
+      return this.sourceList.map(item => {
+        const meta = SOURCE_BADGE[item.id] ?? { badge: String(item.name ?? '?').slice(0, 1), color: '#8A8A8A', icon: '' }
+        return {
+          ...item,
+          badge: meta.badge,
+          color: meta.color,
+          // 图标加载失败的源按「无图标」处理，避免显示破图
+          icon: this.brokenIcons[item.id] ? '' : meta.icon,
+        }
+      })
+    },
+    currentSource() {
+      return this.sourceOptions.find(item => item.id === this.source) ?? { badge: '聚', color: '#31C27C', icon: '' }
+    },
   },
   watch: {
     list(n) {
@@ -114,11 +232,17 @@ export default {
   mounted() {
     if (appSetting['search.isFocusSearchBox']) this.handleFocusInput()
     this.handleRegisterEvent('on')
+    document.addEventListener('click', this.handleDocClick)
   },
   beforeUnmount() {
     this.handleRegisterEvent('off')
+    document.removeEventListener('click', this.handleDocClick)
   },
   methods: {
+    // 图标加载失败（资源缺失等）：记录后回退为色块 + 字符
+    markIconBroken(id) {
+      if (id) this.brokenIcons = { ...this.brokenIcons, [id]: true }
+    },
     handleRegisterEvent(action) {
       let eventHub = window.key_event
       let name = action == 'on' ? 'on' : 'off'
@@ -195,6 +319,33 @@ export default {
       this.$emit('update:modelValue', this.text)
       this.sendEvent('submit')
     },
+    handlePanelSearch(text) {
+      if (!text) return
+      this.text = text
+      this.$emit('update:modelValue', text)
+      this.sendEvent('submit')
+    },
+    handleClearHistory() {
+      this.sendEvent('clearHistory')
+    },
+    toggleSourceMenu() {
+      this.sourceMenuVisible = !this.sourceMenuVisible
+    },
+    handleSelectSource(id) {
+      this.sourceMenuVisible = false
+      if (id === this.source) return
+      this.$emit('change-source', id)
+    },
+    // 点击页面其它地方收起源菜单（按钮自身已 stop 冒泡）
+    handleDocClick() {
+      if (this.sourceMenuVisible) this.sourceMenuVisible = false
+    },
+    // 热搜热度：≥1 亿 → x.x亿；≥1 万 → 取整万；否则原样
+    formatHot(num) {
+      if (num >= 100000000) return `${(num / 100000000).toFixed(1)}亿`
+      if (num >= 10000) return `${Math.round(num / 10000)}万`
+      return String(num)
+    },
   },
 }
 </script>
@@ -262,13 +413,31 @@ export default {
       transition: color var(--transition-fast), opacity var(--transition-fast);
     }
 
-    .iconBtn {
+    .sourceBtn {
       flex: none;
-      width: 15px;
-      height: 15px;
-      color: rgb(166, 166, 166);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      transition: transform var(--transition-fast);
 
-      &:hover { color: var(--home-text, rgb(74, 74, 74)); }
+      &:hover { transform: scale(1.08); }
+    }
+
+    .sourceBadge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
     }
 
     .clearBtn {
@@ -292,6 +461,181 @@ export default {
   &.active .form {
     background-color: var(--qm-card, #fff);
     box-shadow: 0 0 0 2px var(--qm-primary), 0 6px 18px rgba(0, 0, 0, .08);
+  }
+
+  // 搜索源菜单（点击搜索框左侧徽标弹出）
+  .sourceMenu {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    z-index: 32;
+    min-width: 158px;
+    padding: var(--qm-sp-2, 6px);
+    border-radius: var(--qm-radius-md, 10px);
+    background-color: var(--qm-card);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .04);
+  }
+
+  .sourceItem {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: var(--qm-sp-4, 10px);
+    width: 100%;
+    height: 38px;
+    padding: 0 var(--qm-sp-4, 10px);
+    border: 0;
+    border-radius: var(--qm-radius-sm, 8px);
+    background-color: transparent;
+    font-size: var(--qm-fs-md, 14px);
+    color: var(--qm-text-1);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+    &:hover { background-color: var(--qm-hover); }
+  }
+
+  .sourceItemActive {
+    background-color: var(--qm-primary-soft);
+    color: var(--qm-primary);
+    font-weight: var(--qm-fw-semibold, 600);
+
+    &:hover { background-color: var(--qm-primary-soft-hover); }
+  }
+
+  .sourceBadgeSm {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    overflow: hidden;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  // 平台官方图标：铺满圆形徽标
+  .sourceIcon {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sourceItemName {
+    flex: auto;
+    min-width: 0;
+    .mixin-ellipsis-1();
+  }
+
+  // 两列下拉面板（热门搜索 / 搜索历史）：与搜索框左对齐、顶部贴合，宽度按设计稿约为搜索框的 2.3 倍
+  .panel {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    z-index: 31;
+    display: flex;
+    flex-flow: row nowrap;
+    width: 520px;
+    max-height: min(420px, calc(100vh - 140px));
+    border-radius: var(--qm-radius-lg, 12px);
+    background-color: var(--qm-card);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .04);
+    overflow: hidden;
+  }
+
+  .panelCol {
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 0;
+
+    &:last-child {
+      flex: auto;
+      min-width: 0;
+    }
+  }
+
+  .panelColHot {
+    flex: none;
+    width: 296px;
+    border-right: 1px solid var(--qm-line-1);
+  }
+
+  .panelHead {
+    flex: none;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qm-sp-3, 8px);
+    height: 38px;
+    padding: 0 var(--qm-sp-5, 12px);
+    font-size: var(--qm-fs-sm, 13px);
+    color: var(--qm-text-4);
+  }
+
+  .panelClear {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--qm-fs-xs, 12px);
+    color: var(--qm-text-4);
+    cursor: pointer;
+    transition: color var(--qm-t-fast);
+
+    &:hover { color: var(--qm-primary); }
+  }
+
+  .panelList {
+    flex: auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 var(--qm-sp-2, 6px) var(--qm-sp-2, 6px);
+    margin: 0;
+    list-style: none;
+
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, .12);
+      border-radius: var(--qm-radius-chip, 999px);
+    }
+
+    li {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      gap: var(--qm-sp-3, 8px);
+      height: 32px;
+      padding: 0 var(--qm-sp-4, 10px);
+      border-radius: var(--qm-radius-sm, 8px);
+      font-size: var(--qm-fs-sm, 13px);
+      color: var(--qm-text-2);
+      cursor: pointer;
+      transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
+
+      &:hover {
+        background-color: var(--qm-hover);
+        color: var(--qm-text-1);
+      }
+    }
+  }
+
+  .panelName {
+    flex: auto;
+    min-width: 0;
+    .mixin-ellipsis-1();
+  }
+
+  .panelHot {
+    flex: none;
+    font-size: var(--qm-fs-xs, 12px);
+    color: var(--qm-text-4);
+    font-variant-numeric: tabular-nums;
   }
 
   .list {
