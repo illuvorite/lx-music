@@ -107,7 +107,7 @@ export default {
   display: flex;
   flex-flow: column nowrap;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--qm-radius-lg, 12px);
   color: rgba(255, 255, 255, .92);
   background-color: rgba(24, 27, 33, .96);
   box-shadow:
@@ -121,17 +121,17 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   padding: 14px 14px 10px 16px;
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .07);
 }
 .title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--qm-fs-lg, 15px);
+  font-weight: var(--qm-fw-semibold, 600);
 }
 .count {
   flex: auto;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: rgba(255, 255, 255, .42);
 }
 .closeBtn {
@@ -164,7 +164,7 @@ export default {
 
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb {
-    border-radius: 3px;
+    border-radius: var(--qm-radius-2xs, 4px);
     background-color: rgba(255, 255, 255, .16);
   }
 }
@@ -173,10 +173,10 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   height: 44px;
   padding: 0 10px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   cursor: pointer;
   transition: background-color @transition-fast;
 
@@ -196,12 +196,12 @@ export default {
 .index {
   flex: none;
   width: 22px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   text-align: center;
   color: rgba(255, 255, 255, .34);
 }
 .wave {
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--qm-primary);
 }
 
@@ -210,7 +210,7 @@ export default {
   min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
 }
 .name {
   margin: 0;
@@ -222,7 +222,7 @@ export default {
 .singer {
   margin: 0;
   overflow: hidden;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: rgba(255, 255, 255, .45);
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -230,7 +230,7 @@ export default {
 
 .empty {
   padding: 40px 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   text-align: center;
   color: rgba(255, 255, 255, .35);
 }

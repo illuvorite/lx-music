@@ -125,7 +125,7 @@ export default {
   flex-flow: column nowrap;
   justify-content: center;
   h2 {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
@@ -142,7 +142,7 @@ export default {
   }
   p {
     line-height: 1.5;
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     text-align: justify;
   }
 }

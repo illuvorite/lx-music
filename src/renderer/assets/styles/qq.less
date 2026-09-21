@@ -32,7 +32,7 @@
   border-radius: var(--qm-radius-chip);
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--qm-text-3);
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1;
   cursor: pointer;
   transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
@@ -59,14 +59,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   height: 32px;
   padding: 0 18px;
   border: 0;
   border-radius: var(--qm-radius-btn);
   background-color: var(--qm-primary);
   color: var(--qm-text-invert);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
   transition: background-color var(--qm-t-fast), transform var(--qm-t-fast);
 
@@ -80,14 +80,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   height: 32px;
   padding: 0 16px;
   border: 1px solid var(--qm-line-2);
   border-radius: var(--qm-radius-btn);
   background-color: transparent;
   color: var(--qm-text-2);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
   transition: border-color var(--qm-t-fast), color var(--qm-t-fast), background-color var(--qm-t-fast);
 

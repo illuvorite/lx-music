@@ -85,7 +85,7 @@ export default {
 
 .list {
   // background-color: @color-search-form-background;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   transition-property: height;
   position: relative;
   .listItem {
@@ -102,7 +102,7 @@ export default {
     &:hover {
       background-color: var(--color-primary-background-hover);
     }
-    // border-radius: 4px;
+    // border-radius: var(--qm-radius-2xs, 4px);
     // &:last-child {
     //   border-bottom-left-radius: 4px;
     //   border-bottom-right-radius: 4px;
@@ -123,13 +123,13 @@ export default {
 
 .text {
   flex: auto;
-  margin-bottom: 2px;
+  margin-bottom: var(--qm-sp-0, 2px);
   .mixin-ellipsis-1();
 }
 
 .label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.5;
   // padding: 0 10px;
   // display: flex;
@@ -139,7 +139,7 @@ export default {
 }
 .btns {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   padding: 0 5px;
   display: flex;
   align-items: center;

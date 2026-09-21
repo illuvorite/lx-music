@@ -1,26 +1,11 @@
 <template>
   <aside :class="[$style.aside, { [$style.collapsed]: collapsed, [$style.fullscreen]: isFullscreen }]">
-    <!-- 顶部：用户区 -->
-    <header v-if="!collapsed" :class="$style.user">
-      <div :class="$style.avatar">
-        <img v-if="avatarUrl" :src="avatarUrl" alt="">
-        <svg-icon v-else name="user" />
-      </div>
-      <span :class="$style.userName">Desire</span>
-      <span :class="$style.vipPill">
-        <svg-icon name="crown" :class="$style.vipCrown" />VIP6
+    <!-- 顶部品牌标识：渐变贴片 + 音符标记（矢量，跟随主题色） -->
+    <header :class="[$style.brand, { [$style.brandCollapsed]: collapsed }]">
+      <span :class="$style.brandMark" role="img" aria-label="LX Music">
+        <svg-icon name="brand-logo" :class="$style.brandIcon" />
       </span>
-      <span :class="$style.vipBadge">
-        <svg-icon name="crown" :class="$style.vipBadgeIcon" />
-      </span>
-      <svg-icon name="chevron-down" :class="$style.caret" />
     </header>
-    <div v-else :class="$style.userCollapsed">
-      <div :class="$style.avatar">
-        <img v-if="avatarUrl" :src="avatarUrl" alt="">
-        <svg-icon v-else name="user" />
-      </div>
-    </div>
 
     <!-- 主入口：首页 + 乐馆 并列 -->
     <nav :class="$style.quickNav">
@@ -90,15 +75,38 @@
     <!-- 新建歌单内嵌输入（弹层定位到 sectionHeader 下方） -->
     <teleport v-if="isShowNewList && !collapsed" to="body">
       <div :class="$style.createPopover" :style="createPopoverStyle" data-new-list-popover @click.stop>
-        <input
-          ref="dom_newInput"
-          v-model="newListName"
-          type="text" maxlength="30"
-          placeholder="输入歌单名，按回车确认"
-          @keyup.enter="handleCreateList"
-          @keyup.esc="handleCancelCreate"
-        >
-        <div :class="$style.createPopoverHint">↵ 创建 · Esc 取消</div>
+        <header :class="$style.createPopoverHeader">
+          <span :class="$style.createPopoverBadge">
+            <svg-icon name="plus" />
+          </span>
+          <span :class="$style.createPopoverTitle">新建歌单</span>
+          <span :class="$style.createPopoverCount">{{ newListName.length }}/30</span>
+        </header>
+        <div :class="$style.createPopoverField">
+          <input
+            ref="dom_newInput"
+            v-model="newListName"
+            type="text" maxlength="30"
+            placeholder="输入歌单名，按回车确认"
+            @keyup.enter="handleCreateList"
+            @keyup.esc="handleCancelCreate"
+          >
+        </div>
+        <footer :class="$style.createPopoverFooter">
+          <span :class="$style.createPopoverHint">↵ 创建 · Esc 取消</span>
+          <div :class="$style.createPopoverActions">
+            <button
+              :class="$style.createPopoverBtn"
+              type="button"
+              @click="handleCancelCreate"
+            >取消</button>
+            <button
+              :class="[$style.createPopoverBtn, $style.createPopoverBtnPrimary]"
+              type="button"
+              @click="handleCreateList"
+            >创建</button>
+          </div>
+        </footer>
       </div>
     </teleport>
 
@@ -222,7 +230,7 @@
 import { computed, reactive, ref, nextTick, watch, onMounted, onBeforeUnmount } from '@common/utils/vueTools'
 import { useRoute, useRouter } from '@common/utils/vueRouter'
 import { isFullscreen, isShowChangeLog } from '@renderer/store'
-import avatarUrl from '@renderer/assets/images/defaultUser.jpg'
+
 import {
   loveList,
   defaultList,
@@ -635,7 +643,7 @@ watch(userLists, () => {
 
   &.collapsed {
     padding: 0 8px;
-    .userName, .vipPill, .vipBadge, .caret, .sectionHeader, .playlist,
+    .sectionHeader, .playlist,
     .navLabel, .navCount, .createDashed { display: none; }
     .quickNav { flex-flow: column nowrap; }
     .navItem { justify-content: center; padding: 0; }
@@ -643,97 +651,55 @@ watch(userLists, () => {
   }
 }
 
-// -------- 用户行 --------
-.user {
+// -------- 品牌标识 --------
+.brand {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 26px;
-  margin: 24px 0 0;
-  cursor: pointer;
+  height: 32px;
+  margin: 22px 0 0;
+  padding-left: var(--qm-sp-0, 2px);
 }
 
-.userCollapsed {
-  flex: none;
-  display: flex;
+.brandCollapsed {
   justify-content: center;
-  margin-top: 24px;
+  padding-left: 0;
 }
 
-.avatar {
-  flex: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--home-tile-bg), var(--home-field-bg));
-  color: var(--home-text-weak);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  img { width: 100%; height: 100%; object-fit: cover; }
-  :global(.svg-icon) { width: 15px; height: 15px; fill: currentColor; }
-}
-
-.userName {
-  flex: none;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--home-text-strong);
-  letter-spacing: 0;
-  .mixin-ellipsis-1();
-}
-
-// VIP6 药丸：灰底白字 + 皇冠
-.vipPill {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  height: 12px;
-  padding: 0 3px 0 2px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #d2d2d2, #b7b7b7);
-  color: #fff;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  line-height: 1;
-}
-
-.vipCrown {
-  width: 8px;
-  height: 8px;
-  fill: currentColor;
-}
-
-// 会员等级小方块
-.vipBadge {
+// 渐变圆角贴片：Apple 应用图标的经典处理，30px 下依然干净可辨
+.brandMark {
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background-color: var(--home-field-bg);
-  color: var(--home-text-weak);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--qm-radius-md, 10px);
+  background: linear-gradient(135deg, var(--qm-primary), var(--qm-primary-active));
+  box-shadow:
+    0 2px 6px color-mix(in srgb, var(--qm-primary) 34%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: transform var(--qm-t-base), box-shadow var(--qm-t-base);
+
+  &:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow:
+      0 4px 12px color-mix(in srgb, var(--qm-primary) 40%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  }
 }
 
-.vipBadgeIcon {
-  width: 8px;
-  height: 8px;
+.brandIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--qm-text-invert, #fff);
   fill: currentColor;
-}
 
-.caret {
-  flex: none;
-  width: 12px;
-  height: 12px;
-  color: var(--home-text-weak);
-  fill: currentColor;
+  :global(.svg-icon) {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
 }
 
 // -------- 快捷入口：首页 / 乐馆 --------
@@ -741,30 +707,31 @@ watch(userLists, () => {
   flex: none;
   display: flex;
   flex-flow: row nowrap;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--qm-sp-3, 8px);
+  margin-top: var(--qm-sp-7, 16px);
 }
 
 .quickNavItem {
   flex: 1 1 0;
   min-width: 0;
-  height: 48px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: var(--qm-radius-card, 10px);
   background-color: var(--home-tile-bg);
   color: var(--home-icon);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition: background-color var(--qm-t-base), color var(--qm-t-base), transform var(--qm-t-fast);
 
   &:hover { background-color: var(--home-tile-bg-active); }
-  &:active { transform: scale(0.98); }
+  &:active { transform: scale(0.97); }
 
   &.active {
     background-color: var(--home-tile-bg-active);
-    color: rgb(17, 17, 17);
+    // 跟随主题文字色阶，避免深色主题下出现近黑的硬编码色
+    color: var(--home-text-strong);
   }
 }
 .quickNavLabel { display: none; }
@@ -776,28 +743,31 @@ watch(userLists, () => {
   :global(.svg-icon) { width: 20px; height: 20px; fill: currentColor; }
 }
 
-// -------- 新建歌单（虚线） --------
+// -------- 新建歌单 --------
+// Apple 风格：不再用虚线框这种「装饰性边框」，改为安静的幽灵行，
+// 常态几乎隐入背景，hover 时才浮现填充与主色
 .createDashed {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 27px;
-  margin-top: 7px;
+  height: 30px;
+  margin-top: var(--qm-sp-2, 6px);
   padding: 0;
-  border: 1px dashed var(--home-line);
-  border-radius: 8px;
+  border: 0;
+  border-radius: var(--qm-radius-card, 10px);
   background-color: transparent;
-  color: rgb(180, 180, 180);
+  color: var(--qm-text-4);
   cursor: pointer;
-  transition: border-color var(--transition-base), color var(--transition-base), background-color var(--transition-base);
+  // transform 必须列入过渡，否则 :active 的缩放会是「瞬跳」而非平滑反馈
+  transition: color var(--qm-t-fast), background-color var(--qm-t-fast), transform var(--qm-t-fast);
 
-  :global(.svg-icon) { width: 12px; height: 12px; fill: currentColor; }
+  :global(.svg-icon) { width: 13px; height: 13px; fill: currentColor; }
   &:hover {
-    border-color: var(--home-green-deep);
-    color: var(--home-green-deep);
-    background-color: rgba(35, 240, 140, 0.06);
+    color: var(--qm-primary);
+    background-color: var(--qm-hover, var(--home-hover-bg));
   }
+  &:active { transform: scale(0.98); }
 }
 
 // -------- 主入口列表 --------
@@ -805,24 +775,50 @@ watch(userLists, () => {
   flex: none;
   display: flex;
   flex-flow: column nowrap;
-  margin-top: 22px;
+  gap: var(--qm-sp-0, 2px);
+  margin-top: 18px;
 }
 
 .navItem {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 15px;
-  border-radius: 10px;
-  color: var(--home-text-strong);
+  gap: var(--qm-sp-4, 10px);
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--qm-radius-card, 10px);
+  color: var(--home-text);
   text-decoration: none;
-  font-size: 13px;
+  font-size: var(--qm-font-title-md, 13px);
+  font-weight: var(--qm-fw-medium, 500);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
 
-  &:hover { background-color: var(--home-hover-bg); }
-  &.active { color: var(--home-green-deep); }
+  // 激活指示条：与设置页导航、列表「当前播放行」保持同一套视觉语言
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 0;
+    border-radius: 0 3px 3px 0;
+    background-color: var(--qm-primary, var(--home-green-deep));
+    transform: translateY(-50%);
+    transition: height var(--qm-t-base);
+  }
+
+  &:hover { background-color: var(--qm-hover, var(--home-hover-bg)); }
+
+  &.active {
+    color: var(--qm-primary, var(--home-green-deep));
+    background-color: var(--qm-primary-soft);
+    font-weight: var(--qm-fw-semibold, 600);
+
+    &::before { height: 18px; }
+  }
+
+  &:active { transform: scale(0.99); }
 }
 
 .navIcon {
@@ -831,12 +827,12 @@ watch(userLists, () => {
   height: 18px;
   color: var(--home-icon);
   fill: currentColor;
-  transition: color var(--transition-fast);
+  transition: color var(--qm-t-fast);
   :global(.svg-icon) { width: 18px; height: 18px; fill: currentColor; }
 }
 
 .navItem:hover .navIcon,
-.navItem.active .navIcon { color: var(--home-green-deep); }
+.navItem.active .navIcon { color: var(--qm-primary, var(--home-green-deep)); }
 
 .navLabel {
   flex: none;
@@ -845,9 +841,12 @@ watch(userLists, () => {
 
 .navCount {
   flex: none;
-  margin-left: 1px;
-  color: var(--home-text-weak);
+  margin-left: var(--qm-sp-0, 2px);
+  font-size: var(--qm-font-aux, 12px);
+  // 小号数字用 text-3：#9A9A9A 在白底仅 ~2.9:1，不达标
+  color: var(--qm-text-3);
   font-variant-numeric: tabular-nums;
+  font-feature-settings: var(--qm-num-feature, 'tnum' 1);
 }
 
 // -------- 分组标题 --------
@@ -857,19 +856,22 @@ watch(userLists, () => {
   align-items: center;
   gap: 5px;
   height: 24px;
-  margin-top: 27px;
+  margin-top: 22px;
 }
 
+// 分组标题：Apple 侧栏习惯用小号中性标题，而非高对比粗黑
 .sectionTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgb(26, 26, 26);
+  font-size: var(--qm-font-aux, 12px);
+  font-weight: var(--qm-fw-semibold, 600);
+  letter-spacing: var(--qm-tracking-wide, 0.02em);
+  // 使用 text-3 而非 text-4：12px 小字需保证 ≥4.5:1 对比度
+  color: var(--qm-text-3);
   .mixin-ellipsis-1();
 }
 
 .sectionDivider {
-  color: rgb(190, 190, 190);
-  font-size: 11px;
+  color: var(--qm-line-2);
+  font-size: var(--qm-fs-2xs, 11px);
 }
 
 .sectionBtn {
@@ -881,7 +883,7 @@ watch(userLists, () => {
   height: 20px;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background: transparent;
   color: var(--home-text-weak);
   cursor: pointer;
@@ -903,37 +905,45 @@ watch(userLists, () => {
   min-height: 0;
   max-height: 50vh;
   overflow-y: auto;
-  margin-top: 10px;
+  margin-top: var(--qm-sp-4, 10px);
   display: flex;
   flex-flow: column nowrap;
   scrollbar-gutter: stable;
 
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgb(211, 211, 211); border-radius: 999px; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--qm-line-2);
+    border-radius: var(--qm-radius-chip, 999px);
+  }
 }
 
 .playlistItem {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 9px;
-  height: 40px;
+  gap: var(--qm-sp-4, 10px);
+  height: 38px;
   padding: 0 10px;
-  border-radius: 9px;
-  color: var(--home-text-strong);
+  border-radius: var(--qm-radius-card, 10px);
+  color: var(--home-text);
   cursor: pointer;
-  font-size: 13px;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  font-size: var(--qm-font-title-md, 13px);
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
 
-  &:hover { background-color: var(--home-hover-bg); }
-  &.active { color: var(--home-green-deep); }
+  &:hover { background-color: var(--qm-hover, var(--home-hover-bg)); }
+
+  &.active {
+    color: var(--qm-primary, var(--home-green-deep));
+    background-color: var(--qm-primary-soft);
+    font-weight: var(--qm-fw-semibold, 600);
+  }
 }
 
 .playlistCover {
   flex: none;
-  width: 27px;
-  height: 27px;
-  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--qm-radius-cover, 8px);
   background-color: var(--home-field-bg);
   display: inline-flex;
   align-items: center;
@@ -957,15 +967,16 @@ watch(userLists, () => {
 
 .playlistCount {
   flex: none;
-  color: var(--home-text-weak);
-  font-size: 11px;
+  color: var(--qm-text-3);
+  font-size: var(--qm-font-badge, 11px);
   font-variant-numeric: tabular-nums;
+  font-feature-settings: var(--qm-num-feature, 'tnum' 1);
 }
 
 .playlistEmpty {
   padding: 12px 8px;
   text-align: center;
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   color: var(--home-text-weak);
   line-height: 1.6;
 }
@@ -982,21 +993,25 @@ watch(userLists, () => {
 
 .footerBtn {
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-card, 10px);
   background: transparent;
-  color: rgb(158, 158, 158);
+  color: var(--qm-text-3);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
 
-  &:hover { background-color: var(--home-hover-bg); color: var(--home-text-strong); }
+  &:hover {
+    background-color: var(--qm-hover, var(--home-hover-bg));
+    color: var(--home-text-strong);
+  }
   &:active { transform: scale(0.94); }
+  &:focus-visible { box-shadow: var(--focus-ring, 0 0 0 3px rgba(0, 0, 0, .12)); }
   :global(.svg-icon) { width: 19px; height: 19px; fill: currentColor; }
 }
 
@@ -1006,43 +1021,156 @@ watch(userLists, () => {
 .createPopover {
   position: fixed;
   z-index: 1500;
-  background-color: #fff;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
-  padding: 10px 12px 8px;
+  min-width: 240px;
   display: flex;
   flex-flow: column nowrap;
-  gap: 6px;
-  input {
-    width: 100%;
-    height: 32px;
-    padding: 0 10px;
-    border: 1px solid var(--color-primary);
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.02);
-    color: var(--home-text-strong);
-    font-size: 13px;
-    outline: none;
-    &:focus { box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06); }
+  padding: var(--qm-sp-5, 12px);
+  box-sizing: border-box;
+  border-radius: var(--qm-radius-lg, 12px);
+  border: 1px solid var(--glass-border, var(--color-border));
+  background-color: var(--glass-bg-strong, var(--color-surface-raised, #fff));
+  backdrop-filter: blur(@glass-blur) saturate(@glass-saturate);
+  -webkit-backdrop-filter: blur(@glass-blur) saturate(@glass-saturate);
+  box-shadow: var(--shadow-4), var(--glass-highlight);
+  transform-origin: 16px top;
+  animation: createPopoverIn 220ms var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+
+  @keyframes createPopoverIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 }
 
-.createPopoverHint {
-  font-size: 11px;
+// -------- 弹层头部：图标徽章 + 标题 + 字数 --------
+.createPopoverHeader {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--qm-sp-3, 8px);
+  margin-bottom: var(--qm-sp-4, 10px);
+}
+
+.createPopoverBadge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--qm-radius-sm, 8px);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+
+  :global(.svg-icon) { width: 12px; height: 12px; fill: currentColor; }
+}
+
+.createPopoverTitle {
+  flex: auto;
+  min-width: 0;
+  font-size: var(--qm-fs-sm, 13px);
+  font-weight: var(--qm-fw-bold, 700);
+  color: var(--color-font, var(--home-text-strong));
+  .mixin-ellipsis-1();
+}
+
+.createPopoverCount {
+  flex: none;
+  font-size: var(--qm-fs-2xs, 11px);
   color: var(--home-text-weak);
-  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--transition-fast);
+}
+
+.createPopoverField {
+  flex: none;
+
+  input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border-strong, var(--color-border));
+    border-radius: var(--qm-radius-md, 10px);
+    background: color-mix(in srgb, var(--color-font) 4%, transparent);
+    color: var(--color-font, var(--home-text-strong));
+    font-size: var(--qm-fs-sm, 13px);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+
+    &::placeholder { color: var(--home-text-weak); opacity: 0.75; }
+
+    &:focus {
+      border-color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    }
+  }
+}
+
+// -------- 弹层底部：快捷键提示 + 操作按钮 --------
+.createPopoverFooter {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qm-sp-3, 8px);
+  margin-top: var(--qm-sp-4, 10px);
+}
+
+.createPopoverHint {
+  flex: none;
+  font-size: var(--qm-fs-2xs, 11px);
+  color: var(--home-text-weak);
   letter-spacing: 0.2px;
+  opacity: 0.85;
+}
+
+.createPopoverActions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--qm-sp-2, 6px);
+}
+
+.createPopoverBtn {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--qm-radius-sm, 8px);
+  background: transparent;
+  color: var(--color-font, var(--home-text-strong));
+  font-size: var(--qm-fs-xs, 12px);
+  font-weight: var(--qm-fw-medium, 500);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+
+  &:hover { background: color-mix(in srgb, var(--color-font) 7%, transparent); }
+  &:active { transform: scale(0.96); }
+}
+
+.createPopoverBtnPrimary {
+  background: var(--color-primary);
+  color: #fff;
+
+  &:hover { background: var(--color-primary-dark-100, var(--color-primary)); }
+  &:active { transform: scale(0.96); }
 }
 
 .renameInput {
   flex: 1;
   min-width: 0;
   padding: 2px 6px;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background: rgba(0, 0, 0, 0.04);
   color: var(--home-text-strong);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   outline: none;
   &:focus { box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06); }
 }
@@ -1057,7 +1185,7 @@ watch(userLists, () => {
   flex-flow: column nowrap;
   background-color: #fff;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
   overflow: hidden;
 }
@@ -1072,8 +1200,8 @@ watch(userLists, () => {
   background: rgba(0, 0, 0, 0.02);
   h3 {
     margin: 0;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--qm-fs-md, 14px);
+    font-weight: var(--qm-fw-semibold, 600);
     color: var(--home-text-strong);
   }
 }
@@ -1086,7 +1214,7 @@ watch(userLists, () => {
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background: transparent;
   color: var(--home-text-weak);
   cursor: pointer;
@@ -1108,7 +1236,7 @@ watch(userLists, () => {
 .updateItem {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   padding: 10px 14px;
   transition: background-color var(--transition-fast), opacity var(--transition-fast);
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
@@ -1122,20 +1250,20 @@ watch(userLists, () => {
   min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
 }
 
 .updateItemName {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--qm-fs-sm, 13px);
+  font-weight: var(--qm-fw-medium, 500);
   color: var(--home-text-strong);
   .mixin-ellipsis-1();
 }
 
 .updateItemSource {
-  margin-left: 6px;
-  font-size: 11px;
-  font-weight: 400;
+  margin-left: var(--qm-sp-2, 6px);
+  font-size: var(--qm-fs-2xs, 11px);
+  font-weight: var(--qm-fw-regular, 400);
   color: var(--home-text-weak);
   opacity: 0.7;
   text-transform: lowercase;
@@ -1144,8 +1272,8 @@ watch(userLists, () => {
 .updateItemAuto {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  gap: var(--qm-sp-1, 4px);
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--home-text-weak);
   cursor: pointer;
   user-select: none;
@@ -1165,7 +1293,7 @@ watch(userLists, () => {
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background: transparent;
   color: var(--home-green-deep);
   cursor: pointer;
@@ -1179,14 +1307,14 @@ watch(userLists, () => {
 .updateEmpty {
   padding: 32px 16px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--home-text-weak);
 }
 
 .updatePanelFooter {
   flex: none;
   padding: 8px 14px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.5;
   color: var(--home-text-weak);
   border-top: 1px solid var(--color-border-subtle);

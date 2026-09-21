@@ -84,8 +84,8 @@ export default {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    margin: 15px;
-    font-size: 16px;
+    margin: var(--qm-sp-6, 15px);
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
@@ -94,15 +94,15 @@ export default {
 
 .name {
   color: var(--color-font);
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   word-break: break-all;
   line-height: 1.2;
 }
 
 .desc {
   color: var(--color-font-label);
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: var(--qm-sp-3, 8px);
+  font-size: var(--qm-fs-xs, 12px);
   word-break: break-all;
 }
 
@@ -116,7 +116,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   transition: background-color 0.2s ease;
-  padding: 10px;
+  padding: var(--qm-sp-4, 10px);
   // border-radius: @radius-border;
   &:hover {
     background-color: var(--color-primary-background-hover);
@@ -124,7 +124,7 @@ export default {
 }
 .noitem {
   height: 100px;
-  font-size: 18px;
+  font-size: var(--qm-fs-2xl, 18px);
   color: var(--color-font-label);
   display: flex;
   justify-content: center;
@@ -155,7 +155,7 @@ export default {
 // }
 .tips {
   padding: 8px 15px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 1.25;
   color: var(--color-font);
 }

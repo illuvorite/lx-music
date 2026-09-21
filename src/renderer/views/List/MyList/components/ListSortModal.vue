@@ -154,7 +154,7 @@ export default {
 
 .header {
   flex: none;
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   text-align: center;
   h2 {
     color: var(--color-font);
@@ -172,19 +172,19 @@ export default {
   // overflow: hidden;
 }
 .title {
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   color: var(--color-font-label);
   padding: 10px 0 8px;
 }
 .list {
   display: flex;
   flex-flow: row wrap;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
 }
 .listItem {
   width: (100% / 2);
-  padding-left: 10px;
-  margin-bottom: 8px;
+  padding-left: var(--qm-sp-4, 10px);
+  margin-bottom: var(--qm-sp-3, 8px);
   box-sizing: border-box;
 }
 .footer {
@@ -201,7 +201,7 @@ export default {
   // .mixin-ellipsis-1();
 
   +.btn {
-    margin-left: 10px;
+    margin-left: var(--qm-sp-4, 10px);
   }
 }
 

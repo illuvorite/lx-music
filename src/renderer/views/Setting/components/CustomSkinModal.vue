@@ -569,7 +569,7 @@ export default {
   display: flex;
   flex-flow: column nowrap;
   background-color: var(--color-main-background, #fff);
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   box-shadow: var(--qm-shadow-3, 0 12px 32px rgba(0, 0, 0, 0.2));
   overflow: hidden;
 }
@@ -586,17 +586,17 @@ export default {
   align-items: flex-start;
 }
 .title {
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   line-height: 20px;
-  font-weight: 500;
+  font-weight: var(--qm-fw-medium, 500);
   color: var(--color-primary);
 }
 .titleLine {
   width: 24px;
   height: 4px;
-  border-radius: 2px;
+  border-radius: var(--qm-radius-2xs, 4px);
   background-color: var(--color-primary);
-  margin-top: 6px;
+  margin-top: var(--qm-sp-2, 6px);
 }
 .closeBtn {
   flex: none;
@@ -638,9 +638,9 @@ export default {
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   color: rgb(120, 120, 120);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
 
   .emptyIcon {
@@ -735,7 +735,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   padding: 14px 24px 16px 30px;
 }
 .footerLeft {
@@ -748,14 +748,14 @@ export default {
 }
 .label {
   flex: none;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
 }
 .colorDot {
   flex: none;
   width: 18px;
   height: 18px;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   background-color: var(--pcr-color);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
   cursor: pointer;
@@ -768,13 +768,13 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
 }
 .btnGhost {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   padding: 8px 18px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font, #333);
   background-color: #f0f0f0;
   cursor: pointer;
@@ -789,9 +789,9 @@ export default {
 }
 .btnFinish {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   padding: 8px 18px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: #fff;
   background-color: @skin-green-btn;
   cursor: pointer;

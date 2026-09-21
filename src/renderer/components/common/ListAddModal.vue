@@ -197,11 +197,11 @@ export default {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
-    padding: 15px;
+    padding: var(--qm-sp-6, 15px);
   }
 }
 
@@ -212,7 +212,7 @@ export default {
 .btnContent {
   flex: auto;
   max-height: 100%;
-  padding-right: 15px;
+  padding-right: var(--qm-sp-6, 15px);
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
@@ -222,8 +222,8 @@ export default {
 .btn {
   position: relative;
   box-sizing: border-box;
-  margin-left: 15px;
-  margin-bottom: 15px;
+  margin-left: var(--qm-sp-6, 15px);
+  margin-bottom: var(--qm-sp-6, 15px);
   height: 36px;
   line-height: 36px;
   padding: 0 10px !important;
@@ -262,7 +262,7 @@ export default {
   height: 34px;
   line-height: 34px;
   background: none !important;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   text-align: center;
   font-family: inherit;
   box-sizing: border-box;

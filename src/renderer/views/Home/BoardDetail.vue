@@ -234,13 +234,13 @@ onMounted(() => { void load() })
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
 }
 
 .title {
   margin: 0;
   font-size: var(--qm-font-title-xl);
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
   line-height: 32px;
   color: var(--qm-text-1);
 }
@@ -266,7 +266,7 @@ onMounted(() => { void load() })
   .qm-btn-primary();
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 
   svg { display: block; }
   &:disabled { opacity: .5; cursor: not-allowed; }
@@ -309,7 +309,7 @@ onMounted(() => { void load() })
 .theadNum {
   flex: none;
   width: calc(40px + 44px + 8px + 24px + 8px); // 序号 + 缩略图 + 心形 + 间距
-  padding-left: 6px;
+  padding-left: var(--qm-sp-2, 6px);
 }
 
 .theadCol {
@@ -356,8 +356,8 @@ onMounted(() => { void load() })
   flex: none;
   width: 44px;
   height: 44px;
-  margin-right: 8px;
-  border-radius: 6px;
+  margin-right: var(--qm-sp-3, 8px);
+  border-radius: var(--qm-radius-xs, 6px);
   overflow: hidden;
   background-color: rgba(0, 0, 0, .05);
 
@@ -385,7 +385,7 @@ onMounted(() => { void load() })
   flex: none;
   width: 24px;
   height: 32px;
-  margin-right: 8px;
+  margin-right: var(--qm-sp-3, 8px);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -418,7 +418,7 @@ onMounted(() => { void load() })
 .tag {
   flex: none;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   font-size: var(--qm-font-badge);
   font-style: normal;
   line-height: 14px;
@@ -453,7 +453,7 @@ onMounted(() => { void load() })
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   opacity: 0;
   transition: opacity var(--qm-t-fast);
 

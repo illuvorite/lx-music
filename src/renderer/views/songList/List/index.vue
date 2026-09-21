@@ -134,7 +134,7 @@ export default {
   align-items: center;
   height: 46px;
   padding: 0 var(--qm-content-pad-right) 0 var(--qm-content-pad-left);
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   background-color: var(--qm-surface);
   border-bottom: 1px solid var(--qm-line-1);
 }
@@ -156,7 +156,7 @@ export default {
 
 
 .select {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   width: auto;
   flex: none;
   padding: 0 5px;
@@ -204,7 +204,7 @@ export default {
         // background-color: var(--color-main-background);
         text-align: center;
         line-height: 38px;
-        font-size: 13px;
+        font-size: var(--qm-fs-sm, 13px);
         &:hover {
           background-color: var(--color-button-background-hover);
         }

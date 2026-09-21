@@ -55,12 +55,12 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .controlBtn {
-  padding-left: 20px;
-  padding-right: 10px;
+  padding-left: var(--qm-sp-8, 20px);
+  padding-right: var(--qm-sp-4, 10px);
   flex: none;
   display: flex;
   flex-flow: row nowrap;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   align-items: center;
 
   button {
@@ -72,7 +72,7 @@ export default {
   flex: none;
   height: 26px;
   width: 26px;
-  border-radius: 7px;
+  border-radius: var(--qm-radius-sm, 8px);
   transition: background-color @transition-fast, color @transition-fast, opacity @transition-fast, transform @transition-fast;
   display: flex;
   flex-flow: column nowrap;

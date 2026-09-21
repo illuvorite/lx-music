@@ -333,7 +333,7 @@ export default {
 }
 .label {
   .mixin-ellipsis-2();
-  padding-top: 10px;
+  padding-top: var(--qm-sp-4, 10px);
   text-align: center;
   line-height: 1.1;
 }

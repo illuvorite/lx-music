@@ -134,7 +134,7 @@ export default {
     width: 3px;
     height: 100%;
     background-color: var(--color-primary);
-    border-radius: 4px;
+    border-radius: var(--qm-radius-2xs, 4px);
     transform: translateX(-100%);
     transition: transform @transition-fast;
   }

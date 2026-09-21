@@ -329,10 +329,10 @@
   --color-border-strong:  color-mix(in srgb, var(--color-font) 16%, transparent);
   --color-divider:        var(--color-border-subtle);
 
-  // —— 阴影色（避免在 box-shadow 里硬编码）——
-  --shadow-color-soft:    rgba(0, 0, 0, 0.06);
-  --shadow-color-medium:  rgba(0, 0, 0, 0.08);
-  --shadow-color-strong:  rgba(0, 0, 0, 0.16);
+  // —— 阴影色（Apple 风格：低透明度 + 大扩散，靠层次而非浓度表现浮起）——
+  --shadow-color-soft:    rgba(0, 0, 0, 0.04);
+  --shadow-color-medium:  rgba(0, 0, 0, 0.07);
+  --shadow-color-strong:  rgba(0, 0, 0, 0.14);
 
   // —— 玻璃材质 token（同样跟随主题深浅）——
   --glass-bg-soft:        color-mix(in srgb, var(--color-primary-light-1000) 68%, transparent);
@@ -343,20 +343,28 @@
   --glass-border:         color-mix(in srgb, var(--color-primary-light-1000) 42%, transparent);
   --glass-highlight:       inset 0 1px 0 color-mix(in srgb, var(--color-primary-light-1000) 55%, transparent);
 
-  // —— 过渡曲线 ——
+  // —— 过渡曲线（Apple 手感：出场用「先快后缓」的 ease-out，交互反馈用轻微回弹）——
   --ease-out:             cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out:          cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring:          cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-apple:           cubic-bezier(0.32, 0.72, 0, 1);
   --transition-fast:      150ms var(--ease-out);
   --transition-base:      200ms var(--ease-out);
   --transition-slow:      320ms var(--ease-out);
+  --transition-spring:    320ms var(--ease-spring);
 
-  // —— 浮起阴影（盒模型用）——
-  --shadow-1: 0 1px 2px var(--shadow-color-soft);
-  --shadow-2: 0 2px 8px var(--shadow-color-soft), 0 1px 2px var(--shadow-color-soft);
-  --shadow-3: 0 8px 24px var(--shadow-color-medium), 0 2px 6px var(--shadow-color-soft);
-  --shadow-4: 0 16px 48px var(--shadow-color-strong), 0 4px 12px var(--shadow-color-medium);
-  --shadow-5: 0 24px 64px var(--shadow-color-strong), 0 8px 24px var(--shadow-color-medium);
+  // —— 浮起阴影（盒模型用）：双层「近距离描边感 + 远距离扩散」，比单层大黑影更精致 ——
+  --shadow-1: 0 1px 2px var(--shadow-color-soft), 0 1px 6px var(--shadow-color-soft);
+  --shadow-2: 0 1px 2px var(--shadow-color-soft), 0 4px 12px var(--shadow-color-medium);
+  --shadow-3: 0 2px 6px var(--shadow-color-soft), 0 12px 32px var(--shadow-color-medium);
+  --shadow-4: 0 4px 12px var(--shadow-color-medium), 0 24px 56px var(--shadow-color-strong);
+  --shadow-5: 0 8px 24px var(--shadow-color-medium), 0 40px 88px var(--shadow-color-strong);
+
+  // —— 控件度量（统一按钮/输入框/滑块的高度节奏）——
+  --control-h-sm:         26px;
+  --control-h:            32px;
+  --control-h-lg:         38px;
+  --focus-ring:           0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent);
   // 默认浮起（卡片）：e2
   --shadow-card:          var(--shadow-2);
   --shadow-card-hover:    var(--shadow-3);
@@ -426,21 +434,45 @@
   --qm-text-active:        var(--qm-primary);
 
   // —— 线与阴影（用字体色的透明度，深浅主题都可见） ——
+  // Apple 风格：阴影走「柔和多层扩散」，不靠高浓度黑影堆砌
   --qm-line-1:             color-mix(in srgb, var(--color-1000) 7%, transparent);
   --qm-line-2:             color-mix(in srgb, var(--color-1000) 11%, transparent);
   --qm-line-dashed:        color-mix(in srgb, var(--color-1000) 16%, transparent);
-  --qm-shadow-1:           0 2px 8px rgba(0, 0, 0, 0.06);
-  --qm-shadow-2:           0 8px 24px rgba(0, 0, 0, 0.12);
-  --qm-shadow-3:           0 12px 32px rgba(0, 0, 0, 0.16);
+  --qm-shadow-1:           0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.04);
+  --qm-shadow-2:           0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.08);
+  --qm-shadow-3:           0 2px 6px rgba(0, 0, 0, 0.05), 0 18px 44px rgba(0, 0, 0, 0.14);
   --qm-shadow-text:        0 1px 3px rgba(0, 0, 0, 0.45);
 
   // —— 尺寸与节奏 ——
   --qm-shell-gap:          11px;
-  --qm-radius-panel:       10px;
-  --qm-radius-card:        8px;
-  --qm-radius-cover:       6px;
-  --qm-radius-btn:         6px;
+  // 圆角尺度：6 档 + 全圆，禁止再写 5/7/9/14 这类离群值
+  //   2xs 徽章微标记 · xs 小标签/输入 · sm 按钮/封面 · md 卡片 · lg 面板 · xl 大卡片 · modal 弹窗
+  --qm-radius-2xs:         4px;
+  --qm-radius-xs:          6px;
+  --qm-radius-sm:          8px;
+  --qm-radius-cover:       8px;   // 尺寸语义别名（值同 sm）
+  --qm-radius-btn:         8px;   // 尺寸语义别名（值同 sm）
+  --qm-radius-card:        10px;
+  --qm-radius-panel:       12px;
+  --qm-radius-xl:          16px;
+  --qm-radius-modal:       18px;
   --qm-radius-chip:        999px;
+
+  // 间距阶梯（sp-0 ~ sp-10）
+  // 说明：项目原生的 4px 节奏之外，还保留了 15px —— 它是 QQ 设计稿实测出来的
+  // 主节奏值（832 处间距里出现 82 次，与 10px 并列最高频），不是随手写的漂移值。
+  // 因此这里把它显式纳入尺度，而不是强行归到 16px 而破坏设计稿保真度。
+  --qm-sp-0:               2px;
+  --qm-sp-1:               4px;
+  --qm-sp-2:               6px;
+  --qm-sp-3:               8px;
+  --qm-sp-4:               10px;
+  --qm-sp-5:               12px;
+  --qm-sp-6:               15px;
+  --qm-sp-7:               16px;
+  --qm-sp-8:               20px;
+  --qm-sp-9:               24px;
+  --qm-sp-10:              32px;
   --qm-sidebar:            214px;
   --qm-sidebar-mini:       64px;
   --qm-toolbar-h:          48px;
@@ -458,6 +490,7 @@
   --qm-content-pad-top:    18px;
 
   // —— 字号阶（行高/字重按 docs 规范在组件里配套） ——
+  // 【语义 token】按用途命名，新代码优先使用这一组
   --qm-font-title-xl:      22px;
   --qm-font-title-lg:      15px;
   --qm-font-title-md:      13px;
@@ -466,11 +499,45 @@
   --qm-font-aux:           12px;
   --qm-font-badge:         11px;
 
+  // 【字号值阶 fs-*】按数值命名，用于收敛历史代码里的裸字号。
+  // 两套并行的原因：语义 token 需要逐处判断用途（331 处无法自动化），
+  // 而值阶可以做到「等值替换、零视觉变化」，先把数值集中起来，
+  // 后续再按屏逐步迁移到语义 token。
+  --qm-fs-2xs:             11px;
+  --qm-fs-xs:              12px;
+  --qm-fs-sm:              13px;
+  --qm-fs-md:              14px;
+  --qm-fs-lg:              15px;
+  --qm-fs-xl:              16px;
+  --qm-fs-2xl:             18px;
+  --qm-fs-3xl:             20px;
+  --qm-fs-4xl:             22px;
+  --qm-fs-5xl:             24px;
+
+  // 字重
+  --qm-fw-regular:         400;
+  --qm-fw-medium:          500;
+  --qm-fw-semibold:        600;
+  --qm-fw-bold:            700;
+
+  // —— 排版节奏（Apple 风格：字距收紧、行高分层，标题紧、正文松）——
+  --qm-tracking-tight:     -0.01em;
+  --qm-tracking-normal:    0em;
+  --qm-tracking-wide:      0.02em;
+  --qm-leading-tight:      1.3;
+  --qm-leading-normal:     1.5;
+  --qm-leading-relaxed:    1.7;
+  // 数字统一等宽，避免时长/计数在刷新时左右跳动
+  --qm-num-feature:        'tnum' 1, 'lnum' 1;
+
   // —— 动效 ——
   --qm-ease:               cubic-bezier(0.16, 1, 0.3, 1);
+  --qm-ease-apple:         cubic-bezier(0.32, 0.72, 0, 1);
+  --qm-ease-spring:        cubic-bezier(0.34, 1.56, 0.64, 1);
   --qm-t-fast:             150ms var(--qm-ease);
   --qm-t-base:             200ms var(--qm-ease);
   --qm-t-slow:             280ms var(--qm-ease);
+  --qm-t-spring:           320ms var(--qm-ease-spring);
 
   // —— 外壳别名：历史代码里的 --home-* 统一指向 --qm-* ——
   --home-shell-bg:         var(--qm-shell);
@@ -487,12 +554,68 @@
   --home-green-deep:       var(--qm-primary-hover);
   --home-radius-panel:     var(--qm-radius-panel);
   --home-gap-panel:        var(--qm-shell-gap);
-  --home-tile-bg:          rgb(232, 232, 232);
-  --home-tile-bg-active:   rgb(215, 215, 215);
+  // 侧栏快捷块：由「墨色」透明度派生而非硬编码浅灰，
+  // 深色主题自动变为浅色叠加，保持中性、克制的填充感
+  --home-tile-bg:          color-mix(in srgb, var(--color-1000) 6%, transparent);
+  --home-tile-bg-active:   color-mix(in srgb, var(--color-1000) 12%, transparent);
 }
 
 html {
-  font-size: 16px;
+  font-size: var(--qm-fs-xl, 16px);
+}
+
+// ============================================================
+//  排版基线（Apple 风格）
+//  - 字体抗锯齿：让细体字不再发糊
+//  - 字距收紧：西文更利落，中文保持 0（中文加字距会显得松散）
+// ============================================================
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: var(--qm-leading-normal, 1.5);
+  letter-spacing: var(--qm-tracking-normal, 0);
+}
+
+// ============================================================
+//  弹层出入场动画（Apple 风格：轻微缩放 + 上移 + 淡入）
+//  仅作为 material-modal 的默认动画，开启「随机动画」设置时仍走原逻辑
+// ============================================================
+@keyframes lx-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lx-modal-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+.lx-modal-in {
+  animation: lx-modal-in 260ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.lx-modal-out {
+  animation: lx-modal-out 170ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+// 数字统一等宽（时长、计数、进度）
+.qm-num,
+[class*='__num'] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: var(--qm-num-feature, 'tnum' 1);
 }
 
 .nobreak {
@@ -532,7 +655,7 @@ html {
   position: relative;
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   overflow: hidden;
   background-color: rgba(0, 0, 0, .05);
 
@@ -589,12 +712,12 @@ html {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   min-width: 0;
 
   .name {
     min-width: 0;
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     color: var(--qm-text-1);
     .mixin-ellipsis-1();
   }
@@ -606,7 +729,7 @@ html {
   align-items: center;
   gap: 5px;
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-4);
 
   .name-sub-text {
@@ -633,7 +756,7 @@ html {
   white-space: nowrap;
   vertical-align: middle;
   border: 1px solid var(--qm-primary-border);
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   color: var(--qm-primary);
   transform: scale(0.95);
   transform-origin: left center;
@@ -715,7 +838,7 @@ input, textarea {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
 }
 button:focus-visible,
 a:focus-visible {
@@ -745,7 +868,7 @@ a:focus-visible {
     background-color: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    border-radius: 999px;
+    border-radius: var(--qm-radius-chip, 999px);
     background-color: rgba(0, 0, 0, 0.18);
     border: 2px solid transparent;
     background-clip: padding-box;
@@ -768,7 +891,7 @@ a:focus-visible {
   }
   &::-webkit-scrollbar-track { background-color: transparent; }
   &::-webkit-scrollbar-thumb {
-    border-radius: 999px;
+    border-radius: var(--qm-radius-chip, 999px);
     background-color: #D3D3D3;
   }
   &::-webkit-scrollbar-corner { background-color: transparent; }
@@ -785,7 +908,7 @@ a:focus-visible {
 
   > p {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     line-height: 22px;
     text-align: center;
   }
@@ -816,7 +939,7 @@ table {
   color: var(--qm-text-2);
   th {
     font-size: var(--qm-font-aux);
-    font-weight: 400;
+    font-weight: var(--qm-fw-regular, 400);
     text-align: left;
     line-height: 36px;
     padding: 0 10px;
@@ -848,7 +971,7 @@ table {
     transition: background-color var(--qm-t-fast), color var(--qm-t-fast);
     // border-bottom: 1px solid @color-theme_2-line;
     box-sizing: border-box;
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
 
     &:hover {
       background-color: var(--qm-hover);
@@ -943,7 +1066,7 @@ table {
 
 .gap-left {
   + .gap-left {
-    margin-left: 20px;
+    margin-left: var(--qm-sp-8, 20px);
   }
 }
 .gap-top {
@@ -952,7 +1075,7 @@ table {
   }
 
   + .gap-top {
-    margin-top: 10px;
+    margin-top: var(--qm-sp-4, 10px);
   }
 }
 

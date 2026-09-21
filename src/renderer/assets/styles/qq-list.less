@@ -9,7 +9,7 @@
   table-layout: fixed;
   border-collapse: collapse;
   color: var(--qm-text-2);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
 }
 
 // 吸顶表头
@@ -23,8 +23,8 @@
     box-sizing: border-box;
     background-color: var(--qm-surface);
     color: var(--qm-text-4);
-    font-size: 12px;
-    font-weight: 400;
+    font-size: var(--qm-fs-xs, 12px);
+    font-weight: var(--qm-fw-regular, 400);
     text-align: left;
     white-space: nowrap;
     border-bottom: 1px solid var(--qm-line-1);
@@ -122,7 +122,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   min-width: 0;
 
   .name-text { min-width: 0; .mixin-ellipsis-1(); }
@@ -132,7 +132,7 @@
     height: 15px;
     line-height: 15px;
     border: 1px solid var(--qm-primary-border);
-    border-radius: 3px;
+    border-radius: var(--qm-radius-2xs, 4px);
     color: var(--qm-primary);
     font-size: 10px;
     transform: scale(0.95);

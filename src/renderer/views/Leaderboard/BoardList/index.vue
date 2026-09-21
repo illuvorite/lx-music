@@ -142,7 +142,7 @@ defineExpose({ hideMenu: handleMenuClick })
   display: block;
   height: 100%;
   padding: 0 10px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 36px;
   .mixin-ellipsis-1();
 }

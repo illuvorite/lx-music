@@ -91,7 +91,7 @@ const handleSubmit = () => {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     color: var(--color-font);
     line-height: 1.3;
     word-break: break-all;
@@ -117,7 +117,7 @@ const handleSubmit = () => {
         // background-color: var(--color-main-background);
         text-align: center;
         line-height: 32px;
-        font-size: 13px;
+        font-size: var(--qm-fs-sm, 13px);
         &:hover {
           background-color: var(--color-button-background-hover);
         }
@@ -146,12 +146,12 @@ const handleSubmit = () => {
 
 .tips {
   flex: auto;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
   line-height: 1.5;
   ul {
     list-style: decimal;
-    padding-left: 15px;
+    padding-left: var(--qm-sp-6, 15px);
   }
 }
 

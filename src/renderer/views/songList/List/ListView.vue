@@ -87,7 +87,7 @@ onBeforeRouteLeave(() => {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   box-sizing: border-box;
   padding: 0 15px;
 
@@ -101,7 +101,7 @@ onBeforeRouteLeave(() => {
   width: 32%;
   box-sizing: border-box;
   display: flex;
-  margin-top: 15px;
+  margin-top: var(--qm-sp-6, 15px);
   cursor: pointer;
   transition: opacity @transition-normal;
   &:hover {
@@ -115,7 +115,7 @@ onBeforeRouteLeave(() => {
   display: flex;
   background-position: center;
   background-size: cover;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   overflow: hidden;
   opacity: .9;
 
@@ -129,7 +129,7 @@ onBeforeRouteLeave(() => {
   padding: 3px 15px 5px 7px;
   overflow: hidden;
   h4 {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     height: 2.6em;
     text-align: justify;
     line-height: 1.3;
@@ -139,21 +139,21 @@ onBeforeRouteLeave(() => {
 .songlist_info {
   display: flex;
   flex-flow: row nowrap;
-  gap: 15px;
-  margin-top: 12px;
-  font-size: 12px;
+  gap: var(--qm-sp-6, 15px);
+  margin-top: var(--qm-sp-5, 12px);
+  font-size: var(--qm-fs-xs, 12px);
   .mixin-ellipsis-1();
   text-align: justify;
   line-height: 1.2;
   // text-indent: 24px;
   color: var(--color-font-label);
   svg {
-    margin-right: 2px;
+    margin-right: var(--qm-sp-0, 2px);
   }
 }
 .author {
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: var(--qm-sp-2, 6px);
+  font-size: var(--qm-fs-xs, 12px);
   .mixin-ellipsis-1();
   text-align: justify;
   line-height: 1.2;
@@ -179,7 +179,7 @@ onBeforeRouteLeave(() => {
   // background-color: var(--color-000);
 
   p {
-    font-size: 24px;
+    font-size: var(--qm-fs-5xl, 24px);
     color: var(--color-font-label);
   }
 }

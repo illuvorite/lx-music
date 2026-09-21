@@ -386,6 +386,6 @@ export default {
 
 <style lang="less" module>
 .savePath {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 </style>

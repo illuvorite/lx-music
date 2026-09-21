@@ -123,6 +123,7 @@ const handleToggleAll = () => {
   const setting = {}
   for (const f of freqs) setting[`player.soundEffect.biquadFilter.hz${f}`] = 0
   setting['player.soundEffect.panner.enable'] = false
+  setting['player.soundEffect.panner.soundR'] = 0
   setting['player.soundEffect.convolution.fileName'] = ''
   setting['player.soundEffect.pitchShifter.playbackRate'] = 1
   setting['player.soundEffect.enhance.bass'] = 0
@@ -179,8 +180,8 @@ const tabs = computed(() => {
 @import '@renderer/assets/styles/layout.less';
 // 子组件仍在使用的全局标题样式
 .player__sound_effect_title {
-  font-size: 14px;
-  padding-bottom: 8px;
+  font-size: var(--qm-fs-md, 14px);
+  padding-bottom: var(--qm-sp-3, 8px);
 }
 </style>
 
@@ -244,7 +245,7 @@ const tabs = computed(() => {
   display: flex;
   flex-flow: column nowrap;
   background-color: var(--color-main-background, #fff);
-  border-radius: 12px;
+  border-radius: var(--qm-radius-lg, 12px);
   box-shadow: var(--qm-shadow-3, 0 12px 32px rgba(0, 0, 0, 0.2));
   overflow: hidden;
 }
@@ -255,7 +256,7 @@ const tabs = computed(() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   padding: 14px 16px 12px 18px;
   border-bottom: 1px solid var(--qm-line-1, rgba(0, 0, 0, 0.06));
 }
@@ -268,10 +269,10 @@ const tabs = computed(() => {
 }
 .headerTitle {
   flex: none;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--qm-fs-xl, 16px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
-  margin-right: 6px;
+  margin-right: var(--qm-sp-2, 6px);
 }
 .switch {
   flex: none;
@@ -279,7 +280,7 @@ const tabs = computed(() => {
   width: 36px;
   height: 20px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background-color: var(--qm-line-2, rgba(0, 0, 0, 0.12));
   cursor: pointer;
   transition: background-color @transition-normal;
@@ -305,12 +306,12 @@ const tabs = computed(() => {
 }
 .headerState {
   flex: none;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
 }
 .headerPreset {
   flex: none;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-primary);
 }
 .closeBtn {
@@ -346,7 +347,7 @@ const tabs = computed(() => {
   padding: 14px 10px;
   display: flex;
   flex-flow: column nowrap;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   border-right: 1px solid var(--qm-line-1, rgba(0, 0, 0, 0.06));
   overflow-y: auto;
 }
@@ -355,10 +356,10 @@ const tabs = computed(() => {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   padding: 14px 6px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   background: transparent;
   color: var(--color-font);
   cursor: pointer;
@@ -369,13 +370,13 @@ const tabs = computed(() => {
     height: 26px;
   }
   .navLabel {
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     line-height: 1.2;
   }
   .navSub {
     max-width: 100%;
-    font-size: 11px;
-    font-weight: 400;
+    font-size: var(--qm-fs-2xs, 11px);
+    font-weight: var(--qm-fw-regular, 400);
     line-height: 1.2;
     color: var(--color-primary);
     overflow: hidden;
@@ -390,7 +391,7 @@ const tabs = computed(() => {
     color: var(--color-primary);
     background-color: var(--qm-primary-soft, rgba(0, 0, 0, 0.04));
     .navLabel {
-      font-weight: 600;
+      font-weight: var(--qm-fw-semibold, 600);
     }
   }
 }
@@ -402,7 +403,7 @@ const tabs = computed(() => {
 .acousticPanel {
   display: flex;
   flex-flow: column nowrap;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
 }
 
 // ===== 音效制作 =====
@@ -416,25 +417,25 @@ const tabs = computed(() => {
 }
 .makeTitle {
   margin: 0 0 10px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
 }
 .chipList {
   display: flex;
   flex-flow: row wrap;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
 }
 .chip {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   padding: 5px 12px;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.05));
   color: var(--color-font);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast;
 
@@ -455,7 +456,7 @@ const tabs = computed(() => {
   padding: 0;
   background: transparent;
   color: var(--qm-text-3, #888);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 1;
   cursor: pointer;
 
@@ -466,7 +467,7 @@ const tabs = computed(() => {
 }
 .makeEmpty {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.5;
   color: var(--qm-text-3, #888);
 }
@@ -474,7 +475,7 @@ const tabs = computed(() => {
 .tip {
   flex: none;
   padding: 8px 18px 12px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.25;
   color: var(--color-font);
   border-top: 1px dashed var(--qm-line-1, rgba(0, 0, 0, 0.06));

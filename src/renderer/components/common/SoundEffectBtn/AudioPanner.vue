@@ -42,11 +42,18 @@ const updateEnabled = async(enabled) => {
     await setMediaDeviceId('default').catch(_ => _)
     saveMediaDeviceId('default')
   }
+  // 半径为 0（可能由增强滑条或总开关关闭）时直接开启会静默无声，补一个可感知的默认半径
+  if (enabled && !(appSetting['player.soundEffect.panner.soundR'] > 0)) {
+    updateSetting({ 'player.soundEffect.panner.enable': true, 'player.soundEffect.panner.soundR': 5 })
+    return
+  }
   updateSetting({ 'player.soundEffect.panner.enable': enabled })
 }
 
 const handleUpdateSoundR = (value) => {
-  updateSetting({ 'player.soundEffect.panner.soundR': Math.round(value) })
+  value = Math.round(value)
+  // 半径拖到 0 不再是合法取值（0 = 关闭，走开关），钳制到最小可感知值
+  updateSetting({ 'player.soundEffect.panner.soundR': Math.max(1, value) })
 }
 const handleUpdateSpeed = (value) => {
   updateSetting({ 'player.soundEffect.panner.speed': Math.round(value) })
@@ -61,7 +68,7 @@ const handleUpdateSpeed = (value) => {
   padding-top: 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-height: 0;
   flex: none;
 }
@@ -76,23 +83,23 @@ const handleUpdateSpeed = (value) => {
 .eqList {
   display: flex;
   flex-flow: column nowrap;
-  gap: 15px;
+  gap: var(--qm-sp-6, 15px);
   width: 100%;
 }
 .eqItem {
   display: flex;
   flex-flow: row nowrap;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
 }
 .label {
   flex: none;
   // width: 50px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 .value {
   flex: none;
   width: 40px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   text-align: center;
 
   &.active {
@@ -117,8 +124,8 @@ const handleUpdateSpeed = (value) => {
 }
 
 .checkbox {
-  margin-right: 10px;
-  font-size: 13px;
+  margin-right: var(--qm-sp-4, 10px);
+  font-size: var(--qm-fs-sm, 13px);
 }
 
 </style>

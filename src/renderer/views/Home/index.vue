@@ -604,30 +604,30 @@ onMounted(async() => {
   align-items: center;
   justify-content: space-between;
   min-height: 24px;
-  margin-bottom: 16px;
+  margin-bottom: var(--qm-sp-7, 16px);
 }
 
 .headTitle {
   margin: 0;
   font-size: 17px;
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
   color: var(--qm-text-1);
   letter-spacing: .2px;
 }
 .headTitle2 {
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
 }
 
 .headLink {
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   padding: 0;
   border: none;
   background: none;
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-5);
   transition: color @transition-fast;
 
@@ -640,13 +640,13 @@ onMounted(async() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   margin: -4px 0 18px;
 }
 .sourceTip {
   flex: auto;
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-5);
   .mixin-ellipsis-1();
 }
@@ -660,8 +660,8 @@ onMounted(async() => {
   height: 28px;
   padding: 0 12px;
   border: 1px solid var(--qm-primary-border);
-  border-radius: 14px;
-  font-size: 12px;
+  border-radius: var(--qm-radius-lg, 12px);
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-primary);
   background-color: var(--qm-primary-soft);
   cursor: pointer;
@@ -677,7 +677,7 @@ onMounted(async() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 16px;
+  gap: var(--qm-sp-7, 16px);
   flex: none;
 }
 
@@ -688,7 +688,7 @@ onMounted(async() => {
   justify-content: center;
   width: 22px;
   height: 22px;
-  margin-left: 6px;
+  margin-left: var(--qm-sp-2, 6px);
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -708,7 +708,7 @@ onMounted(async() => {
   justify-content: center;
   width: 26px;
   height: 26px;
-  margin-left: 10px;
+  margin-left: var(--qm-sp-4, 10px);
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -734,7 +734,7 @@ onMounted(async() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   padding: 6px 8px;
   border-radius: var(--qm-radius-card);
   cursor: default;
@@ -782,14 +782,14 @@ onMounted(async() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   margin: 0;
   min-width: 0;
 }
 
 .songNameText {
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   color: var(--qm-text-1);
   .mixin-ellipsis-1();
 }
@@ -798,7 +798,7 @@ onMounted(async() => {
   flex: none;
   padding: 1px 4px;
   border: 1px solid #e8c88a;
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   font-size: 10px;
   font-style: normal;
   line-height: 13px;
@@ -810,7 +810,7 @@ onMounted(async() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   margin: 0;
   min-width: 0;
 }
@@ -838,7 +838,7 @@ onMounted(async() => {
 
 .songSingerText {
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-4);
   .mixin-ellipsis-1();
 }
@@ -848,7 +848,7 @@ onMounted(async() => {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 136px);
-  gap: 24px;
+  gap: var(--qm-sp-9, 24px);
 }
 
 .card {
@@ -882,7 +882,7 @@ onMounted(async() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   width: 100%;
   height: 100%;
 
@@ -942,7 +942,7 @@ onMounted(async() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: #fff;
   background-color: rgba(0, 0, 0, .5);
 }
@@ -958,8 +958,8 @@ onMounted(async() => {
   gap: 3px;
   height: 18px;
   padding: 0 6px;
-  border-radius: 9px;
-  font-size: 11px;
+  border-radius: var(--qm-radius-md, 10px);
+  font-size: var(--qm-fs-2xs, 11px);
   line-height: 1;
   color: #fff;
   background-color: var(--qm-primary);
@@ -970,14 +970,14 @@ onMounted(async() => {
 // ---- 文案 ----
 .name {
   margin: 10px 0 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 19px;
   color: var(--qm-text-2);
   .mixin-ellipsis-2();
 }
 .meta {
   margin: 3px 0 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 18px;
   color: var(--qm-text-4);
   .mixin-ellipsis-2();
@@ -1022,14 +1022,14 @@ onMounted(async() => {
 }
 .heroTitle {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: var(--qm-fs-4xl, 22px);
+  font-weight: var(--qm-fw-bold, 700);
   color: #fff;
   text-shadow: 0 1px 3px rgba(40, 48, 92, .28);
 }
 .heroSub {
   margin: 8px 0 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 20px;
   color: rgba(255, 255, 255, .92);
   text-shadow: 0 1px 2px rgba(40, 48, 92, .22);
@@ -1059,7 +1059,7 @@ onMounted(async() => {
   flex: none;
   width: 106px;
   height: 106px;
-  margin-right: 6px;
+  margin-right: var(--qm-sp-2, 6px);
 
   // 封面右下方露出的深色卡片
   &::after {
@@ -1069,7 +1069,7 @@ onMounted(async() => {
     bottom: -7px;
     width: 92px;
     height: 92px;
-    border-radius: 10px;
+    border-radius: var(--qm-radius-md, 10px);
     background-color: #23252B;
     box-shadow: 0 8px 20px rgba(24, 28, 48, .28);
   }
@@ -1080,7 +1080,7 @@ onMounted(async() => {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   object-fit: cover;
   box-shadow: 0 10px 24px rgba(24, 28, 48, .22);
 }
@@ -1092,8 +1092,8 @@ onMounted(async() => {
   display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: var(--qm-sp-1, 4px);
+  font-size: var(--qm-fs-2xs, 11px);
   color: #fff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .45);
 }
@@ -1103,7 +1103,7 @@ onMounted(async() => {
   justify-content: center;
   width: 14px;
   height: 14px;
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   font-size: 9px;
   font-style: normal;
   color: var(--qm-primary);
@@ -1115,9 +1115,9 @@ onMounted(async() => {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   padding: 28px 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--qm-text-4);
 
   p { margin: 0; }
@@ -1126,7 +1126,7 @@ onMounted(async() => {
   padding: 5px 16px;
   border: 1px solid var(--qm-primary-border);
   border-radius: var(--qm-radius-btn);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--qm-primary);
   background-color: var(--qm-primary-soft);
   cursor: pointer;

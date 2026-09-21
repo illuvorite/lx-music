@@ -236,7 +236,7 @@ export default {
 .search {
   position: absolute;
   width: 100%;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   transition: box-shadow .4s ease, background-color @transition-normal;
   display: flex;
   flex-flow: column nowrap;
@@ -309,7 +309,7 @@ export default {
   }
   .list {
     // background-color: @color-search-form-background;
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     transition: .3s ease;
     height: 0;
     transition-property: height;
@@ -329,7 +329,7 @@ export default {
       &.select {
         background-color: var(--color-primary-dark-100-alpha-700);
       }
-      border-radius: 4px;
+      border-radius: var(--qm-radius-2xs, 4px);
       // &:last-child {
       //   border-bottom-left-radius: 4px;
       //   border-bottom-right-radius: 4px;
@@ -346,13 +346,13 @@ export default {
   .mixin-ellipsis-1();
 }
 .albumName {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.6;
   .mixin-ellipsis-1();
 }
 .source {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.5;
   padding: 0 5px;
   display: flex;

@@ -223,7 +223,7 @@ export default {
     align-items: center;
     height: 31px;
     padding: 0 9px 0 11px;
-    border-radius: 999px;
+    border-radius: var(--qm-radius-chip, 999px);
     background-color: var(--home-field-bg, rgba(0, 0, 0, .08));
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .04);
     transition: background-color var(--transition-base), box-shadow var(--transition-base);
@@ -241,12 +241,12 @@ export default {
       outline: none;
       background-color: transparent;
       color: var(--home-text, rgb(74, 74, 74));
-      font-size: 14px;
+      font-size: var(--qm-fs-md, 14px);
       overflow: hidden;
 
       &::placeholder {
         color: rgb(166, 166, 166);
-        font-size: 14px;
+        font-size: var(--qm-fs-md, 14px);
       }
     }
 
@@ -275,7 +275,7 @@ export default {
       flex: none;
       width: 16px;
       height: 16px;
-      margin-left: 6px;
+      margin-left: var(--qm-sp-2, 6px);
       border-radius: 50%;
       color: rgb(198, 198, 198);
       transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
@@ -299,26 +299,26 @@ export default {
     top: 39px;
     left: 0;
     width: 280px;
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     height: 0;
     padding: 0;
     transition: height 200ms var(--ease-out);
     transition-property: height;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: var(--qm-radius-lg, 12px);
     background-color: #fff;
     box-shadow: 0 12px 32px rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .04);
 
     ul {
       max-height: 320px;
       overflow-y: auto;
-      padding: 6px;
+      padding: var(--qm-sp-2, 6px);
       box-sizing: border-box;
 
       &::-webkit-scrollbar { width: 6px; }
       &::-webkit-scrollbar-thumb {
         background: rgba(0, 0, 0, .12);
-        border-radius: 999px;
+        border-radius: var(--qm-radius-chip, 999px);
       }
     }
 
@@ -328,7 +328,7 @@ export default {
       align-items: center;
       height: 32px;
       padding: 0 10px 0 28px;
-      border-radius: 8px;
+      border-radius: var(--qm-radius-sm, 8px);
       cursor: pointer;
       color: var(--qm-text-2, rgb(51, 51, 51));
       transition: background-color var(--transition-fast), color var(--transition-fast);
@@ -361,7 +361,7 @@ export default {
       &.select {
         background-color: var(--qm-primary-soft, rgba(49, 194, 124, .12));
         color: var(--qm-primary, rgb(49, 194, 124));
-        font-weight: 600;
+        font-weight: var(--qm-fw-semibold, 600);
 
         &::before { opacity: .9; }
       }

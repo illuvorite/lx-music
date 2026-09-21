@@ -530,8 +530,8 @@ export default {
 
 .headTitle {
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--qm-fs-5xl, 24px);
+  font-weight: var(--qm-fw-bold, 700);
   letter-spacing: .5px;
   color: var(--qm-text-1);
 }
@@ -544,14 +544,14 @@ export default {
 }
 
 .stat {
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--qm-text-3);
   cursor: default;
 }
 
 .statActive {
   color: var(--qm-primary);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
 }
 
 .actions {
@@ -559,7 +559,7 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
 }
 
 .spacer { flex: none; width: 6px; }
@@ -654,7 +654,7 @@ export default {
 }
 .content {
   min-height: 0;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   display: flex;
   flex-flow: column nowrap;
   flex: auto;
@@ -669,7 +669,7 @@ export default {
   align-items: center;
 
   p {
-    font-size: 24px;
+    font-size: var(--qm-fs-5xl, 24px);
     color: var(--color-font-label);
   }
 }

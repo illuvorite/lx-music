@@ -128,7 +128,7 @@ export default {
   position: relative;
   // flex: none;
   color: var(--color-550);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   // padding-left: 10px;
   // display: flex;
   // flex-flow: column nowrap;
@@ -142,7 +142,7 @@ export default {
   left: 0;
   width: 100%;
   flex: auto;
-  margin-top: 2px;
+  margin-top: var(--qm-sp-0, 2px);
   // width: 160px;
   // position: relative;
   // padding-bottom: 6px;

@@ -223,7 +223,7 @@ export default {
     align-items: center;
     cursor: pointer;
     // color: var(--color-primary);
-    margin-right: 8px;
+    margin-right: var(--qm-sp-3, 8px);
     transition: .3s ease;
     transition-property: color, opacity;
     margin-bottom: 18px;
@@ -256,7 +256,7 @@ export default {
       border: 2Px solid transparent;
       padding: 2Px;
       transition: border-color .3s ease;
-      border-radius: 5px;
+      border-radius: var(--qm-radius-xs, 6px);
       &:after {
         display: block;
         content: ' ';
@@ -295,7 +295,7 @@ export default {
         position: relative;
         height: 100%;
         overflow: hidden;
-        border-radius: 5px;
+        border-radius: var(--qm-radius-xs, 6px);
       }
       .light, .dark {
         position: absolute;
@@ -353,7 +353,7 @@ export default {
           position: relative;
           height: 100%;
           overflow: hidden;
-          border-radius: 5px;
+          border-radius: var(--qm-radius-xs, 6px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -390,7 +390,7 @@ export default {
 
   .desc {
     color: var(--color-500);
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     margin-left: 5px;
   }
 

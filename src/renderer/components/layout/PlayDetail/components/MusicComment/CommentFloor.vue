@@ -67,7 +67,7 @@ export default {
 
 .content {
   padding: 12px 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   display: flex;
 }
@@ -76,19 +76,19 @@ export default {
 }
 .avatar {
   width: 40px;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   box-shadow: 0 0 2px rgba(0, 0, 0, .15);
 }
 .right {
   flex: auto;
   min-width: 0;
-  margin-left: 10px;
+  margin-left: var(--qm-sp-4, 10px);
 }
 
 .info {
   display: flex;
   flex-flow: row nowrap;
-  gap: 15px;
+  gap: var(--qm-sp-6, 15px);
   width: 100%;
   height: 40px;
   line-height: 1.3;
@@ -106,7 +106,7 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   min-width: 0;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   overflow: hidden;
 }
 .name {
@@ -117,12 +117,12 @@ export default {
 }
 .label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   // margin-left: 5px;
 }
 .likes {
   flex: none;
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   text-align: right;
   padding-top: 3px;
   align-self: flex-start;
@@ -135,7 +135,7 @@ export default {
 }
 .comment_text {
   text-align: justify;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   line-height: 1.5;
   word-break: break-all;
   overflow-wrap: break-word;
@@ -157,13 +157,13 @@ export default {
   margin-left: @padding * 2;
   border-radius: .5rem;
   &:last-child {
-    margin-bottom: 12px;
+    margin-bottom: var(--qm-sp-5, 12px);
   }
   .listItem:last-child {
     border-bottom: none;
   }
   .right {
-    margin-right: 10px;
+    margin-right: var(--qm-sp-4, 10px);
   }
 
   background-color: var(--color-primary-light-500-alpha-700);

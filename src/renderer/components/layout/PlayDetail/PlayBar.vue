@@ -173,7 +173,7 @@ const toggleComment = () => {
   justify-content: center;
   padding: 0 24px;
   overflow: hidden;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 // 第一排 / 第二排：采用 3 列网格 1fr auto 1fr，让中间列在父容器中绝对居中
@@ -199,7 +199,7 @@ const toggleComment = () => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   min-width: 0;
   max-width: 280px;
 }
@@ -208,7 +208,7 @@ const toggleComment = () => {
   width: 40px;
   height: 40px;
   flex: 0 0 40px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   object-fit: cover;
   background-color: var(--color-button-background-hover);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
@@ -222,17 +222,17 @@ const toggleComment = () => {
 }
 
 .infoName {
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   line-height: 1.3;
   color: var(--color-font);
-  font-weight: 500;
+  font-weight: var(--qm-fw-medium, 500);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .infoSinger {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.3;
   color: var(--color-font-label);
   overflow: hidden;
@@ -244,7 +244,7 @@ const toggleComment = () => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 // ===== 中：循环 / 上一首 / 播放暂停 / 下一首 / 音量（必须居中） =====
@@ -279,7 +279,7 @@ const toggleComment = () => {
   width: 30px;
   height: 30px;
   margin-left: 50px;
-  margin-right: 12px;
+  margin-right: var(--qm-sp-5, 12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -328,7 +328,7 @@ const toggleComment = () => {
   flex: 0 0 30px;
   width: 30px;
   height: 30px;
-  margin-left: 12px;
+  margin-left: var(--qm-sp-5, 12px);
   margin-right: 50px;
   display: flex;
   align-items: center;
@@ -362,14 +362,14 @@ const toggleComment = () => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   width: 100%;
   padding: 0 2px;
 }
 
 .timeLabel {
   flex: 0 0 auto;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label);
   font-variant-numeric: tabular-nums;
   min-width: 44px;
@@ -479,7 +479,7 @@ const toggleComment = () => {
   position: absolute;
   right: 24px;
   bottom: 4px;
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   color: var(--color-font-label);
   opacity: 0.7;
   pointer-events: none;

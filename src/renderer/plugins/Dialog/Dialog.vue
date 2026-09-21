@@ -76,7 +76,7 @@ export default {
   flex: auto;
   min-height: 40px;
   padding: 15px 15px 0;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   // max-width: 320px;
   min-width: 220px;
   line-height: 1.5;
@@ -85,10 +85,10 @@ export default {
 
 .footer {
   flex: none;
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 15px;
+  gap: var(--qm-sp-6, 15px);
 }
 </style>

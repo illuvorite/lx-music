@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: var(--qm-sp-10, 32px);
   box-sizing: border-box;
   background: var(--qm-surface, var(--color-content-background));
 }
@@ -36,12 +36,12 @@
   border: 1px solid var(--color-border-subtle);
 }
 .icon {
-  width: 72px; height: 72px; border-radius: 18px;
+  width: 72px; height: 72px; border-radius: var(--qm-radius-modal, 18px);
   background: var(--color-accent-soft);
   display: inline-flex; align-items: center; justify-content: center;
   color: var(--color-accent); margin-bottom: 14px;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
 }
-.title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.2px; }
-.desc { margin: 6px 0 0; font-size: 13px; color: var(--color-font-label); }
+.title { margin: 0; font-size: var(--qm-fs-3xl, 20px); font-weight: var(--qm-fw-bold, 700); letter-spacing: 0.2px; }
+.desc { margin: 6px 0 0; font-size: var(--qm-fs-sm, 13px); color: var(--color-font-label); }
 </style>

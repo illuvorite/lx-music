@@ -118,7 +118,7 @@ export default {
 
 .select {
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   position: relative;
   width: var(--selection-width, 300px);
 

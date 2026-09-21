@@ -139,8 +139,9 @@ export default {
       //   'slideOutUp',
       //   'hinge',
       // ],
-      inClass: 'animated jackInTheBox',
-      outClass: 'animated slideOutRight',
+      // 默认动画：Apple 风格的轻微缩放 + 上移 + 淡入（启用「随机动画」设置时会被随机类覆盖）
+      inClass: 'lx-modal-in',
+      outClass: 'lx-modal-out',
       showModal: false,
       showContent: false,
       modalCount: false,
@@ -241,18 +242,16 @@ export default {
 .modal {
   width: 100%;
   height: 100%;
-  // background-color: rgba(0, 0, 0, .2);
-  // background-color: rgba(255, 255, 255, .6);
-  // background-color: var(--color-primary-light-600-alpha-900);
-  // backdrop-filter: blur(4px);
-  // backdrop-filter: grayscale(70%);
   display: grid;
   align-items: center;
   justify-items: center;
-  // will-change: transform;
 
+  // Apple 风格遮罩：轻压暗 + 背景虚化，让弹层与内容自然分层
+  // （原实现为 grayscale(70%) 灰度滤镜，视觉偏脏，且无法体现层次）
   &.filter {
-    backdrop-filter: grayscale(70%);
+    background-color: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
   }
 
   // &:before {
@@ -269,47 +268,58 @@ export default {
 
 .content {
   position: relative;
-  border-radius: 12px;
-  box-shadow: var(--qm-shadow-3, var(--shadow-modal));
+  border-radius: var(--qm-radius-modal, 18px);
+  // 双层阴影：近处极淡描边感 + 远处大扩散，浮起更自然
+  box-shadow: 0 0 0 1px var(--qm-line-1), var(--qm-shadow-3, var(--shadow-modal));
   overflow: hidden;
-  // max-height: 80%;
-  // max-width: 76%;
   min-width: 220px;
-  position: relative;
   display: flex;
   flex-flow: column nowrap;
   z-index: 100;
   background-color: var(--qm-card, var(--color-content-background));
 }
 
+// 顶部关闭区：保持原有高度与占位（避免与各弹窗内容冲突），
+// 仅去掉异色标题栏，改为透明背景 + 圆形关闭按钮
 .header {
   flex: none;
-  background-color: var(--color-primary-light-100-alpha-100);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   height: 22px;
+  background-color: transparent;
 
   button {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--qm-sp-2, 6px);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: none;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 4px 9px;
     background-color: transparent;
-    color: var(--color-primary-dark-500-alpha-500);
+    color: var(--qm-text-4, var(--color-font-label));
     outline: none;
-    transition: background-color @transition-fast, color @transition-fast;
     line-height: 0;
+    transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
 
     svg {
-      height: .7em;
+      height: .55em;
+      fill: currentColor;
     }
 
     &:hover {
-      background-color: var(--color-primary-dark-100-alpha-600);
-      color: var(--color-danger);
+      background-color: rgba(255, 59, 48, 0.12);
+      color: #ff3b30;
     }
     &:active {
-      background-color: var(--color-primary-dark-200-alpha-600);
+      transform: scale(0.92);
+    }
+    &:focus-visible {
+      box-shadow: var(--focus-ring);
     }
   }
 }

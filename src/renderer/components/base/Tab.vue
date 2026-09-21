@@ -58,9 +58,9 @@ export default {
 .list {
   display: flex;
   flex-flow: row nowrap;
-  font-size: 13px;
-  font-weight: 500;
-  gap: 24px;
+  font-size: var(--qm-fs-sm, 13px);
+  font-weight: var(--qm-fw-medium, 500);
+  gap: var(--qm-sp-9, 24px);
   padding: 0 16px;
 
   &.left {
@@ -85,7 +85,7 @@ export default {
 
   &.active {
     color: var(--color-accent);
-    font-weight: 600;
+    font-weight: var(--qm-fw-semibold, 600);
     cursor: default;
 
     >.label {
@@ -107,7 +107,7 @@ export default {
     bottom: 0;
     width: 100%;
     height: 2px;
-    border-radius: 2px;
+    border-radius: var(--qm-radius-2xs, 4px);
     background-color: var(--color-accent);
     transform: translateY(2px) scaleX(0.6);
     opacity: 0;

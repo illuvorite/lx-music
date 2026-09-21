@@ -115,7 +115,7 @@ export default {
 
 .header {
   flex: none;
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   text-align: center;
   h2 {
     word-break: break-all;
@@ -132,7 +132,7 @@ export default {
   min-height: 175px;
   min-width: 380px;
   // background-color: @color-search-form-background;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   transition-property: height;
   // position: relative;
   .listItem {
@@ -149,7 +149,7 @@ export default {
     &:hover {
       background-color: var(--color-primary-background-hover);
     }
-    // border-radius: 4px;
+    // border-radius: var(--qm-radius-2xs, 4px);
     // &:last-child {
     //   border-bottom-left-radius: 4px;
     //   border-bottom-right-radius: 4px;
@@ -159,7 +159,7 @@ export default {
 
 .num {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   width: 30px;
   text-align: center;
   color: var(--color-font-label);
@@ -179,13 +179,13 @@ export default {
   .mixin-ellipsis-1();
 }
 .albumName {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.6;
   // .mixin-ellipsis-1();
 }
 .label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.5;
   padding: 0 5px;
   display: flex;
@@ -195,7 +195,7 @@ export default {
 }
 .btns {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   padding: 0 5px;
   display: flex;
   align-items: center;
@@ -236,7 +236,7 @@ export default {
   align-items: center;
 
   p {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font-label);
   }
 }

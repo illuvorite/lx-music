@@ -128,7 +128,7 @@ export default {
 .header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   padding: 20px 24px 12px;
   flex: none;
   border-bottom: 1px solid var(--color-divider, rgba(0,0,0,0.06));
@@ -137,10 +137,10 @@ export default {
 .title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--qm-fs-3xl, 20px);
+  font-weight: var(--qm-fw-bold, 700);
   color: var(--color-font);
 }
 
@@ -152,7 +152,7 @@ export default {
 }
 
 .count {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
   font-variant-numeric: tabular-nums;
 }
@@ -171,8 +171,8 @@ export default {
   justify-content: center;
   height: 100%;
   color: var(--color-font-label, rgba(0,0,0,0.45));
-  font-size: 14px;
-  gap: 8px;
+  font-size: var(--qm-fs-md, 14px);
+  gap: var(--qm-sp-3, 8px);
 }
 
 .emptyIcon {
@@ -183,23 +183,23 @@ export default {
 }
 
 .emptyHint {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   opacity: 0.7;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
 }
 
 .table th {
   text-align: left;
   padding: 10px 16px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
-  font-weight: 500;
+  font-weight: var(--qm-fw-medium, 500);
   border-bottom: 1px solid var(--color-divider, rgba(0,0,0,0.06));
 }
 

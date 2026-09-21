@@ -138,26 +138,26 @@ export default {
   min-height: 0;
   h2 {
     flex: none;
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
-    padding: 15px;
+    padding: var(--qm-sp-6, 15px);
   }
   h3 {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
-    padding-bottom: 15px;
-    font-size: 15px;
+    padding-bottom: var(--qm-sp-6, 15px);
+    font-size: var(--qm-fs-lg, 15px);
   }
 }
 .content {
   flex: auto;
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   display: flex;
   flex-flow: column nowrap;
-  gap: 15px;
+  gap: var(--qm-sp-6, 15px);
 }
 .theme {
   display: flex;
@@ -170,9 +170,9 @@ export default {
     align-items: center;
     cursor: pointer;
     // color: var(--color-primary);
-    margin-right: 4px;
+    margin-right: var(--qm-sp-1, 4px);
     transition: color .3s ease;
-    margin-bottom: 15px;
+    margin-bottom: var(--qm-sp-6, 15px);
     width: 86px;
 
     &:last-child {
@@ -192,9 +192,9 @@ export default {
       height: 36px;
       margin-bottom: 5px;
       border: 2px solid transparent;
-      padding: 2px;
+      padding: var(--qm-sp-0, 2px);
       transition: border-color .3s ease;
-      border-radius: 5px;
+      border-radius: var(--qm-radius-xs, 6px);
       &:after {
         display: block;
         content: ' ';
@@ -213,14 +213,14 @@ export default {
       width: 100%;
       text-align: center;
       height: 1.2em;
-      font-size: 14px;
+      font-size: var(--qm-fs-md, 14px);
     }
   }
 }
 
 .note {
   padding: 8px 15px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 1.25;
   color: var(--color-font);
   // p {

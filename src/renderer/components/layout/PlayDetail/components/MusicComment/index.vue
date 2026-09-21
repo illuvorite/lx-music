@@ -260,7 +260,7 @@ export default {
   align-items: center;
   // border-bottom: 1px solid #eee;
   h3 {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     .mixin-ellipsis-1();
     line-height: 1.2;
   }
@@ -289,16 +289,16 @@ export default {
 .commentMain {
   flex: auto;
   background-color: var(--color-primary-light-400-alpha-700);
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   display: flex;
   flex-direction: column;
 }
 .tab_header {
   display: flex;
   flex-flow: row nowrap;
-  gap: 15px;
-  padding-left: 15px;
-  padding-right: 10px;
+  gap: var(--qm-sp-6, 15px);
+  padding-left: var(--qm-sp-6, 15px);
+  padding-right: var(--qm-sp-4, 10px);
 }
 .tab_main {
   flex: auto;
@@ -319,19 +319,19 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  padding-left: 15px;
-  padding-right: 10px;
+  padding-left: var(--qm-sp-6, 15px);
+  padding-right: var(--qm-sp-4, 10px);
   scroll-behavior: smooth;
 }
 .commentLabel {
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   color: var(--color-font-label);
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
 }
 .commentType {
   padding: 5px;
   margin: 5px 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   background: none;
   border: none;
   cursor: pointer;
@@ -360,7 +360,7 @@ export default {
   flex: auto;
   padding-top: 10%;
   text-align: center;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   color: var(--color-font-label);
 }
 

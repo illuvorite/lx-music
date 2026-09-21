@@ -84,7 +84,7 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .list {
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   position: absolute;
   opacity: 0;
   transform: scale(0.94);
@@ -100,7 +100,7 @@ export default {
   // 低于 material-modal(99)
   z-index: 70;
   overflow: hidden;
-  padding: 6px;
+  padding: var(--qm-sp-2, 6px);
   min-width: 140px;
 }
 .listItem {
@@ -110,7 +110,7 @@ export default {
   padding: 0 12px;
   text-align: left;
   outline: none;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   transition: background-color @transition-fast, color @transition-fast;
   box-sizing: border-box;
   .mixin-ellipsis-1();

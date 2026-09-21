@@ -583,7 +583,7 @@ export default {
   // 避免左侧歌曲信息被挤成 0 宽
   grid-template-columns: minmax(250px, 1.15fr) minmax(300px, 1.15fr) minmax(0, 1fr);
   align-items: center;
-  gap: 16px;
+  gap: var(--qm-sp-7, 16px);
   padding: 0 18px;
   background-color: var(--color-main-background);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
@@ -599,7 +599,7 @@ export default {
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-width: 0;
 }
 
@@ -607,7 +607,7 @@ export default {
   width: 50px;
   height: 50px;
   flex: none;
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   overflow: hidden;
   background: var(--color-button-background, rgba(0,0,0,0.05));
   cursor: pointer;
@@ -643,19 +643,19 @@ export default {
   min-width: 0;
   display: flex;
   flex-flow: column;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   line-height: 1.4;
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
   .mixin-ellipsis-1();
 }
 
 .artist {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
   .mixin-ellipsis-1();
 }
@@ -669,7 +669,7 @@ export default {
   justify-content: center;
   background: transparent;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, transform @transition-fast, box-shadow @transition-fast;
@@ -710,14 +710,14 @@ export default {
   display: flex;
   flex-flow: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   min-width: 0;
 }
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 .progress {
@@ -725,8 +725,8 @@ export default {
   max-width: 560px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
+  gap: var(--qm-sp-3, 8px);
+  font-size: var(--qm-fs-2xs, 11px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
   font-variant-numeric: tabular-nums;
 }
@@ -736,7 +736,7 @@ export default {
 .progressBar {
   flex: auto;
   height: 3px;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background: var(--color-button-background, rgba(0,0,0,0.08));
   cursor: pointer;
   transition: height @transition-fast;
@@ -748,7 +748,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   min-width: 0;
 }
 
@@ -757,10 +757,10 @@ export default {
   padding: 0 12px;
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   color: var(--color-font);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--qm-fs-2xs, 11px);
+  font-weight: var(--qm-fw-semibold, 600);
   letter-spacing: 0.3px;
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, border-color @transition-fast, transform @transition-fast;
@@ -778,8 +778,8 @@ export default {
   padding: 10px 12px 6px;
   display: flex;
   flex-flow: column nowrap;
-  gap: 8px;
-  font-size: 12px;
+  gap: var(--qm-sp-3, 8px);
+  font-size: var(--qm-fs-xs, 12px);
 }
 
 .volumeInfo {
@@ -797,7 +797,7 @@ export default {
   justify-content: center;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   color: var(--color-font);
   cursor: pointer;
   &:hover { background-color: var(--color-button-background-hover, rgba(0,0,0,0.06)); }
@@ -806,7 +806,7 @@ export default {
 
 .volumeText {
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 
 .volumeSliderWrap {
@@ -815,7 +815,7 @@ export default {
 
 .volumeBar {
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background: var(--color-button-background, rgba(0,0,0,0.08));
   cursor: pointer;
   transition: height @transition-fast;
@@ -826,7 +826,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 .stepBtn {
@@ -834,9 +834,9 @@ export default {
   height: 24px;
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--qm-radius-xs, 6px);
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, border-color @transition-fast, transform @transition-fast;
@@ -850,7 +850,7 @@ export default {
   flex-flow: column nowrap;
   min-width: 140px;
   padding: 4px 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   // 外层面板（Popup.vue）已经是白卡，这里不要再画一层，否则会出现双重白边
 }
 
@@ -862,13 +862,13 @@ export default {
 .menuItem {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   width: 100%;
   text-align: left;
   background: transparent;
   border: 0;
   padding: 8px 12px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
   cursor: pointer;
   transition: background-color @transition-fast;
@@ -878,7 +878,7 @@ export default {
 
 .menuItemActive {
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
   background-color: var(--color-accent-soft);
 }
 
@@ -896,7 +896,7 @@ export default {
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, transform @transition-fast;
@@ -918,7 +918,7 @@ export default {
   flex-flow: column nowrap;
   min-width: 140px;
   padding: 4px 0;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 
 /* ========== 播放队列弹窗（向上，仿 QQ 音乐） ========== */
@@ -927,7 +927,7 @@ export default {
   flex-flow: column nowrap;
   width: 360px;
   max-height: 420px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
 }
 
@@ -939,8 +939,8 @@ export default {
 }
 
 .playlistPopupTitle {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--qm-fs-lg, 15px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--qm-text-1);
   letter-spacing: .3px;
 }
@@ -965,7 +965,7 @@ export default {
 
 .playlistPopupMeta {
   padding: 0 14px 8px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-4);
 }
 
@@ -980,10 +980,10 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   height: 54px;
   padding: 0 8px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   cursor: pointer;
   transition: background-color @transition-fast;
   color: var(--qm-text-2);
@@ -998,7 +998,7 @@ export default {
 .playlistPopupItemActive {
   background-color: var(--qm-primary-soft);
 
-  .playlistPopupNameText { color: var(--qm-primary); font-weight: 600; }
+  .playlistPopupNameText { color: var(--qm-primary); font-weight: var(--qm-fw-semibold, 600); }
 }
 
 .playlistPopupCover {
@@ -1006,7 +1006,7 @@ export default {
   flex: none;
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   overflow: hidden;
   background-color: rgba(0, 0, 0, .05);
 
@@ -1041,7 +1041,7 @@ export default {
   min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
 }
 
 .playlistPopupName {
@@ -1050,7 +1050,7 @@ export default {
   align-items: center;
   gap: 5px;
   min-width: 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
 }
 
 .playlistPopupNameText {
@@ -1060,7 +1060,7 @@ export default {
 }
 
 .playlistPopupSinger {
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   color: var(--qm-text-4);
   .mixin-ellipsis-1();
 }
@@ -1070,7 +1070,7 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   opacity: 0;
   transition: opacity @transition-fast;
 }
@@ -1103,6 +1103,6 @@ export default {
   padding: 40px 12px;
   text-align: center;
   color: var(--color-font-label, rgba(0,0,0,0.45));
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 </style>

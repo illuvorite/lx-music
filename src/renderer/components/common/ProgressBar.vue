@@ -119,7 +119,7 @@ export default {
   // background-color: #f5f5f5;
   position: relative;
   cursor: pointer;
-  border-radius: 40px;
+  border-radius: var(--qm-radius-chip, 999px);
 }
 .progressBar {
   position: absolute;

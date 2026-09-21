@@ -55,7 +55,7 @@ watch(() => props.source, async(source) => {
 @import '@renderer/assets/styles/layout.less';
 
 .tagList {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   position: relative;
 
   &.active {
@@ -124,7 +124,7 @@ watch(() => props.source, async(source) => {
   transition: .25s ease;
   transition-property: transform, opacity;
   z-index: 10;
-  padding: 10px;
+  padding: var(--qm-sp-4, 10px);
   box-sizing: border-box;
 
   li {
@@ -146,7 +146,7 @@ watch(() => props.source, async(source) => {
 }
 
 .type {
-  padding-top: 10px;
+  padding-top: var(--qm-sp-4, 10px);
   padding-bottom: 3px;
   color: var(--color-font-label);
 }

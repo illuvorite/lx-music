@@ -377,7 +377,7 @@ export default {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
 }
 
 .content {
@@ -403,7 +403,7 @@ export default {
   align-items: center;
 
   p {
-    font-size: 18px;
+    font-size: var(--qm-fs-2xl, 18px);
     color: var(--color-font-label);
   }
 }

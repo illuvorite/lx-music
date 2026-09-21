@@ -139,7 +139,7 @@ export default {
 .btns {
   line-height: 1.2;
   display: inline-flex;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
 
   button {
     background-color: transparent;

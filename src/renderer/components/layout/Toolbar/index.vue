@@ -181,7 +181,7 @@ const goFreeSource = () => {
   justify-content: center;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background: transparent;
   color: rgb(110, 110, 110);
   cursor: pointer;
@@ -204,8 +204,8 @@ const goFreeSource = () => {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-left: 20px;
+  gap: var(--qm-sp-8, 20px);
+  margin-left: var(--qm-sp-8, 20px);
 }
 
 .searchWrap {

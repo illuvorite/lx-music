@@ -163,7 +163,7 @@ onBeforeUnmount(() => {
   }
 }
 .list {
-  padding: 10px;
+  padding: var(--qm-sp-4, 10px);
   box-sizing: border-box;
 }
 

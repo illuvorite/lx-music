@@ -246,20 +246,20 @@ export default {
   display: flex;
   flex-flow: row wrap;
   // margin-top: -15px;
-  margin-bottom: 15px;
+  margin-bottom: var(--qm-sp-6, 15px);
   transition: opacity @transition-normal;
 }
 .hotKeyItem {
   width: 30%;
   padding-right: 35px;
-  margin-top: 15px;
+  margin-top: var(--qm-sp-6, 15px);
   box-sizing: border-box;
 }
 .hotKeyItemTitle {
   .mixin-ellipsis-1();
   padding-bottom: 5px;
   color: var(--color-font-label);
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 .hotKeyItemInput {
   width: 100%;

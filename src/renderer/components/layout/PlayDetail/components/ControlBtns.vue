@@ -138,7 +138,7 @@ export default {
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 
   button {
     width: 20px;
@@ -177,8 +177,8 @@ export default {
     width: auto;
     min-width: 20px;
     padding: 0 2px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--qm-fs-2xs, 11px);
+    font-weight: var(--qm-fw-semibold, 600);
     letter-spacing: .3px;
   }
 }
@@ -188,13 +188,13 @@ export default {
   display: flex;
   flex-flow: column nowrap;
   min-width: 92px;
-  padding: 4px;
+  padding: var(--qm-sp-1, 4px);
 }
 .qualityItem {
   height: 30px;
   padding: 0 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   font-size: 12.5px;
   text-align: left;
   color: var(--color-font);

@@ -402,7 +402,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: baseline;
   gap: 18px;
-  margin-bottom: 6px;
+  margin-bottom: var(--qm-sp-2, 6px);
 }
 .titleMain,
 .titleSub {
@@ -415,12 +415,12 @@ onBeforeUnmount(() => {
 }
 .titleMain {
   font-size: 26px;
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
   line-height: 1.3;
 }
 .titleSub {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: var(--qm-fs-3xl, 20px);
+  font-weight: var(--qm-fw-medium, 500);
   line-height: 1.3;
 }
 .titleActive {
@@ -441,7 +441,7 @@ onBeforeUnmount(() => {
   border: none;
   background: transparent;
   padding: 4px 2px 8px;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   color: var(--qm-text-3, #888);
   cursor: pointer;
   transition: color @transition-fast;
@@ -454,7 +454,7 @@ onBeforeUnmount(() => {
     transform: translateX(-50%) scaleX(0);
     width: 22px;
     height: 3px;
-    border-radius: 2px;
+    border-radius: var(--qm-radius-2xs, 4px);
     background-color: var(--color-primary);
     transition: transform @transition-fast;
   }
@@ -473,13 +473,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 16px;
+  gap: var(--qm-sp-7, 16px);
 }
 .customLink {
   border: none;
   background: transparent;
   padding: 4px 2px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   cursor: pointer;
 
@@ -491,13 +491,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   padding: 12px 14px;
   min-width: 240px;
 
   .opacityPopLabel {
     flex: none;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     color: var(--color-font);
   }
   .opacitySlider {
@@ -509,7 +509,7 @@ onBeforeUnmount(() => {
   .opacityValue {
     flex: none;
     width: 36px;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     text-align: right;
     color: var(--qm-text-3, #888);
   }
@@ -527,12 +527,12 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
-  margin-bottom: 20px;
+  margin-bottom: var(--qm-sp-8, 20px);
 }
 .bannerCard {
   position: relative;
   height: 150px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.08));
   background-size: cover;
   background-position: center;
@@ -558,7 +558,7 @@ onBeforeUnmount(() => {
   .sectionTitle {
     margin: 0;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: var(--qm-fw-semibold, 600);
     color: var(--color-font);
   }
 }
@@ -566,19 +566,19 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
-  margin-bottom: 20px;
+  margin-bottom: var(--qm-sp-8, 20px);
 }
 .cardItem {
   display: flex;
   flex-flow: column nowrap;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   cursor: pointer;
   min-width: 0;
 }
 .cardBg {
   position: relative;
   height: 96px;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   border: 2px solid transparent;
   box-sizing: border-box;
   transition: border-color @transition-fast, transform @transition-fast;
@@ -664,7 +664,7 @@ onBeforeUnmount(() => {
   }
 }
 .cardName {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -681,7 +681,7 @@ onBeforeUnmount(() => {
   position: relative;
   height: 34px;
   border: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   cursor: pointer;
   box-sizing: border-box;
   padding: 0;
@@ -701,10 +701,10 @@ onBeforeUnmount(() => {
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   height: 320px;
   color: var(--qm-text-3, #888);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
 
   .desktopEmptyIcon {
     width: 40px;
@@ -718,7 +718,7 @@ onBeforeUnmount(() => {
 .empty {
   padding: 40px 0;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--qm-text-3, #888);
 }
 </style>

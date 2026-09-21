@@ -57,24 +57,24 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .main {
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   max-width: 400px;
   min-width: 200px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   h2 {
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: var(--qm-sp-6, 15px);
   }
 }
 
 .btn {
   display: block;
-  margin-bottom: 15px;
+  margin-bottom: var(--qm-sp-6, 15px);
   &:last-child {
     margin-bottom: 0;
   }

@@ -303,7 +303,7 @@ export default {
     right: 30px;
     top: -14px;
     line-height: 1.2;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     color: var(--color-primary-dark-100);
     opacity: .7;
   }
@@ -347,7 +347,7 @@ export default {
     line-height: 1.3;
   }
   .lyricSelectlineExtended {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
   }
   .lrcActive {
     color: var(--color-primary);

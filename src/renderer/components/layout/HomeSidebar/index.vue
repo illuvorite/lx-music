@@ -274,18 +274,18 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
 .navList {
   display: flex;
   flex-flow: column;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   padding: 0 12px;
   height: 42px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: var(--qm-radius-md, 10px);
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-medium, 500);
   color: var(--color-font);
   text-decoration: none;
   cursor: pointer;
@@ -299,7 +299,7 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   &.active {
     background-color: var(--color-accent-soft);
     color: var(--color-accent);
-    font-weight: 600;
+    font-weight: var(--qm-fw-semibold, 600);
   }
 }
 
@@ -347,7 +347,7 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   height: 36px;
   padding: 0 10px;
   color: var(--color-font-label, rgba(0,0,0,0.55));
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
@@ -365,7 +365,7 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   justify-content: center;
   background: transparent;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   color: var(--color-font);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, transform @transition-fast;
@@ -382,30 +382,30 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   overflow-y: auto;
   display: flex;
   flex-flow: column;
-  gap: 2px;
-  padding-bottom: 4px;
+  gap: var(--qm-sp-0, 2px);
+  padding-bottom: var(--qm-sp-1, 4px);
   scrollbar-gutter: stable;
   /* 滚动条收敛 */
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb {
     background: var(--color-button-background-hover, rgba(0,0,0,0.12));
-    border-radius: 999px;
+    border-radius: var(--qm-radius-chip, 999px);
   }
 }
 
 .playlistItem {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   padding: 0 12px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   color: var(--color-font);
   text-decoration: none;
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, transform @transition-fast;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--qm-fs-sm, 13px);
+  font-weight: var(--qm-fw-medium, 500);
 
   &:hover {
     background-color: var(--color-button-background-hover, rgba(0,0,0,0.04));
@@ -414,7 +414,7 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   &.active {
     background-color: var(--color-accent-soft);
     color: var(--color-accent);
-    font-weight: 600;
+    font-weight: var(--qm-fw-semibold, 600);
   }
 }
 
@@ -425,7 +425,7 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 7px;
+  border-radius: var(--qm-radius-sm, 8px);
   background: var(--color-button-background, rgba(0,0,0,0.05));
   color: var(--color-primary);
 
@@ -443,10 +443,10 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
 .playlistCount {
   flex: none;
   color: var(--color-font-label, rgba(0,0,0,0.45));
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   font-variant-numeric: tabular-nums;
   padding: 1px 6px;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background: var(--color-button-background, rgba(0,0,0,0.04));
 }
 
@@ -455,16 +455,16 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   height: 36px;
   margin: 4px 0 10px;
   padding: 0 12px;
   background: transparent;
   border: 1px dashed var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   color: var(--color-font-label, rgba(0,0,0,0.55));
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--qm-fs-xs, 12px);
+  font-weight: var(--qm-fw-medium, 500);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, border-color @transition-fast, transform @transition-fast;
 
@@ -480,9 +480,9 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
 .renameInput {
   height: 36px;
   padding: 0 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
+  border-radius: var(--qm-radius-md, 10px);
+  font-size: var(--qm-fs-sm, 13px);
+  font-weight: var(--qm-fw-medium, 500);
   background-color: var(--color-primary-background);
   border: 1px solid var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
@@ -494,8 +494,8 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   flex: none;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 10px;
+  gap: var(--qm-sp-1, 4px);
+  padding: var(--qm-sp-4, 10px);
   border-top: 1px solid var(--color-border-subtle);
 }
 
@@ -504,15 +504,15 @@ const handleListContextMenu = (event: MouseEvent, listInfo: LX.List.MyListInfo, 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   height: 34px;
   padding: 0 8px;
   background: transparent;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   color: var(--color-font);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--qm-fs-xs, 12px);
+  font-weight: var(--qm-fw-medium, 500);
   text-decoration: none;
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast, transform @transition-fast;

@@ -33,11 +33,6 @@ export class Event extends EventEmitter {
    * @param setting 新设置
    */
   update_config(setting: Partial<LX.AppSetting>) {
-    const dbgKeys = Object.keys(setting)
-    if (dbgKeys.some(k => k.includes('soundEffect'))) {
-      // eslint-disable-next-line no-console
-      console.log('[main-config-debug]', JSON.stringify(setting), new Error('trace').stack)
-    }
     const { setting: newSetting, updatedSettingKeys, updatedSetting } = updateSetting(setting)
     global.lx.appSetting = newSetting
     if (!updatedSettingKeys.length) return

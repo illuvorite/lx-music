@@ -105,26 +105,26 @@ export default {
   }
   h2 {
     flex: 0 0 none;
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: var(--qm-sp-6, 15px);
   }
   h3 {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     line-height: 1.3;
   }
   pre {
     white-space: pre-wrap;
     text-align: justify;
-    margin-top: 10px;
+    margin-top: var(--qm-sp-4, 10px);
   }
 }
 
 .info {
   flex: 1 1 auto;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   line-height: 1.5;
   overflow-y: auto;
   height: 100%;
@@ -132,7 +132,7 @@ export default {
 }
 .current {
   > p {
-    padding-left: 15px;
+    padding-left: var(--qm-sp-6, 15px);
   }
 }
 
@@ -148,14 +148,14 @@ export default {
     padding-inline-start: 30px;
   }
   p {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     line-height: 1.5;
   }
 }
 
 .history {
   h3 {
-    padding-top: 15px;
+    padding-top: var(--qm-sp-6, 15px);
   }
 
   .item {
@@ -164,13 +164,13 @@ export default {
     }
     padding: 0 15px;
     + .item {
-      padding-top: 15px;
+      padding-top: var(--qm-sp-6, 15px);
     }
     h4 {
-      font-weight: 700;
+      font-weight: var(--qm-fw-bold, 700);
     }
     > p {
-      padding-left: 15px;
+      padding-left: var(--qm-sp-6, 15px);
     }
   }
 
@@ -179,13 +179,13 @@ export default {
   flex: 0 0 none;
   padding: 0 15px;
   .desc {
-    padding-top: 20px;
-    font-size: 13px;
+    padding-top: var(--qm-sp-8, 20px);
+    font-size: var(--qm-fs-sm, 13px);
     color: var(--color-primary-font);
     line-height: 1.25;
 
     p {
-      font-size: 13px;
+      font-size: var(--qm-fs-sm, 13px);
       color: var(--color-primary-font);
       line-height: 1.25;
     }

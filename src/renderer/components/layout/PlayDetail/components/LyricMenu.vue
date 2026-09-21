@@ -210,7 +210,7 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .container {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   position: absolute;
   opacity: 0;
   transform: scale(0);

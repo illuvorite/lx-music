@@ -125,7 +125,7 @@ export default {
 }
 
 .listsSelect {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 
   &:hover {
     :global(.icon) {
@@ -160,7 +160,7 @@ export default {
     li {
       // background-color: var(--color-main-background);
       line-height: 38px;
-      font-size: 13px;
+      font-size: var(--qm-fs-sm, 13px);
       &:hover {
         background-color: var(--color-button-background-hover);
       }

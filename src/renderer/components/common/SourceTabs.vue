@@ -43,13 +43,13 @@ const handleClick = (id) => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-width: 0;
 }
 
 .label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-4);
 }
 
@@ -57,7 +57,7 @@ const handleClick = (id) => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -70,8 +70,8 @@ const handleClick = (id) => {
   height: 28px;
   padding: 0 14px;
   border: 0;
-  border-radius: 14px;
-  font-size: 12px;
+  border-radius: var(--qm-radius-lg, 12px);
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 28px;
   color: var(--qm-text-3);
   background-color: rgba(0, 0, 0, .05);

@@ -114,7 +114,7 @@ export default {
   ul {
     display: flex;
     flex-flow: row nowrap;
-    gap: 4px;
+    gap: var(--qm-sp-1, 4px);
     li {
       transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
       line-height: 1.2;
@@ -135,14 +135,14 @@ export default {
         line-height: 1.2;
         color: var(--qm-text-2);
         font-size: var(--qm-font-meta);
-        font-weight: 400;
+        font-weight: var(--qm-fw-regular, 400);
         border-radius: 50%;
       }
       &.active {
         span {
           background-color: var(--qm-primary);
           color: var(--qm-text-invert);
-          font-weight: 600;
+          font-weight: var(--qm-fw-semibold, 600);
         }
       }
       button {

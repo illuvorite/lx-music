@@ -310,8 +310,8 @@ export default {
 }
 .listsTitle {
   flex: auto;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--qm-fs-2xs, 11px);
+  font-weight: var(--qm-fw-semibold, 600);
   letter-spacing: 0.6px;
   text-transform: uppercase;
   line-height: 38px;
@@ -322,7 +322,7 @@ export default {
 .headerBtns {
   flex: none;
   display: flex;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
 }
 .listsAdd {
   background: none;
@@ -330,7 +330,7 @@ export default {
   width: 30px;
   border: none;
   outline: none;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   cursor: pointer;
   opacity: 1;
   color: var(--color-font-label);
@@ -376,7 +376,7 @@ export default {
   position: relative;
   transition: background-color @transition-fast, color @transition-fast, opacity @transition-fast, transform @transition-fast;
   background-color: transparent;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   &:not(.active) {
     &:hover {
       background-color: var(--color-button-background-hover);
@@ -387,7 +387,7 @@ export default {
   &.active {
     background-color: var(--color-accent-soft);
     color: var(--color-accent);
-    font-weight: 600;
+    font-weight: var(--qm-fw-semibold, 600);
   }
   &.selected {
     background-color: var(--color-primary-font-active);
@@ -419,10 +419,10 @@ export default {
 .listsLabel {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   height: @lists-item-height;
   padding: 0 10px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: @lists-item-height;
   .mixin-ellipsis-1();
 }
@@ -433,7 +433,7 @@ export default {
   line-height: @lists-item-height;
   background: none !important;
   border-radius: 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   display: none;
 }
 

@@ -8,7 +8,8 @@ export default () => {
   // 创建一个空白音频以保持对 Media Session 的注册
   const emptyAudio = new Audio()
   emptyAudio.autoplay = false
-  emptyAudio.src = require('@renderer/assets/medias/Silence02s.mp3')
+  // 统一使用 PCM WAV（与其余音效资源规格一致），避免 MP3 编码器延迟/填充帧带来的额外采样
+  emptyAudio.src = require('@renderer/assets/medias/Silence02s.wav')
   emptyAudio.controls = false
   emptyAudio.preload = 'auto'
   emptyAudio.onplaying = () => {

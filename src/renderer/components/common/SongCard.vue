@@ -113,8 +113,8 @@ watch(() => props.img, () => { imgError.value = false })
   align-items: center;
   gap: 3px;
   color: var(--qm-text-invert);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--qm-fs-xs, 12px);
+  font-weight: var(--qm-fw-semibold, 600);
   letter-spacing: 0.2px;
   font-variant-numeric: tabular-nums;
   text-shadow: var(--qm-shadow-text);
@@ -154,12 +154,12 @@ watch(() => props.img, () => { imgError.value = false })
 }
 
 .body {
-  margin-top: 8px;
+  margin-top: var(--qm-sp-3, 8px);
   min-width: 0;
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 19px;
   color: var(--qm-text-2);
   transition: color var(--qm-t-fast);
@@ -177,15 +177,15 @@ watch(() => props.img, () => { imgError.value = false })
 }
 
 .meta {
-  margin-top: 2px;
-  font-size: 12px;
+  margin-top: var(--qm-sp-0, 2px);
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 17px;
   color: var(--qm-text-4);
   .mixin-ellipsis-1();
 }
 
 .sm {
-  .title { font-size: 12px; line-height: 17px; }
-  .meta { font-size: 11px; line-height: 16px; }
+  .title { font-size: var(--qm-fs-xs, 12px); line-height: 17px; }
+  .meta { font-size: var(--qm-fs-2xs, 11px); line-height: 16px; }
 }
 </style>

@@ -157,7 +157,7 @@ export default {
   flex-flow: row nowrap;
   align-items: center;
   contain: strict;
-  padding: 6px;
+  padding: var(--qm-sp-2, 6px);
   z-index: 2;
   * {
     box-sizing: border-box;
@@ -214,7 +214,7 @@ export default {
     justify-content: center;
     color: var(--color-primary-light-400-alpha-200);
     user-select: none;
-    font-size: 20px;
+    font-size: var(--qm-fs-3xl, 20px);
     font-family: Consolas, "Courier New", monospace;
 
     span {
@@ -230,7 +230,7 @@ export default {
   flex-flow: column nowrap;
   justify-content: center;
   align-items: flex-start;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   min-width: 0;
   line-height: 1.5;
@@ -238,7 +238,7 @@ export default {
 
 .title {
   max-width: 100%;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label);
   .mixin-ellipsis-1();
 }
@@ -253,7 +253,7 @@ export default {
   width: 30%;
   flex: none;
   color: var(--color-550);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -276,8 +276,8 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  padding-left: 10px;
-  padding-right: 15px;
+  padding-left: var(--qm-sp-4, 10px);
+  padding-right: var(--qm-sp-6, 15px);
   gap: 18px;
 }
 

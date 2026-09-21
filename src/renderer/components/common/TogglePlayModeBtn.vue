@@ -136,8 +136,8 @@ const toggleMode = (mode) => {
 .setting {
   display: flex;
   flex-flow: row nowrap;
-  font-size: 14px;
-  gap: 10px;
+  font-size: var(--qm-fs-md, 14px);
+  gap: var(--qm-sp-4, 10px);
 }
 
 

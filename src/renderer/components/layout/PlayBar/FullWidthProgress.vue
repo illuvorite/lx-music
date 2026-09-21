@@ -180,7 +180,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  padding-bottom: 6px;
+  padding-bottom: var(--qm-sp-2, 6px);
   // height: 15px;
   .progressBar {
     height: 2px;
@@ -225,7 +225,7 @@ export default {
     justify-content: center;
     color: var(--color-primary-light-400-alpha-200);
     user-select: none;
-    font-size: 20px;
+    font-size: var(--qm-fs-3xl, 20px);
     font-family: Consolas, "Courier New", monospace;
 
     span {
@@ -235,13 +235,13 @@ export default {
 }
 
 .infoContent {
-  padding-left: 10px;
+  padding-left: var(--qm-sp-4, 10px);
   flex: auto;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: flex-start;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   min-width: 0;
   line-height: 1.5;
@@ -249,7 +249,7 @@ export default {
 
 .title {
   max-width: 100%;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font-label);
   .mixin-ellipsis-1();
 }
@@ -263,8 +263,8 @@ export default {
 .timeContent {
   flex: none;
   color: var(--color-550);
-  font-size: 13px;
-  padding-left: 10px;
+  font-size: var(--qm-fs-sm, 13px);
+  padding-left: var(--qm-sp-4, 10px);
 }
 
 .playBtnContent {
@@ -273,8 +273,8 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  padding-left: 10px;
-  padding-right: 15px;
+  padding-left: var(--qm-sp-4, 10px);
+  padding-right: var(--qm-sp-6, 15px);
   gap: 18px;
 }
 

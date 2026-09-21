@@ -101,7 +101,7 @@ const icon = computed(() => {
   display: flex;
   flex-flow: column nowrap;
   padding: 2px 3px;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   width: 140px;
 }
 
@@ -110,7 +110,7 @@ const icon = computed(() => {
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   span {
     line-height: 1.2;
   }

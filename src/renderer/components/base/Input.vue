@@ -100,7 +100,7 @@ export default {
   outline: none;
   transition: background-color @transition-fast, border-color @transition-fast, box-shadow @transition-fast;
   background-color: var(--color-primary-background);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
@@ -124,7 +124,7 @@ export default {
 
 .min {
   padding: 3px 8px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 
 </style>

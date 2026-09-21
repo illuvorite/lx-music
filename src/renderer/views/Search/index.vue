@@ -202,7 +202,7 @@ export default {
     bottom: 0;
     width: 0;
     height: 2px;
-    border-radius: 2px;
+    border-radius: var(--qm-radius-2xs, 4px);
     background-color: var(--qm-primary);
     transform: translateX(-50%);
     transition: width var(--qm-t-base);
@@ -211,7 +211,7 @@ export default {
 
 .typeTabActive {
   color: var(--qm-text-1);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
 
   &::after { width: 22px; }
 }
@@ -241,7 +241,7 @@ export default {
 .sourceTabActive {
   background-color: var(--qm-primary-soft);
   color: var(--qm-primary);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
 
   &:hover { background-color: var(--qm-primary-soft-hover); color: var(--qm-primary); }
 }

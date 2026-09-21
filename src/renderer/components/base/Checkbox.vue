@@ -134,16 +134,18 @@ export default {
       }
     }
   }
+  // 选中态：主色实心块 + 白色对勾（比原来的「只换描边色」更明确）
   &:checked {
     + .content {
       .container {
+        color: #fff;
         &:after {
-          border-color: var(--color-primary-font);
+          border-color: var(--qm-primary, var(--color-primary-font));
+          background-color: var(--qm-primary, var(--color-primary-font));
         }
       }
       .icon {
         transform: scale(1);
-        // opacity: 1;
       }
     }
   }
@@ -159,8 +161,8 @@ export default {
   height: 1em;
   cursor: pointer;
   display: flex;
-  color: var(--color-primary);
-  transition: transform @transition-fast;
+  color: var(--qm-primary, var(--color-primary));
+  transition: transform var(--qm-t-fast, @transition-fast);
   &:after {
     position: absolute;
     content: ' ';
@@ -168,25 +170,28 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
-    border: 1.5px solid var(--color-font-label);
-    transition: border-color @transition-fast, background-color @transition-fast;
-    border-radius: 4px;
+    border: 1.5px solid var(--qm-line-2, var(--color-font-label));
+    transition: border-color var(--qm-t-fast), background-color var(--qm-t-fast);
+    border-radius: var(--qm-radius-xs, 6px);
   }
   &:hover:after {
-    border-color: var(--color-accent);
+    border-color: var(--qm-primary, var(--color-accent));
+  }
+  &:active {
+    transform: scale(0.92);
   }
 }
 .icon {
-  transition: transform 220ms var(--ease-spring);
+  transition: transform 220ms var(--qm-ease-spring, var(--ease-spring));
   transition-property: transform;
   transform: scale(0);
-  border-radius: 2px;
+  border-radius: var(--qm-radius-2xs, 4px);
 }
 
 .label {
   flex: auto;
-  margin-left: 5px;
-  line-height: 1.5;
+  margin-left: var(--qm-sp-2, 6px);
+  line-height: var(--qm-leading-normal, 1.5);
   cursor: pointer;
 }
 

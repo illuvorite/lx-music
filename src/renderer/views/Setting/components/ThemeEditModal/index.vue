@@ -556,24 +556,24 @@ export default {
   min-height: 0;
   h2 {
     flex: none;
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
-    padding: 15px;
+    padding: var(--qm-sp-6, 15px);
   }
   h3 {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
-    padding-bottom: 15px;
-    font-size: 15px;
+    padding-bottom: var(--qm-sp-6, 15px);
+    font-size: var(--qm-fs-lg, 15px);
   }
 }
 .content {
   flex: auto;
   // padding: 15px 0;
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   gap: 5px;
   display: flex;
   flex-flow: column nowrap;
@@ -620,7 +620,7 @@ export default {
   }
 }
 .label {
-  padding-top: 10px;
+  padding-top: var(--qm-sp-4, 10px);
   text-align: center;
 }
 
@@ -641,7 +641,7 @@ export default {
   border: 1px dashed var(--color-primary-light-100-alpha-300);
   color: var(--color-primary-light-100-alpha-300);
   position: relative;
-  border-radius: 5px;
+  border-radius: var(--qm-radius-xs, 6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -757,7 +757,7 @@ export default {
 
 .note {
   padding: 8px 15px;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   line-height: 1.25;
   color: var(--color-font);
   // p {
@@ -767,18 +767,18 @@ export default {
   // }
 }
 .footer {
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
-  font-size: 14px;
+  gap: var(--qm-sp-6, 15px);
+  font-size: var(--qm-fs-md, 14px);
   .subContent {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    gap: 10px;
+    gap: var(--qm-sp-4, 10px);
   }
 
   .checkbox {

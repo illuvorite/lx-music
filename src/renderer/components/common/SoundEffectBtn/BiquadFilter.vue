@@ -38,9 +38,15 @@
         </div>
       </div>
     </div>
-    <!-- 增强效果滑条（QQ 银河音效同款 6 项） -->
+    <!-- 增强效果滑条（QQ 银河音效同款 6 项，双击滑条行可重置） -->
     <div :class="$style.enhanceGrid">
-      <div v-for="item in enhanceItems" :key="item.key" :class="$style.enhanceItem">
+      <div
+        v-for="item in enhanceItems"
+        :key="item.key"
+        :class="$style.enhanceItem"
+        :title="item.tip"
+        @dblclick="item.reset()"
+      >
         <span :class="$style.enhanceLabel">{{ item.label }}</span>
         <base-slider-bar
           :class="$style.enhanceSlider"
@@ -194,57 +200,81 @@ const enhanceItems = computed(() => {
     {
       key: 'hifi',
       label: window.i18n.t('player__sound_effect_enhance_hifi'),
+      tip: '提亮高频细节，让人声与乐器更通透（双击重置）',
       value: appSetting['player.soundEffect.enhance.hifi'],
       min: 0,
       max: 50,
       text: `${appSetting['player.soundEffect.enhance.hifi']}%`,
       change: v => { updateSetting({ 'player.soundEffect.enhance.hifi': Math.round(v) }) },
+      reset: () => { updateSetting({ 'player.soundEffect.enhance.hifi': 0 }) },
     },
     {
       key: 'bass',
       label: window.i18n.t('player__sound_effect_enhance_bass'),
+      tip: '增强 120Hz 以下低频力度（双击重置）',
       value: appSetting['player.soundEffect.enhance.bass'],
       min: 0,
       max: 50,
       text: `${appSetting['player.soundEffect.enhance.bass']}%`,
       change: v => { updateSetting({ 'player.soundEffect.enhance.bass': Math.round(v) }) },
+      reset: () => { updateSetting({ 'player.soundEffect.enhance.bass': 0 }) },
     },
     {
       key: 'reverb',
       label: window.i18n.t('player__sound_effect_enhance_reverb'),
+      tip: '为声音添加空间混响（双击重置；拖动会自动启用默认混响）',
       value: appSetting['player.soundEffect.convolution.sendGain'],
       min: 0,
       max: 50,
       text: `${appSetting['player.soundEffect.convolution.sendGain']}%`,
       change: v => {
+        if (Math.round(v) === 0) {
+          // 拖回 0 = 关闭混响（保留用户选择的采样文件，仅静音）
+          updateSetting({ 'player.soundEffect.convolution.sendGain': 0 })
+          return
+        }
         ensureReverbOn()
         updateSetting({ 'player.soundEffect.convolution.sendGain': Math.round(v) })
       },
+      reset: () => { updateSetting({ 'player.soundEffect.convolution.sendGain': 0 }) },
     },
     {
       key: 'dynamic',
       label: window.i18n.t('player__sound_effect_enhance_dynamic'),
+      tip: '动态压缩让响度更饱满、强弱对比更明显（双击重置）',
       value: appSetting['player.soundEffect.enhance.dynamic'],
       min: 0,
       max: 50,
       text: `${appSetting['player.soundEffect.enhance.dynamic']}%`,
       change: v => { updateSetting({ 'player.soundEffect.enhance.dynamic': Math.round(v) }) },
+      reset: () => { updateSetting({ 'player.soundEffect.enhance.dynamic': 0 }) },
     },
     {
       key: 'surround',
       label: window.i18n.t('player__sound_effect_enhance_surround'),
+      tip: '3D 环绕：声音围绕头部旋转，0% 为关闭（双击重置）',
       value: appSetting['player.soundEffect.panner.soundR'],
-      min: 1,
+      min: 0,
       max: 30,
-      text: `${appSetting['player.soundEffect.panner.soundR']}%`,
+      text: appSetting['player.soundEffect.panner.soundR'] === 0
+        ? window.i18n.t('player__sound_effect_biquad_filter_preset_close')
+        : `${appSetting['player.soundEffect.panner.soundR']}%`,
       change: v => {
+        v = Math.round(v)
+        if (v <= 0) {
+          // 0% = 真正关闭环绕（停掉 panner 旋转，释放 CPU）
+          updateSetting({ 'player.soundEffect.panner.enable': false, 'player.soundEffect.panner.soundR': 0 })
+          return
+        }
         if (!appSetting['player.soundEffect.panner.enable']) updateSetting({ 'player.soundEffect.panner.enable': true })
-        updateSetting({ 'player.soundEffect.panner.soundR': Math.round(v) })
+        updateSetting({ 'player.soundEffect.panner.soundR': v })
       },
+      reset: () => { updateSetting({ 'player.soundEffect.panner.enable': false, 'player.soundEffect.panner.soundR': 0 }) },
     },
     {
       key: 'balance',
       label: window.i18n.t('player__sound_effect_enhance_balance'),
+      tip: '左右声道平衡，居中为标准立体声（双击重置）',
       value: appSetting['player.soundEffect.enhance.balance'],
       min: -50,
       max: 50,
@@ -254,6 +284,7 @@ const enhanceItems = computed(() => {
           ? 'player__sound_effect_enhance_balance_right'
           : 'player__sound_effect_enhance_balance_center'),
       change: v => { updateSetting({ 'player.soundEffect.enhance.balance': Math.round(v) }) },
+      reset: () => { updateSetting({ 'player.soundEffect.enhance.balance': 0 }) },
     },
   ]
 })
@@ -278,17 +309,17 @@ onBeforeUnmount(() => {
 .presetGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
 }
 .presetBtn {
   position: relative;
   height: 32px;
   padding: 0 10px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.05));
   color: var(--color-font);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
   transition: background-color @transition-fast, border-color @transition-fast, color @transition-fast;
   box-sizing: border-box;
@@ -328,10 +359,10 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   min-height: 24px;
-  margin-bottom: 6px;
+  margin-bottom: var(--qm-sp-2, 6px);
 
   .dbLabel {
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     color: var(--color-primary);
   }
 }
@@ -345,7 +376,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   width: 44px;
 }
 .bandValue {
@@ -353,7 +384,7 @@ onBeforeUnmount(() => {
   top: -18px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 11px;
+  font-size: var(--qm-fs-2xs, 11px);
   line-height: 14px;
   color: var(--color-primary);
   white-space: nowrap;
@@ -372,7 +403,7 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
   width: 4px;
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   background-color: color-mix(in srgb, var(--color-1000) 14%, transparent);
 }
 .vfill {
@@ -381,7 +412,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   transform: translateX(-50%);
   width: 4px;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   background-color: var(--color-primary);
 }
 .vthumb {
@@ -395,13 +426,13 @@ onBeforeUnmount(() => {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 .freqLabel {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
 }
 
 // ===== 增强效果滑条 =====
 .enhanceGrid {
-  margin-top: 16px;
+  margin-top: var(--qm-sp-7, 16px);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px 28px;
@@ -411,13 +442,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-width: 0;
 }
 .enhanceLabel {
   flex: none;
   width: 60px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
   white-space: nowrap;
 }
@@ -429,7 +460,7 @@ onBeforeUnmount(() => {
   flex: none;
   width: 34px;
   text-align: right;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #999);
   font-variant-numeric: tabular-nums;
 }

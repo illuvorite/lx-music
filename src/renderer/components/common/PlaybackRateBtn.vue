@@ -100,7 +100,7 @@ const updatePreservesPitch = (enabled) => {
   display: flex;
   flex-flow: column nowrap;
   padding: 2px 3px;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   width: 300px;
 }
 
@@ -109,7 +109,7 @@ const updatePreservesPitch = (enabled) => {
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   span {
     line-height: 1.2;
   }
@@ -117,7 +117,7 @@ const updatePreservesPitch = (enabled) => {
 .control {
   align-items: center;
   display: flex;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
 }
 
 .slider {

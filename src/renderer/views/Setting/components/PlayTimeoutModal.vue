@@ -85,7 +85,7 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .main {
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   max-width: 530px;
   min-width: 280px;
   display: flex;
@@ -95,15 +95,15 @@ export default {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
   }
 }
 .content {
-  padding-top: 15px;
-  font-size: 14px;
+  padding-top: var(--qm-sp-6, 15px);
+  font-size: var(--qm-fs-md, 14px);
 }
 .row {
   padding-top: 5px;
@@ -117,7 +117,7 @@ export default {
 }
 .inputLabel {
   flex: none;
-  margin-left: 10px;
+  margin-left: var(--qm-sp-4, 10px);
 }
 .tip {
   visibility: hidden;
@@ -127,7 +127,7 @@ export default {
   }
 }
 .footer {
-  margin-top: 20px;
+  margin-top: var(--qm-sp-8, 20px);
   display: flex;
   flex-flow: row nowrap;
 }
@@ -139,7 +139,7 @@ export default {
   width: 150px;
   .mixin-ellipsis-1();
   + .footerBtn {
-    margin-left: 15px;
+    margin-left: var(--qm-sp-6, 15px);
   }
 }
 .ruleLink {

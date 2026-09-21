@@ -79,7 +79,7 @@ const handleUpdatePlaybackRate = (value) => {
   position: relative;
   display: flex;
   flex-flow: column nowrap;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-height: 0;
   flex: none;
 }
@@ -94,23 +94,23 @@ const handleUpdatePlaybackRate = (value) => {
 .eqList {
   display: flex;
   flex-flow: column nowrap;
-  gap: 15px;
+  gap: var(--qm-sp-6, 15px);
   width: 100%;
 }
 .eqItem {
   display: flex;
   flex-flow: row nowrap;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
 }
 .label {
   flex: none;
   // width: 50px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
 }
 .value {
   flex: none;
   width: 40px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   text-align: center;
 
   &.active {
@@ -135,15 +135,15 @@ const handleUpdatePlaybackRate = (value) => {
 }
 
 .checkbox {
-  margin-right: 10px;
-  font-size: 13px;
+  margin-right: var(--qm-sp-4, 10px);
+  font-size: var(--qm-fs-sm, 13px);
 }
 
 .saveList {
   display: flex;
   flex-flow: row wrap;
-  margin-top: 10px;
-  gap: 10px;
+  margin-top: var(--qm-sp-4, 10px);
+  gap: var(--qm-sp-4, 10px);
 }
 
 </style>

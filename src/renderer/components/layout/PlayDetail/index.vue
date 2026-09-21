@@ -269,7 +269,7 @@ export default {
   overflow: hidden;
   display: flex;
   align-items: stretch;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   // 顶部让出悬浮按钮区域
   padding: 62px 36px 0;
 
@@ -281,7 +281,7 @@ export default {
     .left {
       flex-basis: 18%;
       .description p {
-        font-size: 12px;
+        font-size: var(--qm-fs-xs, 12px);
       }
     }
     .comment {
@@ -318,7 +318,7 @@ export default {
   max-width: 340px;
   margin: 0 auto;
   aspect-ratio: 1 / 1;
-  border-radius: 16px;
+  border-radius: var(--qm-radius-xl, 16px);
   // 唱片需从封面右侧露出，因此这里不能裁剪
   overflow: visible;
   background-color: rgba(255, 255, 255, .06);
@@ -358,7 +358,7 @@ export default {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: var(--qm-radius-xl, 16px);
   object-fit: cover;
 }
 .coverEmpty {
@@ -369,7 +369,7 @@ export default {
   justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: var(--qm-radius-xl, 16px);
   background-color: rgba(255, 255, 255, .06);
   color: rgba(255, 255, 255, .3);
 }
@@ -386,15 +386,15 @@ export default {
   min-height: 0;
   p {
     line-height: 1.75;
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     color: var(--color-font-label);
     overflow-wrap: break-word;
     .mixin-ellipsis(1);
   }
   p:first-child {
     color: var(--color-font);
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: var(--qm-fw-medium, 500);
+    font-size: var(--qm-fs-md, 14px);
     .mixin-ellipsis(2);
   }
 }
@@ -407,7 +407,7 @@ export default {
   width: 50%;
   height: 100%;
   opacity: 1;
-  margin-left: 10px;
+  margin-left: var(--qm-sp-4, 10px);
   transform: scaleX(0);
 }
 

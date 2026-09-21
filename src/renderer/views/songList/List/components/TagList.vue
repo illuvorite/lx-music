@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
 @import '@renderer/assets/styles/layout.less';
 
 .tagList {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   position: relative;
 
   &.active {
@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
   top: 100%;
   width: 645px;
   left: 8px;
-  margin-top: 12px;
+  margin-top: var(--qm-sp-5, 12px);
   border-radius: var(--qm-radius-card);
   background-color: var(--qm-card);
   opacity: 0;
@@ -192,7 +192,7 @@ onBeforeUnmount(() => {
   display: flex;
 }
 .list {
-  padding: 10px;
+  padding: var(--qm-sp-4, 10px);
   box-sizing: border-box;
   // box-shadow: 0 0 4px rgba(0, 0, 0, .2);
 }

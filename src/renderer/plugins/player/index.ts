@@ -53,10 +53,20 @@ let convolverSourceGainNode: GainNode
 let convolverOutputGainNode: GainNode
 let convolverDynamicsCompressor: DynamicsCompressorNode
 let gainNode: GainNode
+let masterLimiter: DynamicsCompressorNode
 let panner: PannerNode
-let bassShelf: BiquadFilterNode        // 超重低音（lowshelf 120Hz）
-let hiFiShelf: BiquadFilterNode        // 高保真度（highshelf 7.5kHz）
-let stereoBalance: StereoPannerNode    // 声道平衡
+// 当前生效的增益状态（用于干湿归一化与自动补偿）
+let reverbDry = 1
+let reverbWet = 0
+let eqBoostDb = 0
+let bassBoostDb = 0
+let hifiBoostDb = 0
+// 超重低音（lowshelf 120Hz）
+let bassShelf: BiquadFilterNode
+// 高保真度（highshelf 7.5kHz）
+let hiFiShelf: BiquadFilterNode
+// 声道平衡
+let stereoBalance: StereoPannerNode
 let pitchShifterNode: AudioWorkletNode
 let pitchShifterNodePitchFactor: AudioParam
 let pitchShifterNodeLoadStatus: 'none' | 'loading' | 'unconnect' | 'connected' = 'none'
@@ -119,6 +129,16 @@ const initConvolver = () => {
 
 const initPanner = () => {
   panner = audioContext.createPanner()
+  panner.panningModel = 'HRTF'
+  // 关键：关闭距离衰减。
+  // 默认 distanceModel='inverse' 的增益 = refDistance / (refDistance + rolloff * (d - refDistance))，
+  // 当旋转半径 r < 1 时会得到数倍增益（r=0.1 → 10 倍），且距离在 r~1.73r 间周期变化，
+  // 表现为「一开环绕音量就暴涨且忽大忽小」。改为 linear + rolloff 0 后距离增益恒为 1，
+  // 只保留 HRTF 方向感（环绕效果不变），音量不再被放大。
+  panner.distanceModel = 'linear'
+  panner.refDistance = 1
+  panner.maxDistance = 1000
+  panner.rolloffFactor = 0
 }
 
 const initEnhanceNodes = () => {
@@ -140,6 +160,50 @@ const initGain = () => {
   gainNode = audioContext.createGain()
 }
 
+// 末端限幅器：EQ / 低音 / 高保真 / 混响叠加后的峰值兜底，防止数字削波（破音、电音失真）
+const initMasterLimiter = () => {
+  masterLimiter = audioContext.createDynamicsCompressor()
+  masterLimiter.threshold.value = -1.5
+  masterLimiter.knee.value = 0
+  masterLimiter.ratio.value = 20
+  masterLimiter.attack.value = 0.003
+  masterLimiter.release.value = 0.12
+}
+
+// ============================================================
+//  平滑写入 AudioParam：直接赋值会产生阶跃，是「咔哒/爆音」的主要来源
+// ============================================================
+const PARAM_RAMP = 0.03
+const setParamSmooth = (param: AudioParam, value: number) => {
+  if (!audioContext) {
+    param.value = value
+    return
+  }
+  const now = audioContext.currentTime
+  param.cancelScheduledValues(now)
+  param.setValueAtTime(param.value, now)
+  param.linearRampToValueAtTime(value, now + PARAM_RAMP)
+}
+
+// 混响干湿「等功率归一化」：sqrt(dry² + wet²) > 1 时按能量等比回缩，
+// 保证开混响后整体响度不上升（原先 dry 1.5 + wet 1.5 可带来约 +9dB 的音量跳变）
+const applyReverbGains = () => {
+  if (!convolverSourceGainNode) return
+  const norm = Math.sqrt(reverbDry * reverbDry + reverbWet * reverbWet)
+  const k = norm > 1 ? 1 / norm : 1
+  setParamSmooth(convolverSourceGainNode.gain, reverbDry * k)
+  setParamSmooth(convolverOutputGainNode.gain, reverbWet * k)
+}
+
+// 提升量自动补偿：EQ/低音/高保真抬高多少，就回缩多少（上限 6dB），
+// 让「开关音效、切换预设」前后主观响度基本一致
+const applyMakeupGain = () => {
+  if (!gainNode) return
+  const peakBoostDb = Math.max(0, eqBoostDb) + Math.max(0, bassBoostDb) + Math.max(0, hifiBoostDb)
+  const makeupDb = -Math.min(6, peakBoostDb * 0.4)
+  setParamSmooth(gainNode.gain, Math.pow(10, makeupDb / 20))
+}
+
 const initAdvancedAudioFeatures = () => {
   if (audioContext) return
   if (!audio) throw new Error('audio not defined')
@@ -152,7 +216,8 @@ const initAdvancedAudioFeatures = () => {
   initPanner()
   initEnhanceNodes()
   initGain()
-  // source -> analyser -> biquadFilter -> bassShelf -> hiFiShelf -> pitchShifter -> [(convolver & convolverSource)->convolverDynamicsCompressor] -> panner -> stereoBalance -> gain
+  initMasterLimiter()
+  // source -> analyser -> biquadFilter -> bassShelf -> hiFiShelf -> pitchShifter -> [(convolver & convolverSource)->convolverDynamicsCompressor] -> panner -> stereoBalance -> gain(makeup) -> masterLimiter
   mediaSource = audioContext.createMediaElementSource(audio)
   mediaSource.connect(analyser)
   analyser.connect(biquads.get(`hz${freqs[0]}`)!)
@@ -164,7 +229,8 @@ const initAdvancedAudioFeatures = () => {
   convolverDynamicsCompressor.connect(panner)
   panner.connect(stereoBalance)
   stereoBalance.connect(gainNode)
-  gainNode.connect(audioContext.destination)
+  gainNode.connect(masterLimiter)
+  masterLimiter.connect(audioContext.destination)
 
   // 音频输出设备改变时刷新 audio node 连接
   window.app_event.on('playerDeviceChanged', handleMediaListChange)
@@ -250,24 +316,27 @@ export const setConvolver = (buffer: AudioBuffer | null, mainGain: number, sendG
   convolver.buffer = buffer
   // console.log(mainGain, sendGain)
   if (buffer) {
-    convolverSourceGainNode.gain.value = mainGain
-    convolverOutputGainNode.gain.value = sendGain
+    reverbDry = mainGain
+    reverbWet = sendGain
   } else {
-    convolverSourceGainNode.gain.value = 1
-    convolverOutputGainNode.gain.value = 0
+    reverbDry = 1
+    reverbWet = 0
   }
+  applyReverbGains()
 }
 
 export const setConvolverMainGain = (gain: number) => {
-  if (convolverSourceGainNode.gain.value == gain) return
+  if (reverbDry == gain) return
   // console.log(gain)
-  convolverSourceGainNode.gain.value = gain
+  reverbDry = gain
+  applyReverbGains()
 }
 
 export const setConvolverSendGain = (gain: number) => {
-  if (convolverOutputGainNode.gain.value == gain) return
+  if (reverbWet == gain) return
   // console.log(gain)
-  convolverOutputGainNode.gain.value = gain
+  reverbWet = gain
+  applyReverbGains()
 }
 
 let pannerInfo = {
@@ -283,10 +352,10 @@ const setPannerXYZ = (nx: number, ny: number, nz: number) => {
   pannerInfo.x = nx
   pannerInfo.y = ny
   pannerInfo.z = nz
-  // console.log(pannerInfo)
-  panner.positionX.value = nx * pannerInfo.soundR
-  panner.positionY.value = ny * pannerInfo.soundR
-  panner.positionZ.value = nz * pannerInfo.soundR
+  // 平滑推进：旋转是按定时器跳变的，直接赋值会让 HRTF 参数瞬变，听感上是「沙沙/咔哒」杂音
+  setParamSmooth(panner.positionX, nx * pannerInfo.soundR)
+  setParamSmooth(panner.positionY, ny * pannerInfo.soundR)
+  setParamSmooth(panner.positionZ, nz * pannerInfo.soundR)
 }
 export const setPannerSoundR = (r: number) => {
   pannerInfo.soundR = r
@@ -302,9 +371,9 @@ export const stopPanner = () => {
     pannerInfo.intv = null
     pannerInfo.rad = 0
   }
-  panner.positionX.value = 0
-  panner.positionY.value = 0
-  panner.positionZ.value = 0
+  setParamSmooth(panner.positionX, 0)
+  setParamSmooth(panner.positionY, 0)
+  setParamSmooth(panner.positionZ, 0)
 }
 
 export const startPanner = () => {
@@ -418,33 +487,55 @@ export const hasInitedAdvancedAudioFeatures = (): boolean => audioContext != nul
 /** 超重低音：lowshelf 增益（dB，0~15） */
 export const setBassBoost = (db: number) => {
   initAdvancedAudioFeatures()
-  bassShelf.gain.value = db
+  bassBoostDb = db
+  setParamSmooth(bassShelf.gain, db)
+  applyMakeupGain()
 }
 
 /** 高保真度：highshelf 提亮（dB，0~12） */
 export const setHiFiBoost = (db: number) => {
   initAdvancedAudioFeatures()
-  hiFiShelf.gain.value = db
+  hifiBoostDb = db
+  setParamSmooth(hiFiShelf.gain, db)
+  applyMakeupGain()
+}
+
+/** 均衡器单频段增益：平滑写入，避免拖动 EQ 时的阶跃爆音 */
+export const setEqGain = (hz: Freqs, gain: number) => {
+  initAdvancedAudioFeatures()
+  const filter = biquads.get(`hz${hz}`)
+  if (!filter) return
+  setParamSmooth(filter.gain, gain)
+}
+
+/** 记录当前 EQ 的最大正向提升量，用于自动响度补偿 */
+export const setEqBoostDb = (db: number) => {
+  eqBoostDb = db
+  applyMakeupGain()
 }
 
 /** 声道平衡：-1（全左）~ 1（全右） */
 export const setStereoBalance = (pan: number) => {
   initAdvancedAudioFeatures()
-  stereoBalance.pan.value = Math.min(1, Math.max(-1, pan))
+  setParamSmooth(stereoBalance.pan, Math.min(1, Math.max(-1, pan)))
 }
 
-/** 动态推进：0~1，映射压限器 threshold；0 时保持保守限幅防止多效果叠加削波 */
+/** 动态推进：0~1，映射压限器 threshold/ratio；
+ *  0 时保持透明（此前 threshold -10 / ratio 3 会对全部干声持续压缩，是泵感与失真感的来源之一），
+ *  削波兜底交由末端 masterLimiter 负责 */
 export const setDynamicBoost = (amount: number) => {
   initAdvancedAudioFeatures()
   const a = Math.min(1, Math.max(0, amount))
+  convolverDynamicsCompressor.knee.value = 6
+  convolverDynamicsCompressor.attack.value = 0.004
+  convolverDynamicsCompressor.release.value = a <= 0 ? 0.25 : 0.2
   if (a <= 0) {
-    // 保守限幅（非直通）：多段 EQ/混响叠加时兜底防削波
-    convolverDynamicsCompressor.threshold.value = -10
-    convolverDynamicsCompressor.ratio.value = 3
+    setParamSmooth(convolverDynamicsCompressor.threshold, -3)
+    setParamSmooth(convolverDynamicsCompressor.ratio, 2)
     return
   }
-  convolverDynamicsCompressor.threshold.value = -10 - a * 26
-  convolverDynamicsCompressor.ratio.value = 3 + a * 5
+  setParamSmooth(convolverDynamicsCompressor.threshold, -3 - a * 16)
+  setParamSmooth(convolverDynamicsCompressor.ratio, 2 + a * 4)
 }
 
 let djNoiseBuffer: AudioBuffer | null = null

@@ -84,10 +84,10 @@ export default {
   word-wrap: break-word;
   padding: 4px 5px;
   z-index: 10001;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   // max-width: 80%;
   color: var(--color-font);
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   background: var(--color-content-background);
   overflow: hidden;
   pointer-events: none;

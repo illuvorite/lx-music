@@ -130,17 +130,19 @@ export default {
   flex: none;
   position: relative;
   width: 100px;
-  padding: 5px 0;
-  // margin-right: 10px;
+  // 固定高度：轨道 hover 加粗时不会引起周围布局抖动
+  height: 22px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  opacity: .5;
-  transition: opacity @transition-normal;
+  // 默认即为「可用」状态：原先 .5 的透明度会让滑块看起来像被禁用
+  opacity: .8;
+  transition: opacity var(--qm-t-base, @transition-normal);
   &:hover {
     opacity: 1;
   }
   &.disabled {
-    opacity: .3;
+    opacity: .35;
     .sliderMask {
       cursor: default;
     }
@@ -148,22 +150,15 @@ export default {
 }
 
 .slider {
-  // cursor: pointer;
   width: 100%;
-  height: 5px;
-  border-radius: 20px;
+  height: 6px;
+  border-radius: var(--qm-radius-chip, 999px);
   overflow: hidden;
-  transition: @transition-normal;
-  transition-property: background-color, opacity;
-  background-color: var(--color-primary-alpha-700);
-  // background-color: #f5f5f5;
+  transition: background-color var(--qm-t-base), height var(--qm-t-base);
+  // 轨道走中性色，让「已填充部分」成为唯一的主色焦点
+  background-color: var(--qm-line-2, var(--color-primary-alpha-700));
   position: relative;
-  // border-radius: @radius-progress-border;
 }
-
-// .muted {
-//   opacity: .5;
-// }
 
 .sliderBar {
   position: absolute;
@@ -174,9 +169,12 @@ export default {
   // 不加 transform 过渡：组件重渲染时过渡会重播，视觉上表现为“滑杆自己滑动”
   width: 100%;
   height: 100%;
-  // border-radius: @radius-progress-border;
-  background-color: var(--color-button-font);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  background-color: var(--qm-primary, var(--color-button-font));
+}
+
+// hover 时轻微加粗，给出「可拖动」的暗示
+.sliderContent:hover:not(.disabled) .slider {
+  height: 8px;
 }
 
 .sliderMask {

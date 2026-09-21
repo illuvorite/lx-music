@@ -105,7 +105,114 @@
 
 ## 源码使用方法
 
-请参阅：<https://lyswhut.github.io/lx-music-doc/desktop/use-source-code>
+本节说明本项目的依赖安装、开发启动与构建打包方式，命令行示例均在仓库根目录执行。
+
+技术栈：Electron 40（Electron 40.9.2）+ Vue 3.3 + Webpack 5 + LESS + TypeScript。构建脚本全部位于 `build-config/` 目录。
+
+### 环境要求
+
+| 项目 | 要求 |
+| --- | --- |
+| Node.js | `>= 22`（`package.json` 的 `engines` 字段） |
+| 包管理器 | 推荐 **pnpm**（仓库带 `pnpm-workspace.yaml`，脚本按 `pnpm <script>` 书写），npm / yarn 也可 |
+| C++ 生成工具 | 仅 Windows 编译原生模块时需要（Visual Studio 生成工具）；Linux 需要 `build-essential`，macOS 需要 Xcode CLT |
+
+### 安装依赖
+
+```bash
+pnpm install
+```
+
+安装过程中的几个注意点：
+
+- **Electron 二进制需手动触发下载**：`pnpm-workspace.yaml` 的 `allowBuilds` 关闭了 `electron` 的安装脚本，安装完依赖后需执行一次
+
+  ```bash
+  node node_modules/electron/install.js
+  ```
+
+  国内网络可加速：`$env:ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"`（Windows PowerShell），
+  对应 npm 配置键也可写作 `.npmrc` 中的 `electron_mirror=...`。
+
+- **原生模块**：
+  - `better-sqlite3` 会优先使用预编译产物（Electron ABI 与 `node_modules/better-sqlite3/build/Release/better_sqlite3.node` 对应），无需本地编译。
+  - `qrc_decode` 不需要自行编译，`build-config/lib/` 内置了各平台/架构的 `.node` 预编译文件，dev 与 pack 前会由 `build-config/build-before-pack.js` 自动拷贝到 `build/Release/qrc_decode.node`。
+  - `bufferutil` / `utf-8-validate` 是 `ws` 的可选性能依赖，缺少 C++ 生成工具时 `node-gyp` 报错可忽略，不影响启动；如不想看到该报错，安装 Visual Studio 生成工具后重新 `pnpm install` 即可。
+
+### 启动开发环境
+
+```bash
+pnpm dev
+```
+
+等价于 `node --max-http-header-size=200000 build-config/runner-dev.js`，它会：
+
+1. 并行启动 4 个 webpack 编译任务：
+   - `main`（主进程，输出到 `dist/main.js`）
+   - `renderer`（渲染进程，webpack-dev-server 端口 **9080**）
+   - `renderer-lyric`（桌面歌词窗口，端口 **9081**）
+   - `renderer-scripts`（用户脚本 / preload 等）
+2. 将预编译的 `qrc_decode.node` 拷入 `build/Release/`；
+3. 全部编译完成后自动拉起 Electron，加载 `dist/main.js`，主进程调试端口 `5858`（可用 chrome://inspect 连接）；
+4. 修改代码自动生效：渲染进程走 HMR，主进程改动会 `tree-kill` 旧进程并自动重启 Electron。
+
+首次编译约需 1~3 分钟（renderer 产物约 20 MB）。关闭应用时在终端 `Ctrl + C` 即可。
+
+### 构建产物
+
+```bash
+pnpm build              # 全量构建，清空 dist/、build/ 后重新编译 4 个目标
+pnpm build:main         # 只构建主进程
+pnpm build:renderer     # 只构建渲染进程
+pnpm build:renderer-lyric     # 只构建桌面歌词窗口
+pnpm build:renderer-scripts   # 只构建用户脚本 / preload
+```
+
+说明：
+
+- `pnpm build` 即 `node build-config/pack.js`，它同时编译 4 个目标，但**不**做安装包打包。
+- 单独构建子目标（如 `pnpm build:main`）会通过 `build-config/setenv.js NODE_ENV=production -- webpack --config ...` 执行，不会清空 `dist/`。
+- 主题数据为构建产物：修改 `src/common/theme/createThemes.js` 后需执行 `pnpm build:theme` 重新生成 `src/common/theme/index.json`。
+
+### 打包安装包
+
+打包前会先执行 `pnpm build`，产物输出到 `build/` 目录。
+
+```bash
+pnpm pack               # Windows x64 安装包（setup）
+pnpm pack:win           # Windows 全架构 setup + 7z 绿色版
+pnpm pack:win:setup:x64     # Windows x64 安装包
+pnpm pack:win:portable      # Windows 便携版
+pnpm pack:win:7z            # Windows 绿色版（7z）
+pnpm pack:win7:setup:x64    # Windows 7 专用安装包
+pnpm pack:linux         # deb / AppImage / rpm / pacman
+pnpm pack:mac           # dmg（x64 + arm64）
+pnpm pack:dir           # 仅输出免安装目录，适合快速验证打包结果
+```
+
+可选架构参数通过 `build-config/build-pack.js` 传入，例如：
+
+```bash
+node build-config/build-pack.js target=win arch=x64 type=setup
+```
+
+### 其他常用命令
+
+```bash
+pnpm lint         # ESLint 检查 src 目录
+pnpm lint:fix     # ESLint 自动修复
+```
+
+### 常见问题
+
+- **端口 9080 / 9081 被占用**：修改 `build-config/runner-dev.js` 中两个 `WebpackDevServer` 的 `port`。
+- **`Electron failed to install correctly`**：Electron 二进制缺失，执行 `node node_modules/electron/install.js`。
+- **`Could not find any Visual Studio installation to use`**：Windows 缺少 C++ 生成工具，仅影响 `bufferutil` 等可选原生模块，可忽略；需彻底解决请安装 Visual Studio 生成工具。
+- **webpack 报 `Failed to load plugin 'import' / '@typescript-eslint'`**：`eslint-config-standard(-with-typescript)` 的 peer 依赖缺失，执行
+  `pnpm add -D eslint-plugin-import eslint-plugin-n eslint-plugin-promise @typescript-eslint/eslint-plugin@^6 @typescript-eslint/parser@^6` 即可消除，不影响应用运行（当前仓库已内置）。
+- **修改主题后样式不生效**：主题色阶是预生成的，需运行 `pnpm build:theme`。
+
+更多细节请参阅：<https://lyswhut.github.io/lx-music-doc/desktop/use-source-code>
 
 ## 项目协议
 

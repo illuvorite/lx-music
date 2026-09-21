@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
     background: none;
     border: none;
     outline: none;
-    border-radius: 7px;
+    border-radius: var(--qm-radius-sm, 8px);
     cursor: pointer;
     color: rgb(138, 138, 138);
     transition: background-color 0.16s ease-in-out, color 0.16s ease-in-out;

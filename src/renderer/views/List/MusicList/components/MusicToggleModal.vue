@@ -191,9 +191,9 @@ export default {
   min-height: 100px;
   min-width: 460px;
   // background-color: @color-search-form-background;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   transition-property: height;
-  margin-top: 10px;
+  margin-top: var(--qm-sp-4, 10px);
   padding: 0 7px;
   // position: relative;
   .listItem {
@@ -206,7 +206,7 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    border-radius: 4px;
+    border-radius: var(--qm-radius-2xs, 4px);
 
     &:hover {
       background-color: var(--color-primary-background-hover);
@@ -219,7 +219,7 @@ export default {
 
   .num {
     flex: none;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     width: 20px;
     text-align: center;
     color: var(--color-font-label);
@@ -237,13 +237,13 @@ export default {
     .mixin-ellipsis-1();
   }
   .albumName {
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     opacity: 0.6;
     // .mixin-ellipsis-1();
   }
   .label {
     flex: none;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     opacity: 0.5;
     padding: 0 5px;
     display: flex;
@@ -253,7 +253,7 @@ export default {
   }
   .btns {
     flex: none;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
     padding: 0 5px;
     display: flex;
     align-items: center;
@@ -295,7 +295,7 @@ export default {
     height: 100%;
 
     p {
-      font-size: 16px;
+      font-size: var(--qm-fs-xl, 16px);
       color: var(--color-font-label);
     }
   }
@@ -312,9 +312,9 @@ export default {
     min-width: 0;
     display: flex;
     flex-flow: row nowrap;
-    padding-right: 10px;
-    gap: 10px;
-    font-size: 12px;
+    padding-right: var(--qm-sp-4, 10px);
+    gap: var(--qm-sp-4, 10px);
+    font-size: var(--qm-fs-xs, 12px);
     align-items: center;
 
     h2 {
@@ -332,7 +332,7 @@ export default {
     }
     .label {
       flex: none;
-      font-size: 12px;
+      font-size: var(--qm-fs-xs, 12px);
       opacity: 0.8;
       padding: 0 5px;
       color: var(--color-primary);
@@ -360,7 +360,7 @@ export default {
     // .mixin-ellipsis-1();
 
     +.btn {
-      margin-left: 10px;
+      margin-left: var(--qm-sp-4, 10px);
     }
   }
 }

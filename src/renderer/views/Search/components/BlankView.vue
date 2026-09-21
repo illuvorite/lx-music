@@ -139,7 +139,7 @@ const handleSearch = (text) => {
 .blockTitle {
   margin: 0;
   font-size: var(--qm-font-title-lg);
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
   line-height: 22px;
   color: var(--qm-text-1);
 }
@@ -152,7 +152,7 @@ const handleSearch = (text) => {
 .clearBtn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   padding: 0;
   border: 0;
   background: transparent;
@@ -194,7 +194,7 @@ const handleSearch = (text) => {
   width: 18px;
   text-align: center;
   font-size: var(--qm-font-meta);
-  font-weight: 600;
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--qm-text-4);
   font-variant-numeric: tabular-nums;
 }

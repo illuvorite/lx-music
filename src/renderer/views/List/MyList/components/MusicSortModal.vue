@@ -82,7 +82,7 @@ export default {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    font-size: 13px;
+    font-size: var(--qm-fs-sm, 13px);
     color: var(--color-font);
     line-height: 1.3;
     word-break: break-all;
@@ -110,7 +110,7 @@ export default {
   // .mixin-ellipsis-1();
 
   +.btn {
-    margin-left: 10px;
+    margin-left: var(--qm-sp-4, 10px);
   }
 }
 

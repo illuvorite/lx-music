@@ -232,14 +232,14 @@ export default {
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 .headerTitle {
   margin: 0;
   max-width: 100%;
   font-size: var(--qm-font-title-xl);
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
   line-height: 30px;
   color: var(--qm-text-1);
   .mixin-ellipsis-1();

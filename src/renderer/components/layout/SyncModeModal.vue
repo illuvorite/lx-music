@@ -123,7 +123,7 @@ export default {
 @import '@renderer/assets/styles/layout.less';
 
 .main {
-  padding: 15px;
+  padding: var(--qm-sp-6, 15px);
   max-width: 700px;
   min-width: 200px;
   min-height: 0;
@@ -131,7 +131,7 @@ export default {
   flex-flow: column nowrap;
   justify-content: center;
   h2 {
-    font-size: 16px;
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
@@ -143,23 +143,23 @@ export default {
   padding: 15px 0 5px;
   padding-right: 5px;
   .btnGroup + .btnGroup {
-    margin-top: 10px;
+    margin-top: var(--qm-sp-4, 10px);
   }
   .label {
     color: var(--color-font-label);
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     line-height: 2;
   }
   .desc {
     line-height: 1.5;
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     text-align: justify;
   }
 
   .tipGroup {
     display: flex;
     flex-direction: row;
-    font-size: 12px;
+    font-size: var(--qm-fs-xs, 12px);
 
     + .tipGroup {
       margin-top: 5px;
@@ -185,7 +185,7 @@ export default {
   display: block;
   white-space: nowrap;
   +.btn {
-    margin-left: 15px;
+    margin-left: var(--qm-sp-6, 15px);
   }
   &:last-child {
     margin-bottom: 0;

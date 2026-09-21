@@ -295,7 +295,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
 .subHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   margin-bottom: 14px;
 }
 .backBtn {
@@ -320,8 +320,8 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   flex: 1;
   text-align: center;
   margin-right: 30px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--qm-fs-lg, 15px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
 }
 
@@ -336,10 +336,10 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
   padding: 34px 16px 28px;
   border: 1px solid var(--qm-line-1, rgba(0, 0, 0, 0.08));
-  border-radius: 10px;
+  border-radius: var(--qm-radius-md, 10px);
   background: transparent;
   cursor: pointer;
   transition: box-shadow @transition-fast, transform @transition-fast, border-color @transition-fast;
@@ -356,12 +356,12 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   color: var(--color-font);
 }
 .bigName {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--qm-fs-lg, 15px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
 }
 .bigDesc {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.6;
   color: var(--qm-text-3, #888);
   text-align: center;
@@ -376,7 +376,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
 .footerLink {
   border: none;
   background: transparent;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   cursor: pointer;
 
@@ -389,17 +389,17 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
 .genToolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--qm-sp-5, 12px);
+  margin-bottom: var(--qm-sp-7, 16px);
 }
 .genName {
   width: 160px;
   padding: 6px 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background: transparent;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-semibold, 600);
   color: var(--color-font);
   box-sizing: border-box;
 
@@ -410,7 +410,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
 }
 .genPhone {
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #aaa);
 }
 .genSwitch {
@@ -418,7 +418,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   width: 40px;
   height: 22px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   background-color: var(--qm-line-2, rgba(0, 0, 0, 0.12));
   cursor: pointer;
   transition: background-color @transition-normal;
@@ -441,16 +441,16 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   }
 }
 .genSwitchLabel {
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #999);
 }
 .genPill {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   padding: 6px 16px;
   background-color: color-mix(in srgb, var(--color-primary) 18%, transparent);
   color: var(--color-primary);
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   cursor: pointer;
 
   &:hover {
@@ -465,39 +465,39 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: var(--qm-sp-4, 10px);
 
   b {
-    font-size: 14px;
+    font-size: var(--qm-fs-md, 14px);
     color: var(--color-font);
   }
 }
 .addLocalBtn {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--qm-radius-chip, 999px);
   padding: 7px 16px;
   background-color: var(--color-primary);
   color: #fff;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   cursor: pointer;
 }
 .addGroup {
   margin: 0 0 8px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #999);
 }
 .fxGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
 }
 .fxBtn {
   height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.05));
   color: var(--color-font);
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast;
   box-sizing: border-box;
@@ -520,7 +520,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.05));
   color: var(--qm-text-3, #999);
   cursor: pointer;
@@ -534,11 +534,11 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
 .chainList {
   display: flex;
   flex-flow: column nowrap;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
 }
 .chainItem {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.04));
 }
 .chainHead {
@@ -550,7 +550,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   border: none;
   background: transparent;
   color: var(--color-font);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
 
   &:hover {
@@ -579,7 +579,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   border-radius: 50%;
   background: transparent;
   color: var(--qm-text-3, #999);
-  font-size: 15px;
+  font-size: var(--qm-fs-lg, 15px);
   line-height: 1;
   cursor: pointer;
 
@@ -592,18 +592,18 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   padding: 4px 14px 12px;
   display: flex;
   flex-flow: column nowrap;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
 }
 .paramRow {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--qm-sp-4, 10px);
   min-width: 0;
 }
 .paramLabel {
   flex: none;
   width: 70px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--color-font);
 }
 .paramSlider {
@@ -614,7 +614,7 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   flex: none;
   width: 36px;
   text-align: right;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #999);
   font-variant-numeric: tabular-nums;
 }
@@ -624,19 +624,19 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  padding-top: 16px;
+  padding-top: var(--qm-sp-7, 16px);
 }
 .djAdd {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
   min-height: 118px;
-  border-radius: 8px;
+  border-radius: var(--qm-radius-sm, 8px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.05));
   color: var(--qm-text-3, #999);
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   cursor: pointer;
 
   svg { width: 22px; height: 22px; }
@@ -650,30 +650,45 @@ const playDj = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => 
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border: none;
-  border-radius: 8px;
+  gap: var(--qm-sp-3, 8px);
+  border: 1px solid var(--qm-line-1);
+  border-radius: var(--qm-radius-card, 10px);
   cursor: pointer;
-  color: #fff;
-  transition: transform @transition-fast;
+  // 与「精选音效」一致：低饱和柔和渐变 + 主题墨色文字，去掉了原来的白字 + 重描边阴影
+  background-color: var(--qm-card);
+  color: var(--qm-text-1);
+  transition: transform var(--qm-t-fast), border-color var(--qm-t-fast);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+    border-color: var(--qm-line-2);
+  }
+  &:active {
+    transform: scale(0.99);
   }
 }
 .djName {
-  font-size: 16px;
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  font-size: var(--qm-fs-xl, 16px);
+  font-weight: var(--qm-fw-semibold, 600);
 }
 .djDesc {
-  font-size: 12px;
-  opacity: 0.9;
+  font-size: var(--qm-fs-xs, 12px);
+  color: var(--qm-text-3);
 }
-.djBlue { background: linear-gradient(135deg, #4facfe, #00c6fb); }
-.djTeal { background: linear-gradient(135deg, #2af598, #009efd); }
-.djPink { background: linear-gradient(135deg, #f78ca0, #c471f5); }
-.djPurple { background: linear-gradient(135deg, #a18cd1, #b06ab3); }
-.djIndigo { background: linear-gradient(135deg, #5a6dcf, #3f4c9e); }
-.djGreen { background: linear-gradient(135deg, #43cea2, #185a9d); }
+
+// 色相族：与精选音效卡同一套取值方式（改这两个百分比即可整体调浓淡）
+.djBlue   { --tile-hue: 74, 157, 196; }
+.djTeal   { --tile-hue: 79, 179, 165; }
+.djPink   { --tile-hue: 201, 106, 99; }
+.djPurple { --tile-hue: 142, 124, 195; }
+.djIndigo { --tile-hue: 107, 127, 199; }
+.djGreen  { --tile-hue: 90, 164, 105; }
+
+.djBlue, .djTeal, .djPink, .djPurple, .djIndigo, .djGreen {
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in srgb, rgb(var(--tile-hue)) 18%, var(--qm-card)),
+    color-mix(in srgb, rgb(var(--tile-hue)) 7%, var(--qm-card))
+  );
+}
 </style>

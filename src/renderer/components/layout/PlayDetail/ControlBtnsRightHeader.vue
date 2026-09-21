@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    gap: 4px;
+    gap: var(--qm-sp-1, 4px);
   }
 
   .btn {

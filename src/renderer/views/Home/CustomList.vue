@@ -231,7 +231,7 @@ watch(() => route.query.source, (value) => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   border-radius: var(--qm-radius-card);
   overflow: hidden;
   background-color: rgba(0, 0, 0, .04);
@@ -268,13 +268,13 @@ watch(() => route.query.source, (value) => {
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 }
 
 .title {
   margin: 0;
   font-size: var(--qm-font-title-xl);
-  font-weight: 700;
+  font-weight: var(--qm-fw-bold, 700);
   line-height: 30px;
   color: var(--qm-text-1);
 }
@@ -307,7 +307,7 @@ watch(() => route.query.source, (value) => {
   .qm-btn-primary();
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--qm-sp-2, 6px);
 
   svg { display: block; }
 }
@@ -402,7 +402,7 @@ watch(() => route.query.source, (value) => {
   flex: none;
   padding: 1px 5px;
   border: 1px solid var(--qm-primary-border);
-  border-radius: 3px;
+  border-radius: var(--qm-radius-2xs, 4px);
   font-size: var(--qm-font-badge);
   font-style: normal;
   line-height: 14px;
@@ -436,7 +436,7 @@ watch(() => route.query.source, (value) => {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 2px;
+  gap: var(--qm-sp-0, 2px);
   opacity: 0;
   transition: opacity var(--qm-t-fast);
 

@@ -62,8 +62,8 @@ export default {
   // max-height: 100%;
   // overflow: hidden;
   h2 {
-    margin: 20px;
-    font-size: 16px;
+    margin: var(--qm-sp-8, 20px);
+    font-size: var(--qm-fs-xl, 16px);
     color: var(--color-font);
     line-height: 1.3;
     text-align: center;
@@ -82,7 +82,7 @@ export default {
   height: 100%;
   border: none;
   outline: none;
-  border-radius: 4px;
+  border-radius: var(--qm-radius-2xs, 4px);
   padding: 5px;
   background-color: var(--color-primary-light-200-alpha-900);
   box-sizing: border-box;
@@ -102,7 +102,7 @@ export default {
 }
 .tips {
   // padding: 10px 15px;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   line-height: 1.25;
   color: var(--color-550);
   white-space: pre-wrap;

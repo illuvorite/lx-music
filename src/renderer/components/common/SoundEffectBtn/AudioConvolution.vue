@@ -104,6 +104,10 @@ const applyEffect = effect => {
     'player.soundEffect.enhance.balance': effect.balance ?? 0,
     'player.soundEffect.pitchShifter.playbackRate': effect.pitch ?? 1,
     'player.soundEffect.panner.enable': effect.panner ?? false,
+    // 开启环绕时若半径为 0（之前被用户关掉），给一个可感知的默认值，否则 panner 半径为 0 会导致音效静默失效
+    'player.soundEffect.panner.soundR': effect.panner
+      ? (appSetting['player.soundEffect.panner.soundR'] || 5)
+      : appSetting['player.soundEffect.panner.soundR'],
   }
   const eq = effect.eq ?? { ...ZERO_EQ }
   for (const f of freqs) setting[`player.soundEffect.biquadFilter.hz${f}`] = eq[`hz${f}`] ?? 0
@@ -186,54 +190,82 @@ onMounted(() => {
 }
 .sectionTitle {
   margin: 0 0 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-font);
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-semibold, 600);
+  color: var(--qm-text-1);
 }
 
 // ===== 精选音效卡 =====
+// 设计取向（对应 Apple HIG 卡片的「渐变承担明确作用、不牺牲文字可读性」）：
+// 原实现是 10 组霓虹双色强渐变 + 白字 + 重描边阴影，其中两个预设因白字读不清
+// 被临时改成深色字——说明配色体系本身有问题。
+// 现改为「低饱和同色相柔和渐变 + 主题墨色文字」：
+//   · 颜色仅用于区分预设（承担明确作用），不再做视觉主角
+//   · 文字统一走 --qm-text-1，浅色/深色主题下对比度都稳定达标
+//   · 选中态改用主题主色，与全局「选中」语言一致
 .featuredGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  gap: var(--qm-sp-5, 12px);
 }
 .featuredCard {
   position: relative;
   height: 74px;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  border: 1px solid var(--qm-line-1);
+  border-radius: var(--qm-radius-card, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-sizing: border-box;
-  transition: transform @transition-fast, border-color @transition-fast;
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--qm-card);
+  color: var(--qm-text-1);
+  transition: transform var(--qm-t-fast), border-color var(--qm-t-fast);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+    border-color: var(--qm-line-2);
   }
   &.active {
-    border-color: var(--color-primary);
+    border-color: var(--qm-primary);
+    background-image: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--qm-primary) 16%, var(--qm-card)),
+      color-mix(in srgb, var(--qm-primary) 6%, var(--qm-card))
+    );
+    color: var(--qm-primary);
+
     .checkBadge {
       display: block;
     }
   }
 }
-.themeRed { background: linear-gradient(135deg, #f78ca0, #f9748f); }
-.themePurple { background: linear-gradient(135deg, #a18cd1, #7f7fd5); }
-.themeTeal { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #134; text-shadow: none; }
-.themeGreen { background: linear-gradient(135deg, #43cea2, #185a9d); }
-.themeIndigo { background: linear-gradient(135deg, #654ea3, #5a6dcf); }
-.themeCyan { background: linear-gradient(135deg, #24c6dc, #514a9d); }
-.themeAqua { background: linear-gradient(135deg, #36d1dc, #5b86e5); }
-.themeGreen2 { background: linear-gradient(135deg, #11998e, #38ef7d); color: #123; text-shadow: none; }
-.themeViolet { background: linear-gradient(135deg, #da70d6, #9370db); }
-.themeRed2 { background: linear-gradient(135deg, #e52d27, #b31217); }
+
+// 预设色相族：统一以「墨色三元组」定义，再以相同比例混入卡片底色。
+// 调整整体浓淡只需改下面两个百分比。
+.themeRed    { --tile-hue: 201, 106, 99; }
+.themePurple { --tile-hue: 142, 124, 195; }
+.themeTeal   { --tile-hue: 79, 179, 165; }
+.themeGreen  { --tile-hue: 90, 164, 105; }
+.themeIndigo { --tile-hue: 107, 127, 199; }
+.themeCyan   { --tile-hue: 74, 157, 196; }
+.themeAqua   { --tile-hue: 79, 176, 184; }
+.themeGreen2 { --tile-hue: 120, 176, 132; }
+.themeViolet { --tile-hue: 160, 108, 192; }
+.themeRed2   { --tile-hue: 176, 96, 88; }
+
+.themeRed, .themePurple, .themeTeal, .themeGreen, .themeIndigo,
+.themeCyan, .themeAqua, .themeGreen2, .themeViolet, .themeRed2 {
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in srgb, rgb(var(--tile-hue)) 18%, var(--qm-card)),
+    color-mix(in srgb, rgb(var(--tile-hue)) 7%, var(--qm-card))
+  );
+}
+
 .featuredName {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--qm-fs-md, 14px);
+  font-weight: var(--qm-fw-semibold, 600);
 }
 .checkBadge {
   display: none;
@@ -242,8 +274,9 @@ onMounted(() => {
   bottom: 4px;
   width: 16px;
   height: 16px;
-  color: var(--color-primary);
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9));
+  color: var(--qm-primary);
+  // 由白色描边阴影改为跟随卡片底色的柔光，浅色卡面上也能看清
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--qm-card) 90%, transparent));
 }
 
 // ===== 达人音效列表 =====
@@ -257,12 +290,12 @@ onMounted(() => {
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--qm-sp-1, 4px);
   min-height: 40px;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.04));
   color: var(--qm-text-3, #999);
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   cursor: pointer;
   transition: background-color @transition-fast, color @transition-fast;
 
@@ -276,11 +309,11 @@ onMounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--qm-sp-3, 8px);
   min-height: 40px;
   padding: 0 12px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--qm-radius-xs, 6px);
   background-color: var(--qm-field, rgba(0, 0, 0, 0.04));
   cursor: pointer;
   transition: background-color @transition-fast, border-color @transition-fast;
@@ -295,7 +328,7 @@ onMounted(() => {
 .masterName {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 13px;
+  font-size: var(--qm-fs-sm, 13px);
   color: var(--color-font);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -316,7 +349,7 @@ onMounted(() => {
   padding: 0;
   background: transparent;
   color: var(--qm-text-3, #999);
-  font-size: 14px;
+  font-size: var(--qm-fs-md, 14px);
   line-height: 1;
   cursor: pointer;
 
@@ -327,7 +360,7 @@ onMounted(() => {
 }
 .masterUse {
   flex: none;
-  font-size: 12px;
+  font-size: var(--qm-fs-xs, 12px);
   color: var(--qm-text-3, #999);
   cursor: pointer;
 }
