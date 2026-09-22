@@ -1,49 +1,44 @@
 <template>
   <div v-if="maxPage > 1" :class="$style.pagination">
     <ul>
-      <li v-if="page == 1" :class="$style.disabled">
+      <li v-if="page == 1" :class="[$style.nav, $style.disabled]">
         <span>
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-left" />
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.8 8.2 12 15 19.2" /></svg>
         </span>
       </li>
-      <li v-else>
+      <li v-else :class="$style.nav">
         <button type="button" :aria-label="$t('pagination__prev')" @click="handleClick(page - 1)">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-left" />
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.8 8.2 12 15 19.2" /></svg>
         </button>
       </li>
-      <li v-if="maxPage > btnLength && page > pageEvg+1" :class="$style.first">
+      <li v-if="maxPage > btnLength && page > pageEvg+1" :class="$style.jump">
         <button type="button" :aria-label="$t('pagination__page', { num: 1 })" @click="handleClick(1)">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-first" />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11.4 4.8 4.6 12l6.8 7.2" />
+            <path d="M19 4.8 12.2 12l6.8 7.2" />
           </svg>
         </button>
       </li>
-      <li v-for="p in pages" :key="p" :class="{[$style.active] : p == page}">
-        <span v-if="p === page" v-text="page" />
+      <li v-for="p in pages" :key="p" :class="[$style.num, {[$style.active] : p == page}]">
+        <span v-if="p === page" aria-current="page" v-text="page" />
         <button v-else type="button" :aria-label="$t('pagination__page', { num: p })" @click="handleClick(p)" v-text="p" />
       </li>
-      <li v-if="maxPage > btnLength && maxPage - page > pageEvg" :class="$style.last">
+      <li v-if="maxPage > btnLength && maxPage - page > pageEvg" :class="$style.jump">
         <button type="button" :aria-label="$t('pagination__page', { num: maxPage })" @click="handleClick(maxPage)">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-last" />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.6 4.8 11.4 12l-6.8 7.2" />
+            <path d="M12.2 4.8 19 12l-6.8 7.2" />
           </svg>
         </button>
       </li>
-      <li v-if="page == maxPage" :class="$style.disabled">
+      <li v-if="page == maxPage" :class="[$style.nav, $style.disabled]">
         <span>
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-right" />
-          </svg></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.8 15.8 12 9 19.2" /></svg>
+        </span>
       </li>
-      <li v-else>
+      <li v-else :class="$style.nav">
         <button type="button" :aria-label="$t('pagination__next')" @click="handleClick(page + 1)">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" height="100%" viewBox="0 0 451.846 451.847" space="preserve">
-            <use xlink:href="#icon-right" />
-          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.8 15.8 12 9 19.2" /></svg>
         </button>
       </li>
     </ul>
@@ -111,58 +106,122 @@ export default {
 
 .pagination {
   display: inline-flex;
+
   ul {
     display: flex;
     flex-flow: row nowrap;
-    gap: var(--qm-sp-1, 4px);
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
     li {
-      transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
-      line-height: 1.2;
       display: flex;
-      border-radius: 50%;
+      border-radius: var(--qm-radius-card, 10px);
 
       svg {
-        height: 1em;
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
       }
+
       span,
       button {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 30px;
-        height: 30px;
+        box-sizing: border-box;
+        min-width: 32px;
+        height: 32px;
         padding: 0 8px;
-        line-height: 1.2;
-        color: var(--qm-text-2);
-        font-size: var(--qm-font-meta);
-        font-weight: var(--qm-fw-regular, 400);
-        border-radius: 50%;
-      }
-      &.active {
-        span {
-          background-color: var(--qm-primary);
-          color: var(--qm-text-invert);
-          font-weight: var(--qm-fw-semibold, 600);
-        }
-      }
-      button {
-        background-color: transparent;
         border: none;
+        border-radius: var(--qm-radius-card, 10px);
+        background-color: transparent;
+        color: var(--qm-text-2);
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        transition: background-color var(--qm-t-fast), color var(--qm-t-fast), box-shadow var(--qm-t-fast);
+      }
+
+      button {
         cursor: pointer;
         outline: none;
-        transition: background-color var(--qm-t-fast), color var(--qm-t-fast), transform var(--qm-t-fast);
-        &:hover {
-          background-color: var(--qm-primary-soft);
-          color: var(--qm-primary);
-        }
+
         &:active {
           transform: scale(0.94);
         }
       }
+
+      // 数字页：浅底方块，hover 时转为浅主题色
+      &.num {
+        span,
+        button {
+          background-color: var(--qm-hover);
+        }
+
+        button:hover {
+          background-color: var(--qm-primary-soft);
+          color: var(--qm-primary);
+        }
+      }
+
+      // 当前页：主题色实心 + 同色投影
+      &.active span {
+        background-color: var(--qm-primary);
+        color: var(--qm-text-invert, #fff);
+        font-weight: var(--qm-fw-semibold, 600);
+        box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .16);
+        box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--qm-primary) 45%, transparent);
+      }
+
+      // 上一页 / 下一页：浅主题色底 + 主题色图标，作为主操作
+      &.nav {
+        span,
+        button {
+          background-color: var(--qm-primary-soft);
+          color: var(--qm-primary);
+        }
+
+        button:hover {
+          background-color: var(--qm-primary-soft-hover, var(--qm-primary-soft));
+        }
+      }
+
+      // 首页 / 末页跳转：弱化为纯图标，避免与相邻的翻页箭头混淆
+      &.jump {
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        span,
+        button {
+          color: var(--qm-text-4);
+        }
+
+        button:hover {
+          background-color: var(--qm-primary-soft);
+          color: var(--qm-primary);
+        }
+      }
+
       &.disabled {
-        opacity: .32;
+        opacity: .3;
         cursor: not-allowed;
-        span { cursor: not-allowed; }
+
+        span {
+          cursor: not-allowed;
+          // 禁用时收回主题色底，避免看起来还可点
+          background-color: var(--qm-hover);
+          color: var(--qm-text-3);
+        }
       }
     }
   }

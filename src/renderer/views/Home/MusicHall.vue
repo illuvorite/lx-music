@@ -220,22 +220,12 @@ const officialSortId = ref('')
 const newSortId = ref('')
 const hotSortId = ref('')
 
+// 取不到数据的区块直接不显示（不要回退成其它池子，否则两个区块会出现完全相同的内容）
 const sections = computed(() => ([
-  // 部分平台「推荐/新歌」排序拿不到数据，回退用热门列表，避免空分区
-  { key: 'official', title: '官方歌单', sub: '官方精选订阅歌单', sortId: officialSortId.value, list: officialList.value.length ? officialList.value : hotList.value },
+  { key: 'official', title: '官方歌单', sub: '官方精选订阅歌单', sortId: officialSortId.value, list: officialList.value },
   { key: 'new', title: '新歌首发', sub: '', sortId: newSortId.value, list: newList.value },
   { key: 'hot', title: '热门歌单', sub: '', sortId: hotSortId.value, list: hotList.value },
 ]).filter(sec => sec.list.length))
-
-const parsePlayCount = (text) => {
-  const match = /([\d.]+)\s*(亿|万)?/.exec(text ?? '')
-  if (!match) return 0
-  const value = parseFloat(match[1])
-  if (Number.isNaN(value)) return 0
-  if (match[2] === '亿') return value * 1e8
-  if (match[2] === '万') return value * 1e4
-  return value
-}
 
 const shuffle = (list) => {
   const arr = [...list]
@@ -246,10 +236,25 @@ const shuffle = (list) => {
   return arr
 }
 
-// 取一个排序下 2 页歌单并打乱：每次进入乐馆内容都不同
-async function fetchPlaylistPool(sdk, sortId) {
-  const pages = await Promise.all([1, 2].map(page => sdk.getList(sortId, '', page).catch(() => null)))
-  return shuffle(pages.flatMap(page => (page?.list ?? []).filter(item => item?.id && item.name)))
+// tx 的 getList 内部会 cancelHttp 掉上一个未完成的请求：与页面其它模块（榜单 / 分类歌单）
+// 并发时可能被取消，因此单页请求失败后延迟重试几次
+async function fetchSquarePage(sdk, sortId, tagId, page, retry = 0) {
+  const result = await sdk.getList(sortId, tagId, page).catch(() => null)
+  if (result || retry >= 2) return result
+  await new Promise(resolve => { setTimeout(resolve, 300 * (retry + 1)) })
+  return fetchSquarePage(sdk, sortId, tagId, page, retry + 1)
+}
+
+// 取一个排序（或分类）下 2 页歌单并打乱：每次进入乐馆内容都不同。
+// 注意必须串行请求：tx.songList.getList 内部会 cancelHttp 掉上一个未完成的请求，
+// 并发调用会导致除最后一个之外全部被取消（表现为分区内容为空、多分区内容重复）
+async function fetchPlaylistPool(sdk, sortId, tagId = '') {
+  const list = []
+  for (const page of [1, 2]) {
+    const result = await fetchSquarePage(sdk, sortId, tagId, page)
+    list.push(...(result?.list ?? []).filter(item => item?.id && item.name))
+  }
+  return shuffle(list)
 }
 
 async function loadFeatured() {
@@ -258,20 +263,29 @@ async function loadFeatured() {
     const sdk = musicSdk[source.value]?.songList
     if (!sdk?.getList) return
     const sortList = sdk.sortList ?? []
-    officialSortId.value = sortList[0]?.id ?? ''
     newSortId.value = (sortList.find(item => (item.name ?? '').includes('新')) ?? sortList[0])?.id ?? ''
     hotSortId.value = (sortList.find(item => (item.name ?? '').includes('热')) ?? sortList[0])?.id ?? ''
-    const [official, fresh, hot] = await Promise.all([
-      fetchPlaylistPool(sdk, officialSortId.value),
-      fetchPlaylistPool(sdk, newSortId.value),
-      fetchPlaylistPool(sdk, hotSortId.value),
-    ])
+    officialSortId.value = newSortId.value
+
+    // 「官方歌单」用分类里的官方歌单分类（tx 为 3317，接口实测有数据）：
+    // 此前它和「热门歌单」用同一个排序，导致两个区块内容完全一样
+    let officialTagId = ''
+    if (typeof sdk.getTag === 'function') {
+      const tagGroups = await sdk.getTag().catch(() => null)
+      const tag = tagGroups?.flatMap(group => group.list ?? []).find(item => (item.name ?? '').includes('官方'))
+      officialTagId = tag?.id ? String(tag.id) : ''
+    }
+    if (!officialTagId && source.value === 'tx') officialTagId = '3317'
+
+    // 串行拉取（见 fetchPlaylistPool 注释：并发会被 getList 内部互相取消）
+    const official = await fetchPlaylistPool(sdk, officialSortId.value, officialTagId)
+    const fresh = await fetchPlaylistPool(sdk, newSortId.value)
+    const hot = await fetchPlaylistPool(sdk, hotSortId.value)
     officialList.value = official.slice(0, 10)
     newList.value = fresh.slice(0, 10)
     hotList.value = hot.slice(0, 10)
-    banners.value = [...official, ...hot]
-      .sort((a, b) => parsePlayCount(b.play_count) - parsePlayCount(a.play_count))
-      .slice(0, 5)
+    // banner 从两个池子里随机取：此前按播放量取 Top5，导致每次进来都是同一批歌单
+    banners.value = shuffle([...official, ...hot]).slice(0, 5)
     bannerIndex.value = 0
   } finally {
     loading.value = false
@@ -407,12 +421,19 @@ const handleSingerIndex = (id) => {
   void loadSingers(true)
 }
 
+// 点击歌手进入歌手主页（不再是跳到搜索页）
 const openSinger = (item) => {
-  void router.push({ path: '/search', query: { text: item.name, source: source.value } }).catch(() => {})
+  void router.push({
+    path: '/singer/detail',
+    query: { id: item.id, name: item.name, img: item.img, source: source.value },
+  }).catch(() => {})
 }
 
 // ------- 分类歌单（乐馆内嵌歌单广场：标签筛选 + 排序 + 网格 + 分页） -------
-const squareTagId = ref('')
+// tx 的「全部」广场接口（PlayListPlazaServer id=10000000）匿名返回的数据很旧（多为 2020 年前后），
+// 默认落到「流行」分类（PlayListCategoryServer，按更新时间返回，每天都有新歌单）
+const DEFAULT_SQUARE_TAG = { tx: '3152' }
+const squareTagId = ref(DEFAULT_SQUARE_TAG[source.value] ?? '')
 const squareSortId = ref('')
 const squareLoading = ref(false)
 const visibleImport = ref(false)
@@ -446,7 +467,8 @@ async function loadSquare(page = 1) {
   squareLoading.value = true
   squareListInfo.noItemLabel = '加载中…'
   try {
-    const result = await sdk.getList(squareSortId.value, squareTagId.value, page).catch(() => null)
+    // 失败重试：与页面其它模块（精选/榜单）并发时请求可能被互相取消
+    const result = await fetchSquarePage(sdk, squareSortId.value, squareTagId.value, page)
     if (requestId !== squareRequestSeq) return
     if (!result) {
       squareListInfo.list = []
@@ -508,7 +530,7 @@ const handleSourceChange = (id) => {
     void loadSingers(true)
   } else if (tab.value === 'square') {
     // 换源后重置筛选；SortTab 会随 source 变化重新选中默认排序并 emit，从而触发加载
-    squareTagId.value = ''
+    squareTagId.value = DEFAULT_SQUARE_TAG[id] ?? ''
     squareSortId.value = ''
     squareListInfo.list = []
     squareListInfo.noItemLabel = '加载中…'

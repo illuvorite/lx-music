@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.player">
+  <div :class="[$style.player, { [$style.fullMode]: variant === 'full' }]">
     <!-- 左：封面 + 信息 + 快捷操作 -->
     <div :class="$style.left">
       <div :class="$style.cover" :aria-label="$t('player__pic_tip')" @contextmenu="handleToMusicLocation" @click="showPlayerDetail">
@@ -63,7 +63,7 @@
           <svg-icon name="next" />
         </button>
       </div>
-      <div :class="$style.progress">
+      <div v-if="variant !== 'full'" :class="[$style.progress, { [$style.progressWide]: variant === 'middle' }]">
         <span :class="$style.time">{{ nowPlayTimeStr }}</span>
         <common-progress-bar
           v-if="!isShowPlayerDetail"
@@ -79,6 +79,8 @@
 
     <!-- 右：辅助操作 -->
     <div :class="$style.right">
+      <!-- full：进度条已移到播放栏底部通栏，时间合并显示在这里 -->
+      <span v-if="variant === 'full'" :class="$style.timeInline">{{ nowPlayTimeStr }} / {{ maxPlayTimeStr }}</span>
       <material-popup-btn>
         <button :class="$style.iconBtn" :aria-label="isMute ? '取消静音' : '音量'" :title="isMute ? '取消静音' : `音量：${volumePercent}%`">
           <svg-icon :name="volumeIcon" />
@@ -201,6 +203,17 @@
         </template>
       </material-popup-btn>
     </div>
+    <!-- full：贴播放栏底部的通栏进度条 -->
+    <div v-if="variant === 'full'" :class="$style.progressFull">
+      <common-progress-bar
+        v-if="!isShowPlayerDetail"
+        :class-name="$style.progressBarFull"
+        :progress="progress"
+        :handle-transition-end="handleTransitionEnd"
+        :is-active-transition="isActiveTransition"
+        :emit-playback-progress="true"
+      />
+    </div>
     <common-list-add-modal v-model:show="isShowAddMusicTo" :music-info="addMusicInfo || playMusicInfo.musicInfo" />
   </div>
 </template>
@@ -262,6 +275,17 @@ const PLAY_MODE_OPTIONS = [
 
 export default {
   name: 'CorePlayBar',
+  props: {
+    // 进度条样式（设置项 common.playBarProgressStyle）：
+    //   mini   —— 进度条较短，位于播放控制区下方（默认）
+    //   middle —— 进度条较宽，占满中间控制区
+    //   full   —— 进度条贴播放栏底部通栏，时间合并显示在右侧
+    // 三种模式的控件区完全一致，仅进度条的摆放不同
+    variant: {
+      type: String,
+      default: 'mini',
+    },
+  },
   setup() {
     const router = useRouter()
     const isLiked = ref(false)
@@ -595,6 +619,11 @@ export default {
   * { box-sizing: border-box; }
 }
 
+// full：进度条贴底通栏，内容略微上移给进度条让位
+.fullMode {
+  padding-bottom: 4px;
+}
+
 /* ========== 左：封面 + 信息 + 快捷 ========== */
 .left {
   display: flex;
@@ -737,6 +766,39 @@ export default {
   flex: auto;
   height: 3px;
   border-radius: var(--qm-radius-chip, 999px);
+  background: var(--color-button-background, rgba(0,0,0,0.08));
+  cursor: pointer;
+  transition: height @transition-fast;
+  &:hover { height: 5px; }
+}
+
+// middle：进度条占满中间控制区，比 mini 更长
+.progressWide {
+  max-width: none;
+}
+
+// full：时间合并显示在右侧
+.timeInline {
+  flex: none;
+  margin-right: var(--qm-sp-1, 4px);
+  font-size: var(--qm-fs-2xs, 11px);
+  color: var(--color-font-label, rgba(0,0,0,0.55));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+// full：贴播放栏底部的通栏进度条
+.progressFull {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.progressBarFull {
+  width: 100%;
+  height: 3px;
   background: var(--color-button-background, rgba(0,0,0,0.08));
   cursor: pointer;
   transition: height @transition-fast;

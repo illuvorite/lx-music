@@ -29,6 +29,10 @@ const tagId = ref<string>('')
 const sortId = ref<string>('')
 const page = ref<number>(1)
 
+// 各音源的默认分类：tx 的「全部」广场接口（PlayListPlazaServer id=10000000）匿名数据很旧
+// （多为 2020 年前后），默认落到「流行」分类（PlayListCategoryServer 按更新时间返回，每天有新歌单）
+const DEFAULT_TAG_BY_SOURCE: Record<string, string> = { tx: '3152' }
+
 
 interface Query {
   source?: string
@@ -55,7 +59,8 @@ const verifyQueryParams = async function(this: any, to: { query: Query, path: st
     } else {
       const setting = await getSongListSetting()
       _source = setting.source
-      _tagId = setting.tagId
+      // 站点默认（无记录）时落到该音源的活跃分类，避免一进来总是同一批老歌单
+      _tagId = setting.tagId || DEFAULT_TAG_BY_SOURCE[setting.source] || ''
       _sortId = setting.sortId
       _page = '1'
     }

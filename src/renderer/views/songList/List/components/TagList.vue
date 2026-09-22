@@ -76,8 +76,15 @@ watch(() => props.source, async(source) => {
   if (!source) return
   // const source = (await getLeaderboardSetting()).source as LX.OnlineSource
   let tagInfo = tags[source]
-  // console.log(await getTags(source))
-  if (tagInfo == null) setTags(tagInfo = await getTags(source), source)
+  // 首次进入时该请求可能与页面其它请求竞争而失败（表现为下拉为空、分类名退化成 id），失败后重试几次
+  if (tagInfo == null) {
+    for (let attempt = 0; attempt < 3 && tagInfo == null; attempt++) {
+      if (attempt) await new Promise(resolve => { setTimeout(resolve, 400 * attempt) })
+      tagInfo = await getTags(source).catch(() => null)
+    }
+    if (tagInfo == null) return
+    setTags(tagInfo, source)
+  }
 
   list.splice(0, list.length, ...[{ name: window.i18n.t('songlist__tag_info_hot_tag'), list: [...tagInfo.hotTag] }, ...tagInfo.tags])
 }, {

@@ -58,6 +58,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/singer/detail',
+      name: 'SingerDetail',
+      // 歌手主页（仿 QQ 音乐：歌手信息 + 精选/歌曲/专辑/详情）
+      component: require('./views/Singer/Detail/index.vue').default,
+      meta: {
+        name: 'Home',
+      },
+    },
+    {
       path: '/search',
       name: 'Search',
       component: require('./views/Search/index.vue').default,

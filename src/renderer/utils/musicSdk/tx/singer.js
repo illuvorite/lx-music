@@ -2,6 +2,7 @@ import { httpFetch } from '../../request'
 
 import { formatPlayTime, sizeFormate } from '../../index'
 import { formatSingerName } from '../utils'
+import { toNewMusicInfo } from '@common/utils/tools'
 
 export const filterMusicInfoItem = item => {
   const types = []
@@ -273,15 +274,16 @@ export default {
    * @param {*} limit
    */
   async getSongList(id, page = 1, limit = 100) {
-    if (page === 1) page = 0
+    const begin = (page - 1) * limit
     return createMusicuFetch({
       req: {
         module: 'musichall.song_list_server',
         method: 'GetSingerSongList',
         param: {
           singerMid: id,
+          // 1 = 按热度排序
           order: 1,
-          begin: page * limit,
+          begin,
           num: limit,
         },
       },
@@ -304,6 +306,8 @@ export default {
         id: item.albumID,
         mid: item.albumMid,
         count: item.totalNum,
+        // 发行日期：歌手页「最新专辑」展示用
+        publishDate: item.publishDate ?? '',
         info: {
           name: item.albumName,
           author: item.singerName,
@@ -314,9 +318,8 @@ export default {
     })
   },
   filterSongList(raw) {
-    raw.map(item => {
-      return filterMusicInfoItem(item.songInfo)
-    })
+    // 转换为统一的 MusicInfoOnline 结构（含 id / meta），供列表组件与播放器直接使用
+    return raw.map(item => toNewMusicInfo(filterMusicInfoItem(item.songInfo)))
   },
 }
 
