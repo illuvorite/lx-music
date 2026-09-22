@@ -110,10 +110,6 @@ const isAnyActive = computed(() => {
   if (appSetting['player.soundEffect.panner.enable']) return true
   if (appSetting['player.soundEffect.convolution.fileName']) return true
   if (appSetting['player.soundEffect.pitchShifter.playbackRate'] !== 1) return true
-  if (appSetting['player.soundEffect.enhance.bass'] !== 0) return true
-  if (appSetting['player.soundEffect.enhance.hifi'] !== 0) return true
-  if (appSetting['player.soundEffect.enhance.dynamic'] !== 0) return true
-  if (appSetting['player.soundEffect.enhance.balance'] !== 0) return true
   return false
 })
 
@@ -126,10 +122,6 @@ const handleToggleAll = () => {
   setting['player.soundEffect.panner.soundR'] = 0
   setting['player.soundEffect.convolution.fileName'] = ''
   setting['player.soundEffect.pitchShifter.playbackRate'] = 1
-  setting['player.soundEffect.enhance.bass'] = 0
-  setting['player.soundEffect.enhance.hifi'] = 0
-  setting['player.soundEffect.enhance.dynamic'] = 0
-  setting['player.soundEffect.enhance.balance'] = 0
   updateSetting(setting)
   // 同步关闭通用音效链的「开启效果」状态，防止其后续再写全局音效
   try {

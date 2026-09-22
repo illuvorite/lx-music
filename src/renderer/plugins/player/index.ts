@@ -20,10 +20,6 @@ export const freqsPreset = [
   { name: 'electronic', hz31: 6, hz62: 5, hz125: 0, hz250: -5, hz500: -4, hz1000: 0, hz2000: 6, hz4000: 8, hz8000: 8, hz16000: 7 },
   { name: 'subwoofer', hz31: 8, hz62: 7, hz125: 5, hz250: 4, hz500: 0, hz1000: 0, hz2000: 0, hz4000: 0, hz8000: 0, hz16000: 0 },
   { name: 'soft', hz31: -5, hz62: -5, hz125: -4, hz250: -4, hz500: 3, hz1000: 2, hz2000: 4, hz4000: 4, hz8000: 0, hz16000: 0 },
-  // 银河音效补充预设
-  { name: 'blues', hz31: 4, hz62: 3, hz125: 1, hz250: 0, hz500: -2, hz1000: -1, hz2000: 2, hz4000: 3, hz8000: 4, hz16000: 3 },
-  { name: 'jazz', hz31: 5, hz62: 4, hz125: 2, hz250: 0, hz500: -2, hz1000: -1, hz2000: 1, hz4000: 3, hz8000: 4, hz16000: 4 },
-  { name: 'country', hz31: 4, hz62: 3, hz125: 2, hz250: 0, hz500: -1, hz1000: 0, hz2000: 2, hz4000: 2, hz8000: 3, hz16000: 3 },
 ] as const
 export const convolutions = [
   { name: 'telephone', mainGain: 0.0, sendGain: 3.0, source: 'filter-telephone.wav' }, // 电话
@@ -53,20 +49,7 @@ let convolverSourceGainNode: GainNode
 let convolverOutputGainNode: GainNode
 let convolverDynamicsCompressor: DynamicsCompressorNode
 let gainNode: GainNode
-let masterLimiter: DynamicsCompressorNode
 let panner: PannerNode
-// 当前生效的增益状态（用于干湿归一化与自动补偿）
-let reverbDry = 1
-let reverbWet = 0
-let eqBoostDb = 0
-let bassBoostDb = 0
-let hifiBoostDb = 0
-// 超重低音（lowshelf 120Hz）
-let bassShelf: BiquadFilterNode
-// 高保真度（highshelf 7.5kHz）
-let hiFiShelf: BiquadFilterNode
-// 声道平衡
-let stereoBalance: StereoPannerNode
 let pitchShifterNode: AudioWorkletNode
 let pitchShifterNodePitchFactor: AudioParam
 let pitchShifterNodeLoadStatus: 'none' | 'loading' | 'unconnect' | 'connected' = 'none'
@@ -129,79 +112,10 @@ const initConvolver = () => {
 
 const initPanner = () => {
   panner = audioContext.createPanner()
-  panner.panningModel = 'HRTF'
-  // 关键：关闭距离衰减。
-  // 默认 distanceModel='inverse' 的增益 = refDistance / (refDistance + rolloff * (d - refDistance))，
-  // 当旋转半径 r < 1 时会得到数倍增益（r=0.1 → 10 倍），且距离在 r~1.73r 间周期变化，
-  // 表现为「一开环绕音量就暴涨且忽大忽小」。改为 linear + rolloff 0 后距离增益恒为 1，
-  // 只保留 HRTF 方向感（环绕效果不变），音量不再被放大。
-  panner.distanceModel = 'linear'
-  panner.refDistance = 1
-  panner.maxDistance = 1000
-  panner.rolloffFactor = 0
-}
-
-const initEnhanceNodes = () => {
-  bassShelf = audioContext.createBiquadFilter()
-  bassShelf.type = 'lowshelf'
-  bassShelf.frequency.value = 120
-  bassShelf.gain.value = 0
-
-  hiFiShelf = audioContext.createBiquadFilter()
-  hiFiShelf.type = 'highshelf'
-  hiFiShelf.frequency.value = 7500
-  hiFiShelf.gain.value = 0
-
-  stereoBalance = audioContext.createStereoPanner()
-  stereoBalance.pan.value = 0
 }
 
 const initGain = () => {
   gainNode = audioContext.createGain()
-}
-
-// 末端限幅器：EQ / 低音 / 高保真 / 混响叠加后的峰值兜底，防止数字削波（破音、电音失真）
-const initMasterLimiter = () => {
-  masterLimiter = audioContext.createDynamicsCompressor()
-  masterLimiter.threshold.value = -1.5
-  masterLimiter.knee.value = 0
-  masterLimiter.ratio.value = 20
-  masterLimiter.attack.value = 0.003
-  masterLimiter.release.value = 0.12
-}
-
-// ============================================================
-//  平滑写入 AudioParam：直接赋值会产生阶跃，是「咔哒/爆音」的主要来源
-// ============================================================
-const PARAM_RAMP = 0.03
-const setParamSmooth = (param: AudioParam, value: number) => {
-  if (!audioContext) {
-    param.value = value
-    return
-  }
-  const now = audioContext.currentTime
-  param.cancelScheduledValues(now)
-  param.setValueAtTime(param.value, now)
-  param.linearRampToValueAtTime(value, now + PARAM_RAMP)
-}
-
-// 混响干湿「等功率归一化」：sqrt(dry² + wet²) > 1 时按能量等比回缩，
-// 保证开混响后整体响度不上升（原先 dry 1.5 + wet 1.5 可带来约 +9dB 的音量跳变）
-const applyReverbGains = () => {
-  if (!convolverSourceGainNode) return
-  const norm = Math.sqrt(reverbDry * reverbDry + reverbWet * reverbWet)
-  const k = norm > 1 ? 1 / norm : 1
-  setParamSmooth(convolverSourceGainNode.gain, reverbDry * k)
-  setParamSmooth(convolverOutputGainNode.gain, reverbWet * k)
-}
-
-// 提升量自动补偿：EQ/低音/高保真抬高多少，就回缩多少（上限 6dB），
-// 让「开关音效、切换预设」前后主观响度基本一致
-const applyMakeupGain = () => {
-  if (!gainNode) return
-  const peakBoostDb = Math.max(0, eqBoostDb) + Math.max(0, bassBoostDb) + Math.max(0, hifiBoostDb)
-  const makeupDb = -Math.min(6, peakBoostDb * 0.4)
-  setParamSmooth(gainNode.gain, Math.pow(10, makeupDb / 20))
 }
 
 const initAdvancedAudioFeatures = () => {
@@ -214,23 +128,17 @@ const initAdvancedAudioFeatures = () => {
   initBiquadFilter()
   initConvolver()
   initPanner()
-  initEnhanceNodes()
   initGain()
-  initMasterLimiter()
-  // source -> analyser -> biquadFilter -> bassShelf -> hiFiShelf -> pitchShifter -> [(convolver & convolverSource)->convolverDynamicsCompressor] -> panner -> stereoBalance -> gain(makeup) -> masterLimiter
+  // source -> analyser -> biquadFilter -> pitchShifter -> [(convolver & convolverSource)->convolverDynamicsCompressor] -> panner -> gain
   mediaSource = audioContext.createMediaElementSource(audio)
   mediaSource.connect(analyser)
   analyser.connect(biquads.get(`hz${freqs[0]}`)!)
   const lastBiquadFilter = (biquads.get(`hz${freqs.at(-1)!}`)!)
-  lastBiquadFilter.connect(bassShelf)
-  bassShelf.connect(hiFiShelf)
-  hiFiShelf.connect(convolverSourceGainNode)
-  hiFiShelf.connect(convolver)
+  lastBiquadFilter.connect(convolverSourceGainNode)
+  lastBiquadFilter.connect(convolver)
   convolverDynamicsCompressor.connect(panner)
-  panner.connect(stereoBalance)
-  stereoBalance.connect(gainNode)
-  gainNode.connect(masterLimiter)
-  masterLimiter.connect(audioContext.destination)
+  panner.connect(gainNode)
+  gainNode.connect(audioContext.destination)
 
   // 音频输出设备改变时刷新 audio node 连接
   window.app_event.on('playerDeviceChanged', handleMediaListChange)
@@ -316,27 +224,24 @@ export const setConvolver = (buffer: AudioBuffer | null, mainGain: number, sendG
   convolver.buffer = buffer
   // console.log(mainGain, sendGain)
   if (buffer) {
-    reverbDry = mainGain
-    reverbWet = sendGain
+    convolverSourceGainNode.gain.value = mainGain
+    convolverOutputGainNode.gain.value = sendGain
   } else {
-    reverbDry = 1
-    reverbWet = 0
+    convolverSourceGainNode.gain.value = 1
+    convolverOutputGainNode.gain.value = 0
   }
-  applyReverbGains()
 }
 
 export const setConvolverMainGain = (gain: number) => {
-  if (reverbDry == gain) return
+  if (convolverSourceGainNode.gain.value == gain) return
   // console.log(gain)
-  reverbDry = gain
-  applyReverbGains()
+  convolverSourceGainNode.gain.value = gain
 }
 
 export const setConvolverSendGain = (gain: number) => {
-  if (reverbWet == gain) return
+  if (convolverOutputGainNode.gain.value == gain) return
   // console.log(gain)
-  reverbWet = gain
-  applyReverbGains()
+  convolverOutputGainNode.gain.value = gain
 }
 
 let pannerInfo = {
@@ -352,10 +257,10 @@ const setPannerXYZ = (nx: number, ny: number, nz: number) => {
   pannerInfo.x = nx
   pannerInfo.y = ny
   pannerInfo.z = nz
-  // 平滑推进：旋转是按定时器跳变的，直接赋值会让 HRTF 参数瞬变，听感上是「沙沙/咔哒」杂音
-  setParamSmooth(panner.positionX, nx * pannerInfo.soundR)
-  setParamSmooth(panner.positionY, ny * pannerInfo.soundR)
-  setParamSmooth(panner.positionZ, nz * pannerInfo.soundR)
+  // console.log(pannerInfo)
+  panner.positionX.value = nx * pannerInfo.soundR
+  panner.positionY.value = ny * pannerInfo.soundR
+  panner.positionZ.value = nz * pannerInfo.soundR
 }
 export const setPannerSoundR = (r: number) => {
   pannerInfo.soundR = r
@@ -371,9 +276,9 @@ export const stopPanner = () => {
     pannerInfo.intv = null
     pannerInfo.rad = 0
   }
-  setParamSmooth(panner.positionX, 0)
-  setParamSmooth(panner.positionY, 0)
-  setParamSmooth(panner.positionZ, 0)
+  panner.positionX.value = 0
+  panner.positionY.value = 0
+  panner.positionZ.value = 0
 }
 
 export const startPanner = () => {
@@ -417,19 +322,24 @@ const connectPitchShifterNode = () => {
   audio!.addEventListener('emptied', disconnectNode)
   if (audio!.paused) disconnectNode()
 
-  hiFiShelf.disconnect()
-  hiFiShelf.connect(pitchShifterNode)
+  const lastBiquadFilter = (biquads.get(`hz${freqs.at(-1)!}`)!)
+  lastBiquadFilter.disconnect()
+  lastBiquadFilter.connect(pitchShifterNode)
 
   pitchShifterNode.connect(convolver)
   pitchShifterNode.connect(convolverSourceGainNode)
+  // convolverDynamicsCompressor.disconnect(panner)
+  // convolverDynamicsCompressor.connect(pitchShifterNode)
+  // pitchShifterNode.connect(panner)
   pitchShifterNodeLoadStatus = 'connected'
   pitchShifterNodePitchFactor.value = pitchShifterNodeTempValue
 }
 const disconnectPitchShifterNode = () => {
   console.log('disconnect Pitch Shifter Node')
-  hiFiShelf.disconnect()
-  hiFiShelf.connect(convolver)
-  hiFiShelf.connect(convolverSourceGainNode)
+  const lastBiquadFilter = (biquads.get(`hz${freqs.at(-1)!}`)!)
+  lastBiquadFilter.disconnect()
+  lastBiquadFilter.connect(convolver)
+  lastBiquadFilter.connect(convolverSourceGainNode)
   pitchShifterNodeLoadStatus = 'unconnect'
 
   audio!.removeEventListener('playing', connectNode)
@@ -481,141 +391,6 @@ export const setPitchShifter = (val: number) => {
 }
 
 export const hasInitedAdvancedAudioFeatures = (): boolean => audioContext != null
-
-// ===== 银河音效扩展：增强滑条 / 声道平衡 / 动态推进 / DJ 节奏音效 =====
-
-/** 超重低音：lowshelf 增益（dB，0~15） */
-export const setBassBoost = (db: number) => {
-  initAdvancedAudioFeatures()
-  bassBoostDb = db
-  setParamSmooth(bassShelf.gain, db)
-  applyMakeupGain()
-}
-
-/** 高保真度：highshelf 提亮（dB，0~12） */
-export const setHiFiBoost = (db: number) => {
-  initAdvancedAudioFeatures()
-  hifiBoostDb = db
-  setParamSmooth(hiFiShelf.gain, db)
-  applyMakeupGain()
-}
-
-/** 均衡器单频段增益：平滑写入，避免拖动 EQ 时的阶跃爆音 */
-export const setEqGain = (hz: Freqs, gain: number) => {
-  initAdvancedAudioFeatures()
-  const filter = biquads.get(`hz${hz}`)
-  if (!filter) return
-  setParamSmooth(filter.gain, gain)
-}
-
-/** 记录当前 EQ 的最大正向提升量，用于自动响度补偿 */
-export const setEqBoostDb = (db: number) => {
-  eqBoostDb = db
-  applyMakeupGain()
-}
-
-/** 声道平衡：-1（全左）~ 1（全右） */
-export const setStereoBalance = (pan: number) => {
-  initAdvancedAudioFeatures()
-  setParamSmooth(stereoBalance.pan, Math.min(1, Math.max(-1, pan)))
-}
-
-/** 动态推进：0~1，映射压限器 threshold/ratio；
- *  0 时保持透明（此前 threshold -10 / ratio 3 会对全部干声持续压缩，是泵感与失真感的来源之一），
- *  削波兜底交由末端 masterLimiter 负责 */
-export const setDynamicBoost = (amount: number) => {
-  initAdvancedAudioFeatures()
-  const a = Math.min(1, Math.max(0, amount))
-  convolverDynamicsCompressor.knee.value = 6
-  convolverDynamicsCompressor.attack.value = 0.004
-  convolverDynamicsCompressor.release.value = a <= 0 ? 0.25 : 0.2
-  if (a <= 0) {
-    setParamSmooth(convolverDynamicsCompressor.threshold, -3)
-    setParamSmooth(convolverDynamicsCompressor.ratio, 2)
-    return
-  }
-  setParamSmooth(convolverDynamicsCompressor.threshold, -3 - a * 16)
-  setParamSmooth(convolverDynamicsCompressor.ratio, 2 + a * 4)
-}
-
-let djNoiseBuffer: AudioBuffer | null = null
-const getDjNoise = () => {
-  if (djNoiseBuffer) return djNoiseBuffer
-  const ctx = getAudioContext()
-  const len = Math.floor(ctx.sampleRate * 0.4)
-  const buffer = ctx.createBuffer(1, len, ctx.sampleRate)
-  const data = buffer.getChannelData(0)
-  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
-  djNoiseBuffer = buffer
-  return buffer
-}
-
-/** DJ 节奏音效：WebAudio 合成，直接叠加到主输出（不影响音乐播放） */
-export const playDjEffect = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => {
-  const ctx = getAudioContext()
-  const now = ctx.currentTime
-  const out = ctx.createGain()
-  out.gain.value = 0.9
-  out.connect(gainNode)
-
-  const osc = (wave: OscillatorType, freq: number, endFreq: number, dur: number, delay = 0, peak = 0.8) => {
-    const o = ctx.createOscillator()
-    const g = ctx.createGain()
-    o.type = wave
-    o.frequency.setValueAtTime(freq, now + delay)
-    o.frequency.exponentialRampToValueAtTime(Math.max(1, endFreq), now + delay + dur)
-    g.gain.setValueAtTime(0, now + delay)
-    g.gain.linearRampToValueAtTime(peak, now + delay + 0.01)
-    g.gain.exponentialRampToValueAtTime(0.001, now + delay + dur)
-    o.connect(g)
-    g.connect(out)
-    o.start(now + delay)
-    o.stop(now + delay + dur + 0.05)
-  }
-  const noise = (dur: number, delay: number, peak: number, hp: number) => {
-    const src = ctx.createBufferSource()
-    src.buffer = getDjNoise()
-    const filter = ctx.createBiquadFilter()
-    filter.type = 'highpass'
-    filter.frequency.value = hp
-    const g = ctx.createGain()
-    g.gain.setValueAtTime(peak, now + delay)
-    g.gain.exponentialRampToValueAtTime(0.001, now + delay + dur)
-    src.connect(filter)
-    filter.connect(g)
-    g.connect(out)
-    src.start(now + delay)
-    src.stop(now + delay + dur + 0.05)
-  }
-
-  switch (type) {
-    case 'clap': // 拍手：三连噪声脉冲
-      noise(0.08, 0, 0.7, 1500)
-      noise(0.08, 0.1, 0.6, 1500)
-      noise(0.16, 0.2, 0.8, 1200)
-      break
-    case 'twist': // 扭腰：下扫频
-      osc('sawtooth', 900, 120, 0.3, 0, 0.5)
-      osc('sawtooth', 900, 120, 0.3, 0.15, 0.4)
-      break
-    case 'jump': // 蹦跳：上扫频
-      osc('square', 200, 900, 0.22, 0, 0.4)
-      osc('square', 240, 1100, 0.22, 0.12, 0.35)
-      break
-    case 'shake': // 摇头：抖动噪声
-      for (let i = 0; i < 6; i++) noise(0.05, i * 0.07, 0.4, 4000)
-      break
-    case 'leg': // 抖腿：快速双低频
-      osc('sine', 140, 60, 0.12, 0, 0.9)
-      osc('sine', 140, 60, 0.12, 0.16, 0.9)
-      osc('sine', 140, 60, 0.12, 0.32, 0.9)
-      break
-    case 'knock': // 敲桌：木质低频脉冲
-      osc('sine', 220, 70, 0.1, 0, 1)
-      noise(0.03, 0, 0.3, 800)
-      break
-  }
-}
 
 export const setResource = (src: string) => {
   if (audio) audio.src = src
@@ -796,4 +571,85 @@ export const onVisibilityChange = (callback: Noop) => {
 
 export const getErrorCode = () => {
   return audio?.error?.code
+}
+
+// ===== DJ 节奏音效：WebAudio 合成、点按才触发，串接在主输出增益节点上，
+// 不改变音乐自身的处理链路（保留自银河音效扩展） =====
+
+let djNoiseBuffer: AudioBuffer | null = null
+const getDjNoise = () => {
+  if (djNoiseBuffer) return djNoiseBuffer
+  const ctx = getAudioContext()
+  const len = Math.floor(ctx.sampleRate * 0.4)
+  const buffer = ctx.createBuffer(1, len, ctx.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
+  djNoiseBuffer = buffer
+  return buffer
+}
+
+export const playDjEffect = (type: 'clap' | 'twist' | 'jump' | 'shake' | 'leg' | 'knock') => {
+  const ctx = getAudioContext()
+  const now = ctx.currentTime
+  const out = ctx.createGain()
+  out.gain.value = 0.9
+  out.connect(gainNode)
+
+  const osc = (wave: OscillatorType, freq: number, endFreq: number, dur: number, delay = 0, peak = 0.8) => {
+    const o = ctx.createOscillator()
+    const g = ctx.createGain()
+    o.type = wave
+    o.frequency.setValueAtTime(freq, now + delay)
+    o.frequency.exponentialRampToValueAtTime(Math.max(1, endFreq), now + delay + dur)
+    g.gain.setValueAtTime(0, now + delay)
+    g.gain.linearRampToValueAtTime(peak, now + delay + 0.01)
+    g.gain.exponentialRampToValueAtTime(0.001, now + delay + dur)
+    o.connect(g)
+    g.connect(out)
+    o.start(now + delay)
+    o.stop(now + delay + dur + 0.05)
+  }
+  const noise = (dur: number, delay: number, peak: number, hp: number) => {
+    const src = ctx.createBufferSource()
+    src.buffer = getDjNoise()
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'highpass'
+    filter.frequency.value = hp
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(peak, now + delay)
+    g.gain.exponentialRampToValueAtTime(0.001, now + delay + dur)
+    src.connect(filter)
+    filter.connect(g)
+    g.connect(out)
+    src.start(now + delay)
+    src.stop(now + delay + dur + 0.05)
+  }
+
+  switch (type) {
+    case 'clap': // 拍手：三连噪声脉冲
+      noise(0.08, 0, 0.7, 1500)
+      noise(0.08, 0.1, 0.6, 1500)
+      noise(0.16, 0.2, 0.8, 1200)
+      break
+    case 'twist': // 扭腰：下扫频
+      osc('sawtooth', 900, 120, 0.3, 0, 0.5)
+      osc('sawtooth', 900, 120, 0.3, 0.15, 0.4)
+      break
+    case 'jump': // 蹦跳：上扫频
+      osc('square', 200, 900, 0.22, 0, 0.4)
+      osc('square', 240, 1100, 0.22, 0.12, 0.35)
+      break
+    case 'shake': // 摇头：抖动噪声
+      for (let i = 0; i < 6; i++) noise(0.05, i * 0.07, 0.4, 4000)
+      break
+    case 'leg': // 抖腿：快速双低频
+      osc('sine', 140, 60, 0.12, 0, 0.9)
+      osc('sine', 140, 60, 0.12, 0.16, 0.9)
+      osc('sine', 140, 60, 0.12, 0.32, 0.9)
+      break
+    case 'knock': // 敲桌：木质低频脉冲
+      osc('sine', 220, 70, 0.1, 0, 1)
+      noise(0.03, 0, 0.3, 800)
+      break
+  }
 }

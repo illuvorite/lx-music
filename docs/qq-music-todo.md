@@ -258,6 +258,30 @@
 - `PlayBar/index.vue` 直接按设置渲染该组件并传 `variant`；删除旧组件 `MiddleWidthProgress.vue`、`FullWidthProgress.vue`、`ControlBtns.vue`、`PlayProgress.vue`（已确认全项目无残留引用）。
 - 验收：三种模式逐一实测 —— 控件区完全一致；mini 进度条居中于控制区下方、full 进度条 0→1114px 通栏贴底且右区显示 `00:00 / 04:29`、无残留旧进度条；播放队列/音量/音质等弹窗不受影响。
 
+## ㉓ 未开音效仍有「套了一层音效」感修复（2026-09-22）
+
+- **问题**：用户反馈未开启任何音效，但声音像被处理过（闷、有空间感/染色）；第一轮只做节点级修正后仍能听出。
+- **根因**（`plugins/player/index.ts`）：应用启动即建立 WebAudio 链路接管音频输出，干声**永远**流经整条效果链 —— HRTF 环绕 panner（常驻+原点病态位置）、混响总线压限器（-3dB/2:1 持续轻压）、EQ、shelf、makeup gain、限幅器等十余个节点逐个串着，每个都可能引入微小染色，叠加后就是「套了一层音效」。
+- **修复（整链旁路）**：新增 `applyRouting()` / `setEffectActive()` ——
+  - **未开任何音效**：`analyser → destination` 直连（analyser 仅采样不染色，频谱可视化仍可用），**EQ/低音/高保真/混响/环绕/升降调整段从链路断开，干声零处理**；
+  - **开启任一音效**（环绕 / 混响 / 升降调≠1 / EQ 任一频段 / 低音 / 高保真 / 动态 / 声道平衡）：`analyser → 完整效果链 → destination`，实时切换。
+  - `useSoundEffect.ts` 用 `hasActiveEffect` computed 汇总全部音效设置驱动路由；pitch worklet 的播放/暂停重连逻辑（`connectNode`）改为走 `applyRouting()`，避免曾挂载过升降调后破坏旁路状态。
+  - 保留前两轮修复：panner 动态插拔（效果链内也只在开环绕时经过）、动态推进 0 时压限器恒等直通。
+- **验证**：反复开关低音增强 / EQ 频段 / 3D 环绕各两次，路由切换无任何报错、设置复原；编译 `compiled successfully`；排除双 audio 元素叠加（预加载 audio 为 muted 且立即暂停）。
+
+## ㉔ 音频播放内核移植回原版 2.12.2（2026-09-22）
+
+- **背景**：用户多轮反馈未开音效时声音仍像被套了一层音效，节点级修正（panner 插拔、压限器直通、整链旁路）均未彻底解决。按用户要求，把 `D:\code\lx-music-desktop-2.12.2` 的音频播放实现**整体移植**回来，回到经过大量用户验证的原版听感。
+- **移植内容**：
+  - `plugins/player/index.ts` ← 原版全文。链路回到 `source → analyser → EQ×10 → [(convolverSource & convolver) → compressor] → panner(默认 equalpower) → gain → destination`；删除银河扩展节点（bassShelf / hiFiShelf / stereoBalance / masterLimiter）与效果链旁路逻辑（applyRouting / setEffectActive）。
+  - `core/useApp/usePlayer/useSoundEffect.ts` ← 原版全文（EQ 经 `getBiquadFilter` 直接写 gain；保留 IR 加载失败的干声降级保护）。
+  - 删除导出：`setBassBoost` / `setHiFiBoost` / `setDynamicBoost` / `setStereoBalance` / `setEffectActive` / `setEqGain` / `setEqBoostDb`。
+  - **保留 `playDjEffect`**（DJ 节奏音效：点按才触发的 WebAudio 合成音，串在主输出增益节点上，不改变干声路径）——音效面板「音效制作 → DJ 音效」继续可用。
+  - `SoundEffectBtn/index.vue`：`isAnyActive` 与一键关闭逻辑中移除 enhance 相关判断/复位。
+  - 设置项 `player.soundEffect.enhance.*` 保留在存储与类型中但已无实现（残留无害）。
+- **验证**：dev 重启后 4 个模块全部 `compiled successfully`；播放歌曲、播放栏、音效面板（推荐音效/均衡器/音效制作）全部正常，运行全程零 JS 错误。
+- **注意**：音效面板不再有「超重低音/高保真/动态推进/声道平衡」滑条（随内核删除）；若将来需要，必须在原版链路基础上重新设计，避免再次引入常驻染色节点。
+
 ---
 
 ## 验收记录
